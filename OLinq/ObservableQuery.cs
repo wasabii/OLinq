@@ -225,6 +225,11 @@ namespace OLinq
             return new ObservableValue<ObservableQuery<T>, TResult>(expression, scalarFunc);
         }
 
+        public ObservableQuery<T> ToCollection()
+        {
+            return new ObservableQuery<T>(this);
+        }
+
     }
 
 }

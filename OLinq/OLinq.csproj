@@ -42,6 +42,7 @@
     <Compile Include="ConstantOperation.cs" />
     <Compile Include="ConcatOperation.cs" />
     <Compile Include="AnyOperation.cs" />
+    <Compile Include="BinaryOperation.cs" />
     <Compile Include="ValueChangedEventHandler.cs" />
     <Compile Include="CountOperation.cs" />
     <Compile Include="GroupOperation.cs" />

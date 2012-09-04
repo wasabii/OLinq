@@ -48,6 +48,11 @@ namespace OLinq
                     return (IOperation)Activator.CreateInstance(typeof(NewOperation<>).MakeGenericType(expression.Type), context, expression);
                 case ExpressionType.MemberInit:
                     return (IOperation)Activator.CreateInstance(typeof(MemberInitOperation<>).MakeGenericType(expression.Type), context, expression);
+                case ExpressionType.GreaterThan:
+                case ExpressionType.GreaterThanOrEqual:
+                case ExpressionType.LessThan:
+                case ExpressionType.LessThanOrEqual:
+                    return new BinaryOperation(context, (BinaryExpression)expression);
             }
 
             throw new NotSupportedException(string.Format("{0} expression not supported.", expression.NodeType));
