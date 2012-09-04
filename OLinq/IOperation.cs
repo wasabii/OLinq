@@ -10,6 +10,11 @@ namespace OLinq
     {
 
         /// <summary>
+        /// Gets the context of the operation.
+        /// </summary>
+        OperationContext Context { get; }
+
+        /// <summary>
         /// Gets the currently provided value of this <see cref="Operation"/>.
         /// </summary>
         object Value { get; }

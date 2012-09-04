@@ -20,8 +20,10 @@ namespace OLinq
         public ConcatOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression)
         {
-            source1Expr = expression.Arguments[0];
-            source2Expr = expression.Arguments[1];
+            if (expression.Arguments.Count >= 1)
+                source1Expr = expression.Arguments[0];
+            if (expression.Arguments.Count >= 2)
+                source2Expr = expression.Arguments[1];
 
             if (source1Expr != null)
             {
@@ -101,8 +103,10 @@ namespace OLinq
 
         public override void Load()
         {
-            source1.Load();
-            source2.Load();
+            if (source1 != null)
+                source1.Load();
+            if (source2 != null)
+                source2.Load();
             base.Load();
 
             SetValue(this);

@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    public sealed class ObservableValue<TSource, TResult> : INotifyPropertyChanged
+    public sealed class ObservableValue<TSource, TResult> : INotifyPropertyChanged, IDisposable
     {
 
         private Expression sourceExpr;
@@ -25,7 +25,10 @@ namespace OLinq
             this.resultExpr = resultExpr;
         }
 
-        void Load()
+        /// <summary>
+        /// Ensures an operation has been constructed.
+        /// </summary>
+        void Ensure()
         {
             if (operation == null)
             {
@@ -36,8 +39,27 @@ namespace OLinq
 
                 // operation to emit value
                 operation = OperationFactory.FromExpression<TResult>(ctx, resultExpr);
-                operation.Load();
                 operation.ValueChanged += operation_ValueChanged;
+                operation.Load();
+            }
+        }
+
+        /// <summary>
+        /// Checks whether the operation should be disposed.
+        /// </summary>
+        void Check()
+        {
+            if (propertyChanged == null && valueChanged == null)
+            {
+                // dispose of the operation
+                operation.ValueChanged -= operation_ValueChanged;
+                operation.Dispose();
+
+                // dispose of variables
+                foreach (var var in operation.Context.Variables.Values)
+                    var.Dispose();
+
+                operation = null;
             }
         }
 
@@ -49,15 +71,29 @@ namespace OLinq
 
         public TResult Value
         {
-            get { Load(); return operation.Value; }
+            get { Ensure(); return operation.Value; }
+        }
+
+        event ValueChangedEventHandler valueChanged;
+
+        public event ValueChangedEventHandler ValueChanged
+        {
+            add { Ensure(); valueChanged += value; }
+            remove { valueChanged -= value; Check(); }
+        }
+
+        internal void OnValueChanged(ValueChangedEventArgs args)
+        {
+            if (valueChanged != null)
+                valueChanged(this, args);
         }
 
         event PropertyChangedEventHandler propertyChanged;
 
         public event PropertyChangedEventHandler PropertyChanged
         {
-            add { Load(); propertyChanged += value; }
-            remove { propertyChanged -= value; }
+            add { Ensure(); propertyChanged += value; }
+            remove { propertyChanged -= value; Check(); }
         }
 
         internal void OnPropertyChanged(PropertyChangedEventArgs args)
@@ -66,18 +102,11 @@ namespace OLinq
                 propertyChanged(this, args);
         }
 
-        event ValueChangedEventHandler valueChanged;
-
-        public event ValueChangedEventHandler ValueChanged
+        public void Dispose()
         {
-            add { Load(); valueChanged += value; }
-            remove { valueChanged -= value; }
-        }
-
-        internal void OnValueChanged(ValueChangedEventArgs args)
-        {
-            if (valueChanged != null)
-                valueChanged(this, args);
+            valueChanged = null;
+            propertyChanged = null;
+            Check();
         }
 
     }

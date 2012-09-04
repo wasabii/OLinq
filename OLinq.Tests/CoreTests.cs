@@ -28,7 +28,7 @@ namespace OLinq.Tests
             var c1 = c.AsObservableQuery()
                 .Where(i => i.Length >= 3)
                 .AsObservableQuery()
-                .ToCollection();
+                .ToView();
 
             var c2 = c1
                 .Where(i => i.Length >= 4)

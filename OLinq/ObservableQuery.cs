@@ -35,9 +35,10 @@ namespace OLinq
 
     }
 
-    public class ObservableQuery<T> : ObservableQuery, IQueryable<T>, IQueryProvider, INotifyCollectionChanged
+    public class ObservableQuery<T> : ObservableQuery, IQueryable<T>, IQueryProvider, INotifyCollectionChanged, IDisposable
     {
 
+        private int refCount = 0;
         private IEnumerable<T> enumerable;
         private Expression expression;
         private IOperation<IEnumerable<T>> operation;
@@ -48,8 +49,12 @@ namespace OLinq
         /// <param name="enumerable"></param>
         public ObservableQuery(IEnumerable<T> enumerable)
         {
-            SetEnumerable(enumerable);
+            this.enumerable = enumerable;
             this.expression = Expression.Constant(this);
+
+            var collection = enumerable as INotifyCollectionChanged;
+            if (collection != null)
+                collection.CollectionChanged += enumerable_CollectionChanged;
         }
 
         /// <summary>
@@ -84,7 +89,7 @@ namespace OLinq
         /// <summary>
         /// Ensures the structures associated with the query have been initialized.
         /// </summary>
-        private void EnsureQuery()
+        private void Ensure()
         {
             // skip for base query instances
             if (enumerable != null)
@@ -100,52 +105,85 @@ namespace OLinq
         }
 
         /// <summary>
+        /// Checks whether the structures associated with the query need to be initialized, and if not, disposes of them.
+        /// </summary>
+        private void Check()
+        {
+            if (enumerable != null)
+                return;
+
+            if (operation != null &&
+                refCount == 0 && collectionChanged != null)
+            {
+                operation.ValueChanged -= operation_ValueChanged;
+                operation.Dispose();
+                operation = null;
+            }
+        }
+
+        /// <summary>
         /// Invoked when the handler changes its output value.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
         void operation_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (operation.Value is IEnumerable<T>)
-                SetEnumerable(operation.Value as IEnumerable<T>);
-        }
+            var oldValue = args.OldValue as INotifyCollectionChanged;
+            if (oldValue != null)
+                oldValue.CollectionChanged -= operation_CollectionChanged;
 
-        /// <summary>
-        /// Invoked when the handler's value changes.
-        /// </summary>
-        private void SetEnumerable(IEnumerable<T> newEnumerable)
-        {
-            // unsubscribe from collection changed
-            var observable = enumerable as INotifyCollectionChanged;
-            if (observable != null)
-                observable.CollectionChanged -= observable_CollectionChanged;
+            var newValue = args.NewValue as INotifyCollectionChanged;
+            if (newValue != null)
+                newValue.CollectionChanged += operation_CollectionChanged;
 
-            enumerable = newEnumerable;
-
-            // subscribe to collection changed
-            observable = enumerable as INotifyCollectionChanged;
-            if (observable != null)
-                observable.CollectionChanged += observable_CollectionChanged;
-
-            // collection is reset
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         /// <summary>
-        /// Invoked when the handler's collection value changes.
+        /// Invoked when the base enumerable's collection changes.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        void observable_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        void enumerable_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             OnCollectionChanged(args);
         }
 
+        /// <summary>
+        /// Invoked when the operation's collection changes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        void operation_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            OnCollectionChanged(args);
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the results of the query.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<T> GetEnumerator()
         {
-            EnsureQuery();
+            if (enumerable != null)
+            {
+                foreach (var i in enumerable)
+                    yield return i;
+                yield break;
+            }
 
-            return enumerable.GetEnumerator();
+            if (operation != null)
+                try
+                {
+                    refCount++;
+                    foreach (var i in operation.Value)
+                        yield return i;
+                }
+                finally
+                {
+                    refCount--;
+                    Check();
+                }
         }
 
         private event NotifyCollectionChangedEventHandler collectionChanged;
@@ -155,8 +193,8 @@ namespace OLinq
         /// </summary>
         public event NotifyCollectionChangedEventHandler CollectionChanged
         {
-            add { EnsureQuery(); collectionChanged += value; }
-            remove { EnsureQuery(); collectionChanged -= value; }
+            add { Ensure(); collectionChanged += value; }
+            remove { collectionChanged -= value; Check(); }
         }
 
         /// <summary>
@@ -203,11 +241,18 @@ namespace OLinq
             return new ObservableQuery<S>(expression);
         }
 
+        /// <summary>
+        /// Executes the expression by creating an operation graph, obtaining it's value, and disposing of it.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         object Execute(Expression expression)
         {
-            var op = OperationFactory.FromExpression(new OperationContext(), expression);
-            op.Load();
-            return op.Value;
+            using (var op = OperationFactory.FromExpression(new OperationContext(), expression))
+            {
+                op.Load();
+                return op.Value;
+            }
         }
 
         object IQueryProvider.Execute(Expression expression)
@@ -225,9 +270,16 @@ namespace OLinq
             return new ObservableValue<ObservableQuery<T>, TResult>(expression, scalarFunc);
         }
 
-        public ObservableQuery<T> ToCollection()
+        public ObservableQueryView<T> ToView()
         {
-            return new ObservableQuery<T>(this);
+            return new ObservableQueryView<T>(this);
+        }
+
+        public void Dispose()
+        {
+            refCount = 0;
+            collectionChanged = null;
+            Check();
         }
 
     }
