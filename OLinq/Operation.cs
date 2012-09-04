@@ -7,7 +7,7 @@ namespace OLinq
     /// <summary>
     /// Base operation type. An operation is associated with an <see cref="Expression"/> and implements its functionality.
     /// </summary>
-    abstract class Operation
+    abstract class Operation : IDisposable
     {
 
         /// <summary>
@@ -48,6 +48,14 @@ namespace OLinq
         /// Holder for attached information.
         /// </summary>
         public object Tag { get; set; }
+
+        /// <summary>
+        /// Disposes of the operation.
+        /// </summary>
+        public virtual void Dispose()
+        {
+
+        }
 
     }
 

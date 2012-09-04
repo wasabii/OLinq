@@ -92,7 +92,6 @@ namespace OLinq
                 // generate new parameter
                 var ctx = new OperationContext(Context);
                 var var = new ValueOperation<TSource>(item);
-                var.Load();
                 ctx.Variables[lambdaExpr.Parameters[0].Name] = var;
 
                 // create new test and subscribe to test modifications
@@ -123,6 +122,28 @@ namespace OLinq
             base.Load();
 
             SetValue(this);
+        }
+
+        public override void Dispose()
+        {
+            if (source != null)
+            {
+                source.ValueChanged -= source_ValueChanged;
+                source.Dispose();
+                var sourceValue = source.Value as INotifyCollectionChanged;
+                if (sourceValue != null)
+                    sourceValue.CollectionChanged -= source_CollectionChanged;
+            }
+            foreach (var func in funcs.Values)
+            {
+                func.ValueChanged -= func_ValueChanged;
+                func.Dispose();
+                foreach (var var in func.Context.Variables)
+                    var.Value.Dispose();
+            }
+            funcs = null;
+
+            base.Dispose();
         }
 
         IEnumerator<TResult> IEnumerable<TResult>.GetEnumerator()

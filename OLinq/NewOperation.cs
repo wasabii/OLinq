@@ -50,6 +50,17 @@ namespace OLinq
             Refresh();
         }
 
+        public override void Dispose()
+        {
+            foreach (var arg in arguments)
+            {
+                arg.ValueChanged -= argument_ValueChanged;
+                arg.Dispose();
+            }
+
+            base.Dispose();
+        }
+
     }
 
 }

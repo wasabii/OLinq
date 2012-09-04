@@ -137,6 +137,28 @@ namespace OLinq
             SetValue(this);
         }
 
+        public override void Dispose()
+        {
+            if (source != null)
+            {
+                source.ValueChanged -= source_ValueChanged;
+                source.Dispose();
+                var sourceValue = source.Value as INotifyCollectionChanged;
+                if (sourceValue != null)
+                    sourceValue.CollectionChanged -= source_CollectionChanged;
+            }
+            foreach (var predicate in predicates.Values)
+            {
+                predicate.ValueChanged -= predicate_ValueChanged;
+                predicate.Dispose();
+                foreach (var var in predicate.Context.Variables)
+                    var.Value.Dispose();
+            }
+            predicates = null;
+
+            base.Dispose();
+        }
+
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
             return GetEnumerator();

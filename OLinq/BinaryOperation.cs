@@ -56,6 +56,22 @@ namespace OLinq
             base.Load();
         }
 
+        public override void Dispose()
+        {
+            if (left != null)
+            {
+                left.ValueChanged -= left_ValueChanged;
+                left.Dispose();
+            }
+            if (right != null)
+            {
+                right.ValueChanged -= right_ValueChanged;
+                right.Dispose();
+            }
+
+            base.Dispose();
+        }
+
     }
 
 }

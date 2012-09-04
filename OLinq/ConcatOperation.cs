@@ -40,11 +40,11 @@ namespace OLinq
         {
             var oldValue = args.OldValue as INotifyCollectionChanged;
             if (oldValue != null)
-                oldValue.CollectionChanged -= source1Value_CollectionChanged;
+                oldValue.CollectionChanged -= source1_CollectionChanged;
 
             var newValue = args.NewValue as INotifyCollectionChanged;
             if (newValue != null)
-                newValue.CollectionChanged += source1Value_CollectionChanged;
+                newValue.CollectionChanged += source1_CollectionChanged;
 
             if (IsLoaded)
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset, null));
@@ -54,22 +54,22 @@ namespace OLinq
         {
             var oldValue = args.OldValue as INotifyCollectionChanged;
             if (oldValue != null)
-                oldValue.CollectionChanged -= source1Value_CollectionChanged;
+                oldValue.CollectionChanged -= source1_CollectionChanged;
 
             var newValue = args.NewValue as INotifyCollectionChanged;
             if (newValue != null)
-                newValue.CollectionChanged += source1Value_CollectionChanged;
+                newValue.CollectionChanged += source1_CollectionChanged;
 
             if (IsLoaded)
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
-        void source1Value_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        void source1_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             sourceValue_CollectionChanged(args);
         }
 
-        void source2Value_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        void source2_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             sourceValue_CollectionChanged(args);
         }
@@ -106,6 +106,28 @@ namespace OLinq
             base.Load();
 
             SetValue(this);
+        }
+
+        public override void Dispose()
+        {
+            if (source1 != null)
+            {
+                var source1value = source1.Value as INotifyCollectionChanged;
+                source1.ValueChanged -= source1_ValueChanged;
+                source1.Dispose();
+                if (source1value != null)
+                    source1value.CollectionChanged -= source1_CollectionChanged;
+            }
+            if (source2 != null)
+            {
+                var source2value = source2.Value as INotifyCollectionChanged;
+                source2.ValueChanged -= source2_ValueChanged;
+                source2.Dispose();
+                if (source2value != null)
+                    source2value.CollectionChanged -= source2_CollectionChanged;
+            }
+
+            base.Dispose();
         }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()

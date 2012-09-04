@@ -6,7 +6,7 @@ namespace OLinq
     /// <summary>
     /// Read-only access to an <see cref="Operation"/>.
     /// </summary>
-    interface IOperation
+    interface IOperation : IDisposable
     {
 
         /// <summary>

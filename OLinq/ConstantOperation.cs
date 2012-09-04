@@ -14,8 +14,8 @@ namespace OLinq
 
         public override void Load()
         {
-            SetValue((T)((ConstantExpression)Expression).Value);
             base.Load();
+            SetValue((T)((ConstantExpression)Expression).Value);
         }
 
     }

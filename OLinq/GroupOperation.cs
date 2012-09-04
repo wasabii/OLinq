@@ -13,24 +13,27 @@ namespace OLinq
         public GroupOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression)
         {
-            source = OperationFactory.FromExpression<IEnumerable>(context, expression.Arguments[0]);
-            source.ValueChanged += source_ValueChanged;
+            if (expression.Arguments.Count >= 1)
+            {
+                source = OperationFactory.FromExpression<IEnumerable>(context, expression.Arguments[0]);
+                source.ValueChanged += source_ValueChanged;
+            }
         }
 
         void source_ValueChanged(object sender, ValueChangedEventArgs args)
         {
             var oldValue = args.OldValue as INotifyCollectionChanged;
             if (oldValue != null)
-                oldValue.CollectionChanged -= sourceValue_CollectionChanged;
+                oldValue.CollectionChanged -= source_CollectionChanged;
 
             var newValue = args.NewValue as INotifyCollectionChanged;
             if (newValue != null)
-                newValue.CollectionChanged += sourceValue_CollectionChanged;
+                newValue.CollectionChanged += source_CollectionChanged;
 
             OnSourceChanged((IEnumerable)args.OldValue, (IEnumerable)args.NewValue);
         }
 
-        void sourceValue_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        void source_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             OnSourceCollectionChanged(args);
         }
@@ -42,8 +45,23 @@ namespace OLinq
 
         public override void Load()
         {
-            source.Load();
+            if (source != null)
+                source.Load();
             base.Load();
+        }
+
+        public override void Dispose()
+        {
+            if (source != null)
+            {
+                var sourceValue = source.Value as INotifyCollectionChanged;
+                source.ValueChanged -= source_ValueChanged;
+                source.Dispose();
+                if (sourceValue != null)
+                    sourceValue.CollectionChanged -= source_CollectionChanged;
+            }
+
+            base.Dispose();
         }
 
         /// <summary>

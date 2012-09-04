@@ -98,6 +98,12 @@ namespace OLinq
                     return new AnyOperation(context, expression);
                 case "Count":
                     return new CountOperation(context, expression);
+                case "Single":
+                    resultItemType = expression.Method.GetGenericArguments()[0];
+                    return (IOperation)Activator.CreateInstance(typeof(SingleOperation<>).MakeGenericType(resultItemType), context, expression);
+                case "SingleOrDefault":
+                    resultItemType = expression.Method.GetGenericArguments()[0];
+                    return (IOperation)Activator.CreateInstance(typeof(SingleOperation<>).MakeGenericType(resultItemType), context, expression);
                 default:
                     throw new NotSupportedException();
             }

@@ -142,6 +142,22 @@ namespace OLinq
             SetValue(result.Value);
         }
 
+        public override void Dispose()
+        {
+            if (result != null)
+            {
+                result.ValueChanged -= result_ValueChanged;
+                result.Dispose();
+            }
+            foreach (var assignment in memberAssignments)
+            {
+                assignment.ValueChanged -= memberAssignment_ValueChanged;
+                assignment.Dispose();
+            }
+
+            base.Dispose();
+        }
+
     }
 
 }

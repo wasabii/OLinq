@@ -85,6 +85,22 @@ namespace OLinq
             SetValue(Invoke(target.Value, args));
         }
 
+        public override void Dispose()
+        {
+            if (target != null)
+            {
+                target.ValueChanged -= target_ValueChanged;
+                target.Dispose();
+            }
+            foreach (var arg in arguments)
+            {
+                arg.ValueChanged -= argument_ValueChanged;
+                arg.Dispose();
+            }
+
+            base.Dispose();
+        }
+
     }
 
 }

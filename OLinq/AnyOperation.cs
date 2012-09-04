@@ -76,7 +76,6 @@ namespace OLinq
                 // generate new parameter
                 var ctx = new OperationContext(Context);
                 var var = new ValueOperation<object>(item);
-                var.Load();
                 ctx.Variables[predicateExpr.Parameters[0].Name] = var;
 
                 // create new test and subscribe to test modifications
@@ -101,6 +100,20 @@ namespace OLinq
         {
             base.Load();
             Reset(Source);
+        }
+
+        public override void Dispose()
+        {
+            foreach (var predicate in predicates.Values)
+            {
+                predicate.ValueChanged -= predicate_ValueChanged;
+                predicate.Dispose();
+                foreach (var var in predicate.Context.Variables)
+                    var.Value.Dispose();
+            }
+            predicates = null;
+
+            base.Dispose();
         }
 
     }

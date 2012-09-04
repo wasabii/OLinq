@@ -71,6 +71,21 @@ namespace OLinq
             base.Load();
         }
 
+        public override void Dispose()
+        {
+            if (target != null)
+            {
+                var targetValue = target.Value as INotifyPropertyChanged;
+                target.ValueChanged -= target_ValueChanged;
+                target.Dispose();
+                if (targetValue != null)
+                    targetValue.PropertyChanged -= target_PropertyChanged;
+            }
+
+
+            base.Dispose();
+        }
+
     }
 
 }

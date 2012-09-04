@@ -34,6 +34,14 @@ namespace OLinq
             base.Load();
         }
 
+        public override void Dispose()
+        {
+            if (variable != null)
+                variable.ValueChanged -= variable_ValueChanged;
+
+            base.Dispose();
+        }
+
     }
 
 }
