@@ -1,0 +1,127 @@
+﻿using System;
+using System.Linq.Expressions;
+
+namespace OLinq
+{
+
+    /// <summary>
+    /// Base operation type. An operation is associated with an <see cref="Expression"/> and implements its functionality.
+    /// </summary>
+    abstract class Operation
+    {
+
+        /// <summary>
+        /// Initializes a new instance.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="context"></param>
+        protected Operation(OperationContext context, Expression expression)
+        {
+            Expression = expression;
+            Context = context;
+        }
+
+        /// <summary>
+        /// Gets the associated <see cref="OperationContext"/>.
+        /// </summary>
+        public OperationContext Context { get; private set; }
+
+        /// <summary>
+        /// Gets the associated expression.
+        /// </summary>
+        public Expression Expression { get; private set; }
+
+        /// <summary>
+        /// Gets whether or not the operation has been loaded.
+        /// </summary>
+        public bool IsLoaded { get; private set; }
+
+        /// <summary>
+        /// Invoked to load the operation's values. Operations should override this method to load their children.
+        /// </summary>
+        public virtual void Load()
+        {
+            IsLoaded = true;
+        }
+
+        /// <summary>
+        /// Holder for attached information.
+        /// </summary>
+        public object Tag { get; set; }
+
+    }
+
+    /// <summary>
+    /// Value-providing operation type.
+    /// </summary>
+    /// <typeparam name="TResult"></typeparam>
+    abstract class Operation<TResult> : Operation, IOperation<TResult>
+    {
+
+        /// <summary>
+        /// Initializes a new instance.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="expression"></param>
+        protected Operation(OperationContext context, Expression expression)
+            : base(context, expression)
+        {
+
+        }
+
+        /// <summary>
+        /// Gets the typed value of the expression.
+        /// </summary>
+        public TResult Value { get; protected set; }
+
+        /// <summary>
+        /// Raised when the output value changes.
+        /// </summary>
+        public event ValueChangedEventHandler ValueChanged;
+
+        /// <summary>
+        /// Raises the ValueChanged event.
+        /// </summary>
+        protected void OnValueChanged(object oldValue, object newValue)
+        {
+            if (ValueChanged != null)
+                ValueChanged(this, new ValueChangedEventArgs(oldValue, newValue));
+        }
+
+        /// <summary>
+        /// Sets the result value, raising appropriate events.
+        /// </summary>
+        /// <param name="value"></param>
+        protected TResult SetValue(TResult value)
+        {
+            var oldValue = Value;
+            var newValue = value;
+
+            if (!object.Equals(oldValue, newValue))
+            {
+                Value = newValue;
+                OnValueChanged(oldValue, newValue);
+            }
+
+            return newValue;
+        }
+
+        TResult IOperation<TResult>.Value
+        {
+            get { return Value; }
+        }
+
+        object IOperation.Value
+        {
+            get { return Value; }
+        }
+
+        event ValueChangedEventHandler IOperation.ValueChanged
+        {
+            add { ValueChanged += value; }
+            remove { ValueChanged -= value; }
+        }
+
+    }
+
+}
