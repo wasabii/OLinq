@@ -31,17 +31,47 @@ namespace OLinq
 
         internal abstract IEnumerable Enumerable { get; }
 
-        internal abstract Expression Expression { get; }
+        public abstract Expression Expression { get; }
+
+        public abstract Type ElementType { get; }
+
+        public abstract IQueryProvider Provider { get; }
 
     }
 
-    public class ObservableQuery<T> : ObservableQuery, IQueryable<T>, IQueryProvider, INotifyCollectionChanged, IDisposable
+    public class ObservableQuery<T> : ObservableQuery, IQueryable<T>, IQueryProvider
     {
 
-        private int refCount = 0;
+        /// <summary>
+        /// Used to transform an expression tree referencing an <see cref="ObservableQuery"/> to one wrapping an
+        /// <see cref="EnumerableQuery"/>.
+        /// </summary>
+        private class EnumerableTransformVisitor : ExpressionVisitor
+        {
+
+            protected override Expression VisitConstant(ConstantExpression node)
+            {
+                var value = node.Value as ObservableQuery;
+                if (value != null)
+                {
+                    // extract item type, generate new query type
+                    var itemType = value.GetType().GetGenericArguments()[0];
+                    var type = typeof(EnumerableQuery<>).MakeGenericType(itemType);
+
+                    // generate new enumerable query wrapper for existing value
+                    var query = Activator.CreateInstance(type, value.Enumerable);
+
+                    // transform constant
+                    return Expression.Constant(query, type);
+                }
+
+                return base.VisitConstant(node);
+            }
+
+        }
+
         private IEnumerable<T> enumerable;
         private Expression expression;
-        private IOperation<IEnumerable<T>> operation;
 
         /// <summary>
         /// Initializes a new instance.
@@ -50,11 +80,7 @@ namespace OLinq
         public ObservableQuery(IEnumerable<T> enumerable)
         {
             this.enumerable = enumerable;
-            this.expression = Expression.Constant(this);
-
-            var collection = enumerable as INotifyCollectionChanged;
-            if (collection != null)
-                collection.CollectionChanged += enumerable_CollectionChanged;
+            this.expression = Expression.Constant(this, typeof(IQueryable<T>));
         }
 
         /// <summary>
@@ -71,155 +97,37 @@ namespace OLinq
             get { return enumerable; }
         }
 
-        internal override Expression Expression
+        public override Expression Expression
         {
             get { return expression; }
         }
 
-        public Type ElementType
+        public override Type ElementType
         {
             get { return typeof(T); }
         }
 
-        public IQueryProvider Provider
+        public override IQueryProvider Provider
         {
             get { return this; }
         }
 
         /// <summary>
-        /// Ensures the structures associated with the query have been initialized.
-        /// </summary>
-        private void Ensure()
-        {
-            // skip for base query instances
-            if (enumerable != null)
-                return;
-
-            // generate new handler
-            if (operation == null)
-            {
-                operation = OperationFactory.FromExpression<IEnumerable<T>>(new OperationContext(), expression);
-                operation.ValueChanged += operation_ValueChanged;
-                operation.Load();
-            }
-        }
-
-        /// <summary>
-        /// Checks whether the structures associated with the query need to be initialized, and if not, disposes of them.
-        /// </summary>
-        private void Check()
-        {
-            if (enumerable != null)
-                return;
-
-            if (operation != null &&
-                refCount == 0 && collectionChanged != null)
-            {
-                operation.ValueChanged -= operation_ValueChanged;
-                operation.Dispose();
-                operation = null;
-            }
-        }
-
-        /// <summary>
-        /// Invoked when the handler changes its output value.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        void operation_ValueChanged(object sender, ValueChangedEventArgs args)
-        {
-            var oldValue = args.OldValue as INotifyCollectionChanged;
-            if (oldValue != null)
-                oldValue.CollectionChanged -= operation_CollectionChanged;
-
-            var newValue = args.NewValue as INotifyCollectionChanged;
-            if (newValue != null)
-                newValue.CollectionChanged += operation_CollectionChanged;
-
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        }
-
-        /// <summary>
-        /// Invoked when the base enumerable's collection changes.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        void enumerable_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
-        {
-            OnCollectionChanged(args);
-        }
-
-        /// <summary>
-        /// Invoked when the operation's collection changes.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
-        void operation_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
-        {
-            OnCollectionChanged(args);
-        }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through the results of the query.
+        /// IQueryable Enumerator implementation. This should preferably not be used. The query should first be
+        /// transformed into a View.
         /// </summary>
         /// <returns></returns>
         public IEnumerator<T> GetEnumerator()
         {
-            if (enumerable != null)
-            {
-                foreach (var i in enumerable)
-                    yield return i;
-                yield break;
-            }
-
-            if (operation != null)
-                try
-                {
-                    refCount++;
-                    foreach (var i in operation.Value)
-                        yield return i;
-                }
-                finally
-                {
-                    refCount--;
-                    Check();
-                }
-        }
-
-        private event NotifyCollectionChangedEventHandler collectionChanged;
-
-        /// <summary>
-        /// Raised when the items in the query change.
-        /// </summary>
-        public event NotifyCollectionChangedEventHandler CollectionChanged
-        {
-            add { Ensure(); collectionChanged += value; }
-            remove { collectionChanged -= value; Check(); }
-        }
-
-        /// <summary>
-        /// Raises the CollectionChanged event.
-        /// </summary>
-        /// <param name="args"></param>
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
-        {
-            if (collectionChanged != null)
-                collectionChanged(this, args);
-        }
-
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
-        {
-            return GetEnumerator();
+            // transform the query into an enumerable query
+            var expr = new EnumerableTransformVisitor().Visit(expression);
+            var query = new EnumerableQuery<T>(expr);
+            return ((IEnumerable<T>)query).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
-        }
-
-        Expression IQueryable.Expression
-        {
-            get { return Expression; }
         }
 
         IQueryable IQueryProvider.CreateQuery(Expression expression)
@@ -248,11 +156,10 @@ namespace OLinq
         /// <returns></returns>
         object Execute(Expression expression)
         {
-            using (var op = OperationFactory.FromExpression(new OperationContext(), expression))
-            {
-                op.Load();
-                return op.Value;
-            }
+            // transform the query into an enumerable query
+            var expr = new EnumerableTransformVisitor().Visit(expression);
+            var query = new EnumerableQuery<T>(expr);
+            return ((IQueryProvider)query).Execute(expr);
         }
 
         object IQueryProvider.Execute(Expression expression)
@@ -265,21 +172,14 @@ namespace OLinq
             return (S)Execute(expression);
         }
 
-        public ObservableValue<ObservableQuery<T>, TResult> Observe<TResult>(Expression<Func<ObservableQuery<T>, TResult>> scalarFunc)
+        public ObservableValue<IEnumerable<T>, TResult> Observe<TResult>(Expression<Func<IQueryable<T>, TResult>> scalarFunc)
         {
-            return new ObservableValue<ObservableQuery<T>, TResult>(expression, scalarFunc);
+            return new ObservableValue<IEnumerable<T>, TResult>(expression, scalarFunc);
         }
 
-        public ObservableQueryView<T> ToView()
+        public ObservableView<T> ToView()
         {
-            return new ObservableQueryView<T>(this);
-        }
-
-        public void Dispose()
-        {
-            refCount = 0;
-            collectionChanged = null;
-            Check();
+            return new ObservableView<T>(this);
         }
 
     }

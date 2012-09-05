@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -8,6 +9,21 @@ namespace OLinq
 
     public static class OperationFactory
     {
+
+        private static Type Fix(Type type)
+        {
+            var oldArgs = type.GetGenericArguments();
+            var newArgs = new Type[oldArgs.Length];
+            for (int i = 0; i < oldArgs.Length; i++)
+                newArgs[i] = Fix(oldArgs[i]);
+
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IQueryable<>))
+                return typeof(IEnumerable<>).MakeGenericType(newArgs);
+            if (type.IsGenericType)
+                return type.GetGenericTypeDefinition().MakeGenericType(newArgs);
+            else
+                return type;
+        }
 
         /// <summary>
         /// Creates a typed <see cref="Operation"/> that properly wraps <paramref name="expression"/>.
@@ -30,24 +46,27 @@ namespace OLinq
         /// <returns></returns>
         internal static IOperation FromExpression(OperationContext context, Expression expression)
         {
+            // replace IQueryable references with IEnumerable
+            var type = Fix(expression.Type);
+
             switch (expression.NodeType)
             {
                 case ExpressionType.Constant:
-                    return (IOperation)Activator.CreateInstance(typeof(ConstantOperation<>).MakeGenericType(expression.Type), context, expression);
+                    return FromConstantExpression(context, (ConstantExpression)expression);
                 case ExpressionType.Quote:
-                    return (IOperation)Activator.CreateInstance(typeof(QuoteOperation<>).MakeGenericType(expression.Type), context, expression);
+                    return (IOperation)Activator.CreateInstance(typeof(QuoteOperation<>).MakeGenericType(type), context, expression);
                 case ExpressionType.Call:
                     return FromCallExpression(context, (MethodCallExpression)expression);
                 case ExpressionType.MemberAccess:
-                    return (IOperation)Activator.CreateInstance(typeof(MemberAccessOperation<>).MakeGenericType(expression.Type), context, expression);
+                    return (IOperation)Activator.CreateInstance(typeof(MemberAccessOperation<>).MakeGenericType(type), context, expression);
                 case ExpressionType.Lambda:
                     return FromLambdaExpression(context, (LambdaExpression)expression);
                 case ExpressionType.Parameter:
-                    return (IOperation)Activator.CreateInstance(typeof(ParameterOperation<>).MakeGenericType(expression.Type), context, expression);
+                    return (IOperation)Activator.CreateInstance(typeof(ParameterOperation<>).MakeGenericType(type), context, expression);
                 case ExpressionType.New:
-                    return (IOperation)Activator.CreateInstance(typeof(NewOperation<>).MakeGenericType(expression.Type), context, expression);
+                    return (IOperation)Activator.CreateInstance(typeof(NewOperation<>).MakeGenericType(type), context, expression);
                 case ExpressionType.MemberInit:
-                    return (IOperation)Activator.CreateInstance(typeof(MemberInitOperation<>).MakeGenericType(expression.Type), context, expression);
+                    return (IOperation)Activator.CreateInstance(typeof(MemberInitOperation<>).MakeGenericType(type), context, expression);
                 case ExpressionType.GreaterThan:
                 case ExpressionType.GreaterThanOrEqual:
                 case ExpressionType.LessThan:
@@ -56,6 +75,15 @@ namespace OLinq
             }
 
             throw new NotSupportedException(string.Format("{0} expression not supported.", expression.NodeType));
+        }
+
+        private static IOperation FromConstantExpression(OperationContext context, ConstantExpression expression)
+        {
+            var query = expression.Value as ObservableQuery;
+            if (query != null)
+                return (IOperation)Activator.CreateInstance(typeof(ObservableQueryConstantOperation<>).MakeGenericType(query.ElementType), context, expression);
+            else
+                return (IOperation)Activator.CreateInstance(typeof(ConstantOperation<>).MakeGenericType(Fix(expression.Type)), context, expression);
         }
 
         /// <summary>
@@ -69,7 +97,7 @@ namespace OLinq
             if (expression.Method.DeclaringType == typeof(Queryable))
                 return FromQueryableExpression(context, expression);
             else
-                return (IOperation)Activator.CreateInstance(typeof(CallOperation<>).MakeGenericType(expression.Type), context, expression);
+                return (IOperation)Activator.CreateInstance(typeof(CallOperation<>).MakeGenericType(Fix(expression.Type)), context, expression);
         }
 
         /// <summary>

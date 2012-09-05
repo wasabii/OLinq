@@ -27,7 +27,8 @@ namespace OLinq.Tests
 
             var q = c.AsObservableQuery()
                 .Where(i => i.EndsWith("3"))
-                .AsObservableQuery();
+                .AsObservableQuery()
+                .ToView();
             q.CollectionChanged += q_CollectionChanged;
 
             Assert.AreEqual(1, q.Count());

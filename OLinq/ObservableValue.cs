@@ -23,44 +23,16 @@ namespace OLinq
 
             this.sourceExpr = sourceExpr;
             this.resultExpr = resultExpr;
-        }
 
-        /// <summary>
-        /// Ensures an operation has been constructed.
-        /// </summary>
-        void Ensure()
-        {
-            if (operation == null)
-            {
-                // provide source
-                var ctx = new OperationContext();
-                var src = OperationFactory.FromExpression<TSource>(new OperationContext(), sourceExpr);
-                ctx.Variables[resultExpr.Parameters[0].Name] = src;
+            // provide source
+            var ctx = new OperationContext();
+            var src = OperationFactory.FromExpression<TSource>(new OperationContext(), sourceExpr);
+            ctx.Variables[resultExpr.Parameters[0].Name] = src;
 
-                // operation to emit value
-                operation = OperationFactory.FromExpression<TResult>(ctx, resultExpr);
-                operation.ValueChanged += operation_ValueChanged;
-                operation.Load();
-            }
-        }
-
-        /// <summary>
-        /// Checks whether the operation should be disposed.
-        /// </summary>
-        void Check()
-        {
-            if (propertyChanged == null && valueChanged == null)
-            {
-                // dispose of the operation
-                operation.ValueChanged -= operation_ValueChanged;
-                operation.Dispose();
-
-                // dispose of variables
-                foreach (var var in operation.Context.Variables.Values)
-                    var.Dispose();
-
-                operation = null;
-            }
+            // operation to emit value
+            operation = OperationFactory.FromExpression<TResult>(ctx, resultExpr);
+            operation.ValueChanged += operation_ValueChanged;
+            operation.Load();
         }
 
         void operation_ValueChanged(object sender, ValueChangedEventArgs args)
@@ -71,42 +43,36 @@ namespace OLinq
 
         public TResult Value
         {
-            get { Ensure(); return operation.Value; }
+            get { return operation.Value; }
         }
 
-        event ValueChangedEventHandler valueChanged;
-
-        public event ValueChangedEventHandler ValueChanged
-        {
-            add { Ensure(); valueChanged += value; }
-            remove { valueChanged -= value; Check(); }
-        }
+        public event ValueChangedEventHandler ValueChanged;
 
         internal void OnValueChanged(ValueChangedEventArgs args)
         {
-            if (valueChanged != null)
-                valueChanged(this, args);
+            if (ValueChanged != null)
+                ValueChanged(this, args);
         }
 
-        event PropertyChangedEventHandler propertyChanged;
-
-        public event PropertyChangedEventHandler PropertyChanged
-        {
-            add { Ensure(); propertyChanged += value; }
-            remove { propertyChanged -= value; Check(); }
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
         internal void OnPropertyChanged(PropertyChangedEventArgs args)
         {
-            if (propertyChanged != null)
-                propertyChanged(this, args);
+            if (PropertyChanged != null)
+                PropertyChanged(this, args);
         }
 
         public void Dispose()
         {
-            valueChanged = null;
-            propertyChanged = null;
-            Check();
+                // dispose of the operation
+                operation.ValueChanged -= operation_ValueChanged;
+                operation.Dispose();
+
+                // dispose of variables
+                foreach (var var in operation.Context.Variables.Values)
+                    var.Dispose();
+
+                operation = null;
         }
 
     }

@@ -28,7 +28,8 @@ namespace OLinq.Tests
 
             var q = c.AsObservableQuery()
                 .Select(i => new { Value = i })
-                .AsObservableQuery();
+                .AsObservableQuery()
+                .ToView();
             q.CollectionChanged += q_CollectionChanged;
 
             Assert.AreEqual(q.Count(), 5);

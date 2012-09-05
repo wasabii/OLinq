@@ -30,9 +30,10 @@ namespace OLinq.Tests
                 .AsObservableQuery()
                 .ToView();
 
-            var c2 = c1
+            var c2 = c1.Query()
                 .Where(i => i.Length >= 4)
-                .AsObservableQuery();
+                .AsObservableQuery()
+                .ToView();
 
             c2.CollectionChanged += c2_CollectionChanged;
             c.Add("AAAAAA");
