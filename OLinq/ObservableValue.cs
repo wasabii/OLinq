@@ -64,15 +64,15 @@ namespace OLinq
 
         public void Dispose()
         {
-                // dispose of the operation
-                operation.ValueChanged -= operation_ValueChanged;
-                operation.Dispose();
+            // dispose of the operation
+            operation.ValueChanged -= operation_ValueChanged;
+            operation.Dispose();
 
-                // dispose of variables
-                foreach (var var in operation.Context.Variables.Values)
-                    var.Dispose();
+            // dispose of variables
+            foreach (var var in operation.Context.Variables.Values)
+                var.Dispose();
 
-                operation = null;
+            operation = null;
         }
 
     }
