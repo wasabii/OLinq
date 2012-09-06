@@ -4,6 +4,8 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using OLinq;
+
 namespace OLinq.Tests
 {
 
@@ -11,40 +13,68 @@ namespace OLinq.Tests
     public class CoreTests
     {
 
-        int resetted = 0;
+        ObservableCollection<string> c = new ObservableCollection<string>()
+        {
+            "A",
+            "AA",
+            "AAA",
+            "AAAA",
+            "AAAAA",
+        };
 
         [TestMethod]
         public void ChainTest()
         {
-            var c = new ObservableCollection<string>()
-            {
-                "A",
-                "AA",
-                "AAA",
-                "AAAA",
-                "AAAAA",
-            };
-
             var c1 = c.AsObservableQuery()
                 .Where(i => i.Length >= 3)
                 .AsObservableQuery()
                 .ToView();
 
             var c2 = c1.Query()
-                .Where(i => i.Length >= 4)
+                .Where(i => i == "ChainTest")
                 .AsObservableQuery()
                 .ToView();
 
-            c2.CollectionChanged += c2_CollectionChanged;
-            c.Add("AAAAAA");
-
-            Assert.AreEqual(1, resetted);
+            bool s1 = false;
+            c2.CollectionChanged += (s, a) => s1 = true;
+            c.Add("ChainTest");
+            Assert.IsTrue(s1);
         }
 
-        void c2_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        [TestMethod]
+        public void AnyTest()
         {
-            if (e.Action == NotifyCollectionChangedAction.Reset)
-                resetted++;
+            var c1 = c.AsObservableQuery()
+                .Observe(i => i.Any(j => j == "AnyTest"));
+
+            bool b = false;
+            c1.ValueChanged += (s, a) => b = (bool)a.NewValue;
+            c.Add("AnyTest");
+            Assert.IsTrue(b);
+            c.Clear();
+            Assert.IsFalse(b);
+            c.Add("NotAnyTest");
+            Assert.IsFalse(b);
+            c.Add("AnyTest");
+            Assert.IsTrue(b);
+        }
+
+        [TestMethod]
+        public void AllTest()
+        {
+            var c1 = c.AsObservableQuery()
+                .Observe(i => i.All(j => j == "AllTest"));
+
+            bool b = false;
+            c1.ValueChanged += (s, a) => b = (bool)a.NewValue;
+            c.Clear();
+            Assert.IsTrue(b);
+            c.Add("NotAllTest");
+            Assert.IsFalse(b);
+            c.Remove("NotAllTest");
+            Assert.IsTrue(b);
+            c.Add("AllTest");
+            Assert.IsTrue(b);
         }
 
     }

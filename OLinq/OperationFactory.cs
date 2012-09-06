@@ -67,6 +67,7 @@ namespace OLinq
                     return (IOperation)Activator.CreateInstance(typeof(NewOperation<>).MakeGenericType(type), context, expression);
                 case ExpressionType.MemberInit:
                     return (IOperation)Activator.CreateInstance(typeof(MemberInitOperation<>).MakeGenericType(type), context, expression);
+                case ExpressionType.Equal:
                 case ExpressionType.GreaterThan:
                 case ExpressionType.GreaterThanOrEqual:
                 case ExpressionType.LessThan:
@@ -122,6 +123,8 @@ namespace OLinq
                 case "Where":
                     resultItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(WhereOperation<>).MakeGenericType(resultItemType), context, expression);
+                case "All":
+                    return new AllOperation(context, expression);
                 case "Any":
                     return new AnyOperation(context, expression);
                 case "Count":
@@ -133,13 +136,18 @@ namespace OLinq
                     resultItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(SingleOperation<>).MakeGenericType(resultItemType), context, expression);
                 default:
-                    throw new NotSupportedException();
+                    throw new NotSupportedException(expression.Method.Name);
             }
         }
 
         private static IOperation FromLambdaExpression(OperationContext context, LambdaExpression expression)
         {
             return (IOperation)Activator.CreateInstance(typeof(LambdaOperation<>).MakeGenericType(expression.ReturnType), context, expression);
+        }
+
+        internal static IOperation FromValue(object value)
+        {
+            return (IOperation)Activator.CreateInstance(typeof(ValueOperation<>).MakeGenericType(value.GetType()), value);
         }
 
     }

@@ -59,9 +59,13 @@ namespace OLinq
 
             if (oldValue != newValue)
                 if (newValue == true)
-                    // any value becoming true means 'any' is true
+                    // new value becoming true means 'any' is true
                     SetValue(true);
+                else if (Value == false)
+                    // new value is false, but so is existing value, and so are we
+                    SetValue(false);
                 else
+                    // undetermined, rebuild
                     Reset(Source);
         }
 
@@ -75,7 +79,7 @@ namespace OLinq
             {
                 // generate new parameter
                 var ctx = new OperationContext(Context);
-                var var = new ValueOperation<object>(item);
+                var var = OperationFactory.FromValue(item);
                 ctx.Variables[predicateExpr.Parameters[0].Name] = var;
 
                 // create new test and subscribe to test modifications

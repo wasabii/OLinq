@@ -43,6 +43,7 @@
     <Compile Include="ConcatOperation.cs" />
     <Compile Include="AnyOperation.cs" />
     <Compile Include="BinaryOperation.cs" />
+    <Compile Include="AllOperation.cs" />
     <Compile Include="ObservableQueryConstantOperation.cs" />
     <Compile Include="ObservableView.cs" />
     <Compile Include="SingleOrDefaultOperation.cs" />

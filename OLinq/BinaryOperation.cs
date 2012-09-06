@@ -25,25 +25,27 @@ namespace OLinq
 
         void left_ValueChanged(object sender, ValueChangedEventArgs args)
         {
+            if (!IsLoaded)
+                return;
+
             Reset();
         }
 
         void right_ValueChanged(object sender, ValueChangedEventArgs args)
         {
+            if (!IsLoaded)
+                return;
+
             Reset();
         }
 
         bool Reset()
         {
-            if (left.Value != null &&
-                right.Value != null)
-                return SetValue(
-                    Expression.Lambda<Func<bool>>(Expression.MakeBinary(self.NodeType,
-                        Expression.Constant(left.Value, self.Left.Type),
-                        Expression.Constant(right.Value, self.Right.Type)))
-                            .Compile()());
-            else
-                return SetValue(false);
+            return SetValue(
+                Expression.Lambda<Func<bool>>(Expression.MakeBinary(self.NodeType,
+                    Expression.Constant(left.Value, self.Left.Type),
+                    Expression.Constant(right.Value, self.Right.Type)))
+                        .Compile()());
         }
 
         public override void Load()
@@ -54,6 +56,9 @@ namespace OLinq
                 right.Load();
 
             base.Load();
+
+            // set our initial value after both left and right initial values have loaded
+            Reset();
         }
 
         public override void Dispose()
