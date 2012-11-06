@@ -95,7 +95,8 @@ namespace OLinq
         /// <returns></returns>
         private static IOperation FromCallExpression(OperationContext context, MethodCallExpression expression)
         {
-            if (expression.Method.DeclaringType == typeof(Queryable))
+            if (expression.Method.DeclaringType == typeof(Queryable) ||
+                expression.Method.DeclaringType == typeof(Enumerable))
                 return FromQueryableExpression(context, expression);
             else
                 return (IOperation)Activator.CreateInstance(typeof(CallOperation<>).MakeGenericType(Fix(expression.Type)), context, expression);
@@ -143,6 +144,9 @@ namespace OLinq
                     sourceItemType = expression.Method.GetGenericArguments()[0];
                     keyItemType = expression.Method.GetGenericArguments()[1];
                     return (IOperation)Activator.CreateInstance(typeof(GroupByOperation<,>).MakeGenericType(sourceItemType, keyItemType), context, expression);
+                case "Distinct":
+                    sourceItemType = expression.Method.GetGenericArguments()[0];
+                    return (IOperation)Activator.CreateInstance(typeof(DistinctOperation<>).MakeGenericType(sourceItemType), context, expression);
                 default:
                     throw new NotSupportedException(expression.Method.Name);
             }

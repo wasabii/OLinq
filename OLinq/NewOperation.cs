@@ -28,7 +28,7 @@ namespace OLinq
         /// <param name="args"></param>
         void argument_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (IsLoaded)
+            if (IsInitialized)
                 Refresh();
         }
 
@@ -41,11 +41,11 @@ namespace OLinq
             SetValue((T)((NewExpression)Expression).Constructor.Invoke(args));
         }
 
-        public override void Load()
+        public override void Init()
         {
             foreach (var arg in arguments)
-                arg.Load();
-            base.Load();
+                arg.Init();
+            base.Init();
 
             Refresh();
         }

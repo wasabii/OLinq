@@ -18,9 +18,9 @@ namespace OLinq
 
         }
 
-        public override void Load()
+        public override void Init()
         {
-            base.Load();
+            base.Init();
 
             var query = ((ConstantExpression)Expression).Value as ObservableQuery;
             if (query == null)

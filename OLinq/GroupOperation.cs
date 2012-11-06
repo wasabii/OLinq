@@ -43,11 +43,11 @@ namespace OLinq
             get { return source.Value; }
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (source != null)
-                source.Load();
-            base.Load();
+                source.Init();
+            base.Init();
         }
 
         public override void Dispose()

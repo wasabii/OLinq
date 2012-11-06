@@ -27,11 +27,11 @@ namespace OLinq
             SetValue(variable.Value);
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (variable != null)
-                variable.Load();
-            base.Load();
+                variable.Init();
+            base.Init();
         }
 
         public override void Dispose()

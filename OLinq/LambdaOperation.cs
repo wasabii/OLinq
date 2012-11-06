@@ -32,11 +32,11 @@ namespace OLinq
             SetValue((T)body.Value);
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (body != null)
-                body.Load();
-            base.Load();
+                body.Init();
+            base.Init();
         }
 
         public override void Dispose()

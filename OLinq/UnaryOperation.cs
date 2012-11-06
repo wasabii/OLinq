@@ -29,11 +29,11 @@ namespace OLinq
             SetValue((T)args.NewValue);
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (operand != null)
-                operand.Load();
-            base.Load();
+                operand.Init();
+            base.Init();
         }
 
         public override void Dispose()

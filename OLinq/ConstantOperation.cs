@@ -12,9 +12,9 @@ namespace OLinq
 
         }
 
-        public override void Load()
+        public override void Init()
         {
-            base.Load();
+            base.Init();
             SetValue((T)((ConstantExpression)Expression).Value);
         }
 

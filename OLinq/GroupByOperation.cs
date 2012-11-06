@@ -89,7 +89,7 @@ namespace OLinq
                 // create new test and subscribe to test modifications
                 keyFunc = new LambdaOperation<TKey>(ctx, keyFuncExpr);
                 keyFunc.Tag = item;
-                keyFunc.Load(); // load before value changed to prevent double notification
+                keyFunc.Init(); // load before value changed to prevent double notification
                 keyFunc.ValueChanged += func_ValueChanged;
                 keyFuncs[item] = keyFunc;
             }
@@ -107,11 +107,11 @@ namespace OLinq
             return source.Value.GroupBy(i => GetKeyFuncResult(i)).GetEnumerator();
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (source != null)
-                source.Load();
-            base.Load();
+                source.Init();
+            base.Init();
 
             SetValue(this);
         }

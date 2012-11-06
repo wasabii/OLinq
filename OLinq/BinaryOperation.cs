@@ -25,7 +25,7 @@ namespace OLinq
 
         void left_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (!IsLoaded)
+            if (!IsInitialized)
                 return;
 
             Reset();
@@ -33,7 +33,7 @@ namespace OLinq
 
         void right_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (!IsLoaded)
+            if (!IsInitialized)
                 return;
 
             Reset();
@@ -48,14 +48,14 @@ namespace OLinq
                         .Compile()());
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (left != null)
-                left.Load();
+                left.Init();
             if (right != null)
-                right.Load();
+                right.Init();
 
-            base.Load();
+            base.Init();
 
             // set our initial value after both left and right initial values have loaded
             Reset();

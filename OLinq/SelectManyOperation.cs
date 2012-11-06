@@ -98,7 +98,7 @@ namespace OLinq
                 // create new test and subscribe to test modifications
                 func = new LambdaOperation<IEnumerable<TResult>>(ctx, lambdaExpr);
                 func.Tag = item;
-                func.Load(); // load before value changed to prevent double notification
+                func.Init(); // load before value changed to prevent double notification
                 func.ValueChanged += func_ValueChanged;
                 funcs[item] = func;
             }
@@ -116,11 +116,11 @@ namespace OLinq
             return source.Value.SelectMany(i => GetFuncResult(i)).GetEnumerator();
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (source != null)
-                source.Load();
-            base.Load();
+                source.Init();
+            base.Init();
 
             SetValue(this);
         }

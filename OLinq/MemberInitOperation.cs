@@ -10,7 +10,7 @@ namespace OLinq
     {
 
         IOperation<T> result;
-        List<IOperation<object>> memberAssignments = new List<IOperation<object>>();
+        List<IOperation> memberAssignments = new List<IOperation>();
 
         public MemberInitOperation(OperationContext context, MemberInitExpression expression)
             : base(context, expression)
@@ -26,7 +26,7 @@ namespace OLinq
                 var memberAssignment = binding as MemberAssignment;
                 if (memberAssignment != null)
                 {
-                    var op = OperationFactory.FromExpression<object>(Context, memberAssignment.Expression);
+                    var op = OperationFactory.FromExpression(Context, memberAssignment.Expression);
                     op.Tag = memberAssignment;
                     op.ValueChanged += memberAssignment_ValueChanged;
                     memberAssignments.Add(op);
@@ -49,7 +49,7 @@ namespace OLinq
         /// <param name="args"></param>
         void result_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (!IsLoaded)
+            if (!IsInitialized)
                 return;
 
             var value = result.Value;
@@ -66,18 +66,18 @@ namespace OLinq
         /// <param name="args"></param>
         void memberAssignment_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (!IsLoaded)
+            if (!IsInitialized)
                 return;
 
-            if (result != null)
+            if (result.Value != null)
             {
                 var op = (IOperation<object>)sender;
                 var assignment = (MemberAssignment)op.Tag;
-                SetAssignment(result, op);
+                SetAssignment(result.Value, op);
             }
         }
 
-        void SetAssignment(object target, IOperation<object> op)
+        void SetAssignment(object target, IOperation op)
         {
             var assignment = (MemberAssignment)op.Tag;
 
@@ -126,15 +126,15 @@ namespace OLinq
             throw new NotImplementedException();
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (result != null)
-                result.Load();
+                result.Init();
 
             foreach (var op in memberAssignments)
-                op.Load();
+                op.Init();
 
-            base.Load();
+            base.Init();
 
             // set up initial value
             if (result.Value != null)

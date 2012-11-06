@@ -84,7 +84,7 @@ namespace OLinq
 
                 // create new test and subscribe to test modifications
                 predicate = new LambdaOperation<bool>(ctx, predicateExpr);
-                predicate.Load(); // load before value changed to prevent double notification
+                predicate.Init(); // load before value changed to prevent double notification
                 predicate.ValueChanged += predicate_ValueChanged;
                 predicates[item] = predicate;
             }
@@ -100,9 +100,9 @@ namespace OLinq
                 return true;
         }
 
-        public override void Load()
+        public override void Init()
         {
-            base.Load();
+            base.Init();
             Reset(Source);
         }
 

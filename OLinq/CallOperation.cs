@@ -39,7 +39,7 @@ namespace OLinq
         /// <param name="args"></param>
         void target_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (IsLoaded)
+            if (IsInitialized)
                 Invoke();
         }
 
@@ -50,19 +50,19 @@ namespace OLinq
         /// <param name="args"></param>
         void argument_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (IsLoaded)
+            if (IsInitialized)
                 Invoke();
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (target != null)
-                target.Load();
+                target.Init();
 
             foreach (var arg in arguments)
-                arg.Load();
+                arg.Init();
 
-            base.Load();
+            base.Init();
 
             // obtain initial value
             Invoke();

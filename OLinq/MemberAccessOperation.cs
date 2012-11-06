@@ -64,11 +64,11 @@ namespace OLinq
                 throw new NotSupportedException(string.Format("MemberAccess does not support Member of type {0}.", expression.Member.MemberType));
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (target != null)
-                target.Load();
-            base.Load();
+                target.Init();
+            base.Init();
         }
 
         public override void Dispose()

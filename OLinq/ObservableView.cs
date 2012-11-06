@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace OLinq
@@ -11,7 +12,7 @@ namespace OLinq
     {
 
         private Expression expression;
-        private IOperation<IEnumerable<T>> operation;
+        private Operation<IEnumerable<T>> operation;
 
         /// <summary>
         /// Initializes a new instance.
@@ -22,9 +23,9 @@ namespace OLinq
             expression = query.Expression;
 
             // establish root operation, hook up events, and load
-            operation = OperationFactory.FromExpression<IEnumerable<T>>(new OperationContext(), expression);
+            operation = (Operation<IEnumerable<T>>)OperationFactory.FromExpression<IEnumerable<T>>(new OperationContext(), expression);
             operation.ValueChanged += operation_ValueChanged;
-            operation.Load();
+            operation.Init();
         }
 
         /// <summary>

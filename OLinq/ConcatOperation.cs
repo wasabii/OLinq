@@ -48,7 +48,7 @@ namespace OLinq
             if (newValue != null)
                 newValue.CollectionChanged += source1_CollectionChanged;
 
-            if (IsLoaded)
+            if (IsInitialized)
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset, null));
         }
 
@@ -62,7 +62,7 @@ namespace OLinq
             if (newValue != null)
                 newValue.CollectionChanged += source1_CollectionChanged;
 
-            if (IsLoaded)
+            if (IsInitialized)
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
@@ -101,13 +101,13 @@ namespace OLinq
             return Enumerable.Concat(source1.Value, source2.Value).GetEnumerator();
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (source1 != null)
-                source1.Load();
+                source1.Init();
             if (source2 != null)
-                source2.Load();
-            base.Load();
+                source2.Init();
+            base.Init();
 
             SetValue(this);
         }

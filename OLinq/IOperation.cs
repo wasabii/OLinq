@@ -25,9 +25,9 @@ namespace OLinq
         event ValueChangedEventHandler ValueChanged;
 
         /// <summary>
-        /// Initiates the initial load of the <see cref="Operation"/>.
+        /// Initializes the operation <see cref="Operation"/>.
         /// </summary>
-        void Load();
+        void Init();
 
         /// <summary>
         /// Holder for attached information.

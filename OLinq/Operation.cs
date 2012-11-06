@@ -32,16 +32,16 @@ namespace OLinq
         public Expression Expression { get; private set; }
 
         /// <summary>
-        /// Gets whether or not the operation has been loaded.
+        /// Gets whether or not the operation has been initialized.
         /// </summary>
-        public bool IsLoaded { get; private set; }
+        public bool IsInitialized { get; private set; }
 
         /// <summary>
-        /// Invoked to load the operation's values. Operations should override this method to load their children.
+        /// Invoked to init the operation's values. Operations should override this method to init their children.
         /// </summary>
-        public virtual void Load()
+        public virtual void Init()
         {
-            IsLoaded = true;
+            IsInitialized = true;
         }
 
         /// <summary>

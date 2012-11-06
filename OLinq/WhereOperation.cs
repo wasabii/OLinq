@@ -104,13 +104,13 @@ namespace OLinq
                 // generate new parameter
                 var ctx = new OperationContext(Context);
                 var var = new ValueOperation<T>(item);
-                var.Load();
+                var.Init();
                 ctx.Variables[predicateExpr.Parameters[0].Name] = var;
 
                 // create new predicate and subscribe to modifications
                 predicate = new LambdaOperation<bool>(ctx, predicateExpr);
                 predicate.Tag = item;
-                predicate.Load(); // load before value changed to prevent double notification
+                predicate.Init(); // load before value changed to prevent double notification
                 predicate.ValueChanged += predicate_ValueChanged;
                 predicates[item] = predicate;
             }
@@ -128,11 +128,11 @@ namespace OLinq
             return source.Value.Where(i => GetPredicateValue(i)).GetEnumerator();
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (source != null)
-                source.Load();
-            base.Load();
+                source.Init();
+            base.Init();
 
             SetValue(this);
         }

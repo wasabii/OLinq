@@ -10,9 +10,9 @@
             Value = value;
         }
 
-        public override void Load()
+        public override void Init()
         {
-            base.Load();
+            base.Init();
             OnValueChanged(null, Value);
         }
 

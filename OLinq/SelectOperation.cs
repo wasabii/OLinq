@@ -44,7 +44,7 @@ namespace OLinq
             if (newValue != null)
                 newValue.CollectionChanged += source_CollectionChanged;
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset, null));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         void source_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -54,7 +54,7 @@ namespace OLinq
                 case NotifyCollectionChangedAction.Reset:
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Replace:
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset, null));
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                     break;
                 case NotifyCollectionChangedAction.Add:
                     var newItems = args.NewItems.Cast<TSource>().Select(i => GetFuncResult(i)).ToList();
@@ -97,7 +97,7 @@ namespace OLinq
                 // create new test and subscribe to test modifications
                 func = new LambdaOperation<TResult>(ctx, lambdaExpr);
                 func.Tag = item;
-                func.Load(); // load before value changed to prevent double notification
+                func.Init(); // load before value changed to prevent double notification
                 func.ValueChanged += func_ValueChanged;
                 funcs[item] = func;
             }
@@ -115,11 +115,11 @@ namespace OLinq
             return source.Value.Select(i => GetFuncResult(i)).GetEnumerator();
         }
 
-        public override void Load()
+        public override void Init()
         {
             if (source != null)
-                source.Load();
-            base.Load();
+                source.Init();
+            base.Init();
 
             SetValue(this);
         }
