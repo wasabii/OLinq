@@ -109,7 +109,7 @@ namespace OLinq
         /// <returns></returns>
         private static IOperation FromQueryableExpression(OperationContext context, MethodCallExpression expression)
         {
-            Type resultItemType, sourceItemType;
+            Type resultItemType, sourceItemType, keyItemType;
 
             switch (expression.Method.Name)
             {
@@ -120,6 +120,10 @@ namespace OLinq
                     sourceItemType = expression.Method.GetGenericArguments()[0];
                     resultItemType = expression.Method.GetGenericArguments()[1];
                     return (IOperation)Activator.CreateInstance(typeof(SelectOperation<,>).MakeGenericType(sourceItemType, resultItemType), context, expression);
+                case "SelectMany":
+                    sourceItemType = expression.Method.GetGenericArguments()[0];
+                    resultItemType = expression.Method.GetGenericArguments()[1];
+                    return (IOperation)Activator.CreateInstance(typeof(SelectManyOperation<,>).MakeGenericType(sourceItemType, resultItemType), context, expression);
                 case "Where":
                     resultItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(WhereOperation<>).MakeGenericType(resultItemType), context, expression);
@@ -135,6 +139,10 @@ namespace OLinq
                 case "SingleOrDefault":
                     resultItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(SingleOperation<>).MakeGenericType(resultItemType), context, expression);
+                case "GroupBy":
+                    sourceItemType = expression.Method.GetGenericArguments()[0];
+                    keyItemType = expression.Method.GetGenericArguments()[1];
+                    return (IOperation)Activator.CreateInstance(typeof(GroupByOperation<,>).MakeGenericType(sourceItemType, keyItemType), context, expression);
                 default:
                     throw new NotSupportedException(expression.Method.Name);
             }

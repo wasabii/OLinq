@@ -44,6 +44,8 @@
     <Compile Include="AnyOperation.cs" />
     <Compile Include="BinaryOperation.cs" />
     <Compile Include="AllOperation.cs" />
+    <Compile Include="SelectManyOperation.cs" />
+    <Compile Include="GroupByOperation.cs" />
     <Compile Include="ObservableQueryConstantOperation.cs" />
     <Compile Include="ObservableView.cs" />
     <Compile Include="SingleOrDefaultOperation.cs" />
