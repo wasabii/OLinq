@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Specialized;
 using System.Linq.Expressions;
+using System.Linq;
 
 namespace OLinq
 {
@@ -29,6 +30,9 @@ namespace OLinq
             var newValue = args.NewValue as INotifyCollectionChanged;
             if (newValue != null)
                 newValue.CollectionChanged += source_CollectionChanged;
+
+            // iterate all source values
+            source.Value.Cast<object>().ToList();
 
             OnSourceChanged((IEnumerable)args.OldValue, (IEnumerable)args.NewValue);
         }

@@ -44,6 +44,9 @@ namespace OLinq
             if (newValue != null)
                 newValue.CollectionChanged += source_CollectionChanged;
 
+            // iterate all new items
+            source.Value.Select(i => GetFuncResult(i)).ToList();
+
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
@@ -54,6 +57,8 @@ namespace OLinq
                 case NotifyCollectionChangedAction.Reset:
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Replace:
+                    // iterate all new items
+                    source.Value.Select(i => GetFuncResult(i)).ToList();
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                     break;
                 case NotifyCollectionChangedAction.Add:

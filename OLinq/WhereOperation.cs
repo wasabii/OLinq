@@ -8,30 +8,30 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class WhereOperation<T> : Operation<IEnumerable<T>>, IEnumerable<T>, INotifyCollectionChanged
+    class WhereOperation<TElement> : Operation<IEnumerable<TElement>>, IEnumerable<TElement>, INotifyCollectionChanged
     {
 
-        Expression<Func<T, bool>> predicateExpr;
-        IOperation<IEnumerable<T>> source;
-        Dictionary<T, LambdaOperation<bool>> predicates = new Dictionary<T, LambdaOperation<bool>>();
+        Expression<Func<TElement, bool>> predicateExpr;
+        IOperation<IEnumerable<TElement>> source;
+        Dictionary<TElement, LambdaOperation<bool>> predicates = new Dictionary<TElement, LambdaOperation<bool>>();
 
         public WhereOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression)
         {
             var sourceExpr = expression.Arguments[0];
-            predicateExpr = expression.Arguments[1] as Expression<Func<T, bool>>;
+            predicateExpr = expression.Arguments[1] as Expression<Func<TElement, bool>>;
 
             // attempt to unpack from unary
             if (predicateExpr == null)
             {
                 var unaryExpr = expression.Arguments[1] as UnaryExpression;
                 if (unaryExpr != null)
-                    predicateExpr = unaryExpr.Operand as Expression<Func<T, bool>>;
+                    predicateExpr = unaryExpr.Operand as Expression<Func<TElement, bool>>;
             }
 
             if (sourceExpr != null)
             {
-                source = (IOperation<IEnumerable<T>>)OperationFactory.FromExpression(context, sourceExpr);
+                source = (IOperation<IEnumerable<TElement>>)OperationFactory.FromExpression(context, sourceExpr);
                 source.ValueChanged += source_ValueChanged;
             }
         }
@@ -45,6 +45,9 @@ namespace OLinq
             var newValue = args.NewValue as INotifyCollectionChanged;
             if (newValue != null)
                 newValue.CollectionChanged += source_CollectionChanged;
+
+            // iterate all new items
+            source.Value.Select(i => GetPredicateValue(i)).ToList();
 
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
@@ -61,19 +64,22 @@ namespace OLinq
                 case NotifyCollectionChangedAction.Reset:
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Replace:
+                    // iterate all new items
+                    source.Value.Select(i => GetPredicateValue(i)).ToList();
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    if (args.NewItems.Cast<T>().Any(i => GetPredicateValue(i)))
+                    if (args.NewItems.Cast<TElement>().Any(i => GetPredicateValue(i)))
                         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                     break;
                 case NotifyCollectionChangedAction.Remove:
 
                     // remove cached predicates
-                    foreach (T item in args.OldItems)
+                    foreach (TElement item in args.OldItems)
                     {
                         var predicate = GetPredicate(item);
                         predicate.ValueChanged -= predicate_ValueChanged;
+                        predicate.Dispose();
                         predicates.Remove(item);
                     }
 
@@ -96,14 +102,14 @@ namespace OLinq
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
-        private LambdaOperation<bool> GetPredicate(T item)
+        private LambdaOperation<bool> GetPredicate(TElement item)
         {
             LambdaOperation<bool> predicate;
             if (!predicates.TryGetValue(item, out predicate))
             {
                 // generate new parameter
                 var ctx = new OperationContext(Context);
-                var var = new ValueOperation<T>(item);
+                var var = new ValueOperation<TElement>(item);
                 var.Init();
                 ctx.Variables[predicateExpr.Parameters[0].Name] = var;
 
@@ -118,12 +124,12 @@ namespace OLinq
             return predicate;
         }
 
-        private bool GetPredicateValue(T item)
+        private bool GetPredicateValue(TElement item)
         {
             return GetPredicate(item).Value;
         }
 
-        IEnumerator<T> GetEnumerator()
+        IEnumerator<TElement> GetEnumerator()
         {
             return source.Value.Where(i => GetPredicateValue(i)).GetEnumerator();
         }
@@ -159,7 +165,7 @@ namespace OLinq
             base.Dispose();
         }
 
-        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        IEnumerator<TElement> IEnumerable<TElement>.GetEnumerator()
         {
             return GetEnumerator();
         }
