@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class AnyOperation : GroupOperation<bool>
+    class AnyOperation<TSource> : GroupOperation<TSource, bool>
     {
 
         LambdaExpression predicateExpr;
@@ -17,34 +17,50 @@ namespace OLinq
         public AnyOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression)
         {
-            if (expression.Arguments.Count >= 2)
-            {
-                predicateExpr = expression.Arguments[1] as LambdaExpression;
-                if (predicateExpr == null)
-                {
-                    var unaryExpr = expression.Arguments[1] as UnaryExpression;
-                    if (unaryExpr != null)
-                        predicateExpr = unaryExpr.Operand as LambdaExpression;
-                }
 
+        }
+
+        LambdaExpression GetPredicateExpr()
+        {
+            if (predicateExpr != null)
+                return predicateExpr;
+
+            var expr = (MethodCallExpression)Expression;
+            if (expr.Arguments.Count >= 2)
+            {
+                predicateExpr = Utils.UnpackLambda(expr.Arguments[1]);
                 if (predicateExpr == null)
                     throw new InvalidOperationException("Could not load predicate.");
             }
+
+            return predicateExpr;
         }
 
-        protected override void OnSourceChanged(IEnumerable oldValue, IEnumerable newValue)
+        protected override void SourceCollectionReset()
         {
-            Reset(Source);
+            base.SourceCollectionReset();
+            ResetValue();
         }
 
-        protected override void OnSourceCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override void SourceCollectionAddItem(TSource item, int index)
         {
-            Reset(Source);
+            base.SourceCollectionAddItem(item, index);
+
+            // we've added a true item, we must be true
+            if (GetItemValue(item))
+                SetValue(true);
         }
 
-        bool Reset(IEnumerable source)
+        protected override void SourceCollectionRemoveItem(TSource item, int index)
         {
-            return SetValue(source.Cast<object>().Any(i => GetPredicateValue(i)));
+            base.SourceCollectionRemoveItem(item, index);
+
+            ResetValue();
+        }
+
+        void ResetValue()
+        {
+            SetValue(SourceCollection.Any(i => GetItemValue(i)));
         }
 
         /// <summary>
@@ -59,19 +75,19 @@ namespace OLinq
 
             if (oldValue != newValue)
                 if (newValue == true)
-                    // new value becoming true means 'any' is true
+                    // new value is true means 'any' is true
                     SetValue(true);
-                else if (Value == false)
-                    // new value is false, but so is existing value, and so are we
-                    SetValue(false);
+                else if (Value == true)
+                    // new value is false, existing value is true, and so are we
+                    SetValue(true);
                 else
                     // undetermined, rebuild
-                    Reset(Source);
+                    ResetValue();
         }
 
         private LambdaOperation<bool> GetPredicate(object item)
         {
-            if (predicateExpr == null)
+            if (GetPredicateExpr() == null)
                 return null;
 
             LambdaOperation<bool> predicate;
@@ -80,10 +96,10 @@ namespace OLinq
                 // generate new parameter
                 var ctx = new OperationContext(Context);
                 var var = OperationFactory.FromValue(item);
-                ctx.Variables[predicateExpr.Parameters[0].Name] = var;
+                ctx.Variables[GetPredicateExpr().Parameters[0].Name] = var;
 
                 // create new test and subscribe to test modifications
-                predicate = new LambdaOperation<bool>(ctx, predicateExpr);
+                predicate = new LambdaOperation<bool>(ctx, GetPredicateExpr());
                 predicate.Init(); // load before value changed to prevent double notification
                 predicate.ValueChanged += predicate_ValueChanged;
                 predicates[item] = predicate;
@@ -92,18 +108,15 @@ namespace OLinq
             return predicate;
         }
 
-        private bool GetPredicateValue(object item)
+        /// <summary>
+        /// Gets whether or not the item is true.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private bool GetItemValue(object item)
         {
-            if (predicateExpr != null)
-                return GetPredicate(item).Value;
-            else
-                return true;
-        }
-
-        public override void Init()
-        {
-            base.Init();
-            Reset(Source);
+            var p = GetPredicate(item);
+            return p != null ? p.Value : true;
         }
 
         public override void Dispose()

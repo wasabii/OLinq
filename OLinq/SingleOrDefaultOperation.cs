@@ -1,45 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
+﻿using System.Linq;
 using System.Linq.Expressions;
 
 namespace OLinq
 {
 
-    class SingleOrDefaultOperation<T> : GroupOperation<T>
+    class SingleOrDefaultOperation<T> : GroupOperation<T,T>
     {
 
         public SingleOrDefaultOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression)
         {
-
+            Reset();
         }
 
-        protected override void OnSourceChanged(IEnumerable oldValue, IEnumerable newValue)
+        protected override void SourceCollectionAddItem(T item, int index)
         {
-            Reset(Source);
+            base.SourceCollectionAddItem(item, index);
+            Reset();
         }
 
-        protected override void OnSourceCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override void SourceCollectionRemoveItem(T item, int index)
         {
-            switch (args.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    Reset(Source);
-                    return;
-                case NotifyCollectionChangedAction.Remove:
-                    Reset(Source);
-                    return;
-                default:
-                    Reset(Source);
-                    return;
-            }
+            base.SourceCollectionRemoveItem(item, index);
+            Reset();
         }
 
-        T Reset(IEnumerable source)
+        T Reset()
         {
-            return SetValue(Enumerable.SingleOrDefault(source as IEnumerable<T> ?? source.Cast<T>()));
+            return SetValue(SourceCollection.SingleOrDefault());
         }
 
     }

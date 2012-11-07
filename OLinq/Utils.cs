@@ -53,6 +53,19 @@ namespace OLinq
             return expr;
         }
 
+        public static LambdaExpression UnpackLambda(Expression e)
+        {
+            var expr = e as LambdaExpression;
+            if (expr == null)
+            {
+                var unaryExpr = e as UnaryExpression;
+                if (unaryExpr != null)
+                    expr = unaryExpr.Operand as LambdaExpression;
+            }
+
+            return expr;
+        }
+
     }
 
 }

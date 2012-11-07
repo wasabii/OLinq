@@ -129,11 +129,14 @@ namespace OLinq
                     resultItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(WhereOperation<>).MakeGenericType(resultItemType), context, expression);
                 case "All":
-                    return new AllOperation(context, expression);
+                    sourceItemType = expression.Method.GetGenericArguments()[0];
+                    return (IOperation)Activator.CreateInstance(typeof(AllOperation<>).MakeGenericType(sourceItemType), context, expression);
                 case "Any":
-                    return new AnyOperation(context, expression);
+                    sourceItemType = expression.Method.GetGenericArguments()[0];
+                    return (IOperation)Activator.CreateInstance(typeof(AnyOperation<>).MakeGenericType(sourceItemType), context, expression);
                 case "Count":
-                    return new CountOperation(context, expression);
+                    sourceItemType = expression.Method.GetGenericArguments()[0];
+                    return (IOperation)Activator.CreateInstance(typeof(CountOperation<>).MakeGenericType(sourceItemType), context, expression);
                 case "Single":
                     resultItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(SingleOperation<>).MakeGenericType(resultItemType), context, expression);

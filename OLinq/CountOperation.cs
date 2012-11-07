@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
+﻿using System.Linq;
 using System.Linq.Expressions;
 
 namespace OLinq
 {
 
-    class CountOperation : GroupOperation<int>
+    class CountOperation<TSource> : GroupOperation<TSource, int>
     {
 
         int count = 0;
@@ -18,30 +15,22 @@ namespace OLinq
 
         }
 
-        protected override void OnSourceChanged(IEnumerable oldValue, IEnumerable newValue)
+        protected override void SourceCollectionReset()
         {
-            Reset(Source);
+            base.SourceCollectionReset();
+            SetValue(count = SourceCollection.Count());
         }
 
-        protected override void OnSourceCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override void SourceCollectionAddItem(TSource item, int index)
         {
-            switch (args.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    SetValue(count += args.NewItems.Count);
-                    return;
-                case NotifyCollectionChangedAction.Remove:
-                    SetValue(count -= args.OldItems.Count);
-                    return;
-                default:
-                    Reset(Source);
-                    return;
-            }
+            base.SourceCollectionAddItem(item, index);
+            SetValue(++count);
         }
 
-        int Reset(IEnumerable source)
+        protected override void SourceCollectionRemoveItem(TSource item, int index)
         {
-            return SetValue(count = Enumerable.Count(source as IEnumerable<object> ?? source.Cast<object>()));
+            base.SourceCollectionRemoveItem(item, index);
+            SetValue(--count);
         }
 
     }
