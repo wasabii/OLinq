@@ -15,18 +15,18 @@ namespace OLinq
         public ObservableQueryConstantOperation(OperationContext context, ConstantExpression expression)
             : base(context, expression)
         {
+            var query = ((ConstantExpression)Expression).Value as ObservableQuery;
+            if (query == null)
+                throw new Exception("Requires ObservableQuery.");
 
+            SetValue((IEnumerable<T>)query.Enumerable);
         }
 
         public override void Init()
         {
             base.Init();
 
-            var query = ((ConstantExpression)Expression).Value as ObservableQuery;
-            if (query == null)
-                throw new Exception("Requires ObservableQuery.");
-
-            SetValue((IEnumerable<T>)query.Enumerable);
+            OnValueChanged(null, Value);
         }
 
     }

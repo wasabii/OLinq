@@ -12,44 +12,102 @@ namespace OLinq
     {
 
         Expression sourceExpr;
-        Expression<Func<TSource, TResult>> lambdaExpr;
         IOperation<IEnumerable<TSource>> source;
-        Dictionary<TSource, LambdaOperation<TResult>> funcs = new Dictionary<TSource, LambdaOperation<TResult>>();
+        Expression<Func<TSource, TResult>> selectorExpr;
+        Dictionary<TSource, LambdaOperation<TResult>> selectors = new Dictionary<TSource, LambdaOperation<TResult>>();
 
         public SelectOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression)
         {
+            // extract expressions
             sourceExpr = expression.Arguments[0];
-            lambdaExpr = expression.Arguments[1] as Expression<Func<TSource, TResult>>;
+            selectorExpr = Utils.UnpackLambda<TSource, TResult>(expression.Arguments[1]);
 
-            // attempt to unpack from unary
-            if (lambdaExpr == null)
-            {
-                var unaryExpr = expression.Arguments[1] as UnaryExpression;
-                if (unaryExpr != null)
-                    lambdaExpr = unaryExpr.Operand as Expression<Func<TSource, TResult>>;
-            }
-
+            // source operation
             source = OperationFactory.FromExpression<IEnumerable<TSource>>(context, sourceExpr);
+            source.Init();
             source.ValueChanged += source_ValueChanged;
+
+            // initial collection load
+            SetValue(this);
+            SourceValueChanged(null, source.Value);
         }
 
         void source_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            var oldValue = args.OldValue as INotifyCollectionChanged;
+            SourceValueChanged((IEnumerable<TSource>)args.OldValue, (IEnumerable<TSource>)args.NewValue);
+        }
+
+        /// <summary>
+        /// Invoke when the source collection changes.
+        /// </summary>
+        /// <param name="oldSource"></param>
+        /// <param name="newSource"></param>
+        void SourceValueChanged(IEnumerable<TSource> oldSource, IEnumerable<TSource> newSource)
+        {
+            var oldValue = oldSource as INotifyCollectionChanged;
             if (oldValue != null)
                 oldValue.CollectionChanged -= source_CollectionChanged;
 
-            var newValue = args.NewValue as INotifyCollectionChanged;
+            var newValue = newSource as INotifyCollectionChanged;
             if (newValue != null)
                 newValue.CollectionChanged += source_CollectionChanged;
 
-            // iterate all new items
-            source.Value.Select(i => GetFuncResult(i)).ToList();
+            ResetCollection(Utils.AsEnumerable<TSource>(oldSource), Utils.AsEnumerable<TSource>(newSource));
+        }
+
+        /// <summary>
+        /// Processes a large collection change.
+        /// </summary>
+        /// <param name="oldItems"></param>
+        /// <param name="newItems"></param>
+        void ResetCollection(IEnumerable<TSource> oldItems, IEnumerable<TSource> newItems)
+        {
+            // items that have been removed
+            var oldSelectors = oldItems.Except(newItems).ToList();
+            foreach (var selector in oldSelectors.Select(i => GetOrCreateSelector(i)))
+                ReleaseSelector(selector);
+
+            // items that have been added
+            foreach (var item in newItems)
+                GetOrCreateSelector(item);
 
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
+        /// <summary>
+        /// Processes an add operation.
+        /// </summary>
+        /// <param name="newItems"></param>
+        /// <param name="startingIndex"></param>
+        void AddCollection(IEnumerable<TSource> newItems, int startingIndex)
+        {
+            var addValues = newItems.Select(i => GetOrCreateSelector(i).Value).ToList();
+            if (addValues.Count > 0)
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, addValues, startingIndex));
+        }
+
+        /// <summary>
+        /// Processes a remove operation.
+        /// </summary>
+        /// <param name="oldItems"></param>
+        /// <param name="startingIndex"></param>
+        void RemoveCollection(IEnumerable<TSource> oldItems, int startingIndex)
+        {
+            var oldSelectors = oldItems.Select(i => GetOrCreateSelector(i)).ToList();
+            foreach (var selector in oldSelectors)
+                ReleaseSelector(selector);
+
+            var oldValues = oldSelectors.Select(i => i.Value).ToList();
+            if (oldValues.Count > 0)
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldValues, startingIndex));
+        }
+
+        /// <summary>
+        /// Invoked when the source collection is changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         void source_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             switch (args.Action)
@@ -57,76 +115,81 @@ namespace OLinq
                 case NotifyCollectionChangedAction.Reset:
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Replace:
-                    // iterate all new items
-                    source.Value.Select(i => GetFuncResult(i)).ToList();
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                    ResetCollection(Utils.AsEnumerable<TSource>(args.OldItems), Utils.AsEnumerable<TSource>(args.NewItems));
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    var newItems = args.NewItems.Cast<TSource>().Select(i => GetFuncResult(i)).ToList();
-                    if (newItems.Count > 0)
-                        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems, args.NewStartingIndex));
+                    AddCollection(Utils.AsEnumerable<TSource>(args.NewItems), args.NewStartingIndex);
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    var oldItems = args.OldItems.Cast<TSource>().Select(i => GetFuncResult(i)).ToList();
-                    if (oldItems.Count > 0)
-                        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems, args.OldStartingIndex));
+                    RemoveCollection(Utils.AsEnumerable<TSource>(args.OldItems), args.OldStartingIndex);
                     break;
             }
         }
 
         /// <summary>
-        /// Invoked when any of the current tests change.
+        /// Invoked when any of the current selectors change.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        void func_ValueChanged(object sender, ValueChangedEventArgs args)
+        void selector_ValueChanged(object sender, ValueChangedEventArgs args)
         {
             var oldValue = (TResult)args.OldValue;
             var newValue = (TResult)args.NewValue;
 
-            // store new test result
+            // single value has been replaced
             if (!object.Equals(oldValue, newValue))
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, new TResult[] { newValue }, new TResult[] { oldValue }));
         }
 
-        private LambdaOperation<TResult> GetFunc(TSource item)
+        /// <summary>
+        /// Gets or creates a selector for the given source item.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        LambdaOperation<TResult> GetOrCreateSelector(TSource item)
         {
-            LambdaOperation<TResult> func;
-            if (!funcs.TryGetValue(item, out func))
+            return selectors.GetOrCreate(item, i =>
             {
                 // generate new parameter
                 var ctx = new OperationContext(Context);
                 var var = new ValueOperation<TSource>(item);
-                ctx.Variables[lambdaExpr.Parameters[0].Name] = var;
+                ctx.Variables[selectorExpr.Parameters[0].Name] = var;
 
                 // create new test and subscribe to test modifications
-                func = new LambdaOperation<TResult>(ctx, lambdaExpr);
-                func.Tag = item;
-                func.Init(); // load before value changed to prevent double notification
-                func.ValueChanged += func_ValueChanged;
-                funcs[item] = func;
-            }
-
-            return func;
+                var selector = new LambdaOperation<TResult>(ctx, selectorExpr);
+                selector.Tag = item;
+                selector.Init(); // load before value changed to prevent double notification
+                selector.ValueChanged += selector_ValueChanged;
+                return selector;
+            });
         }
 
-        private TResult GetFuncResult(TSource item)
+        /// <summary>
+        /// Releases the given selector.
+        /// </summary>
+        /// <param name="selector"></param>
+        void ReleaseSelector(LambdaOperation<TResult> selector)
         {
-            return GetFunc(item).Value;
+            // remove from selectors
+            selectors.Remove((TSource)selector.Tag);
+
+            // dispose of selector and variables
+            selector.ValueChanged -= selector_ValueChanged;
+            selector.Dispose();
+            foreach (var var in selector.Context.Variables)
+                var.Value.Dispose();
         }
 
         IEnumerator<TResult> GetEnumerator()
         {
-            return source.Value.Select(i => GetFuncResult(i)).GetEnumerator();
+            return source.Value.Select(i => GetOrCreateSelector(i).Value).GetEnumerator();
         }
 
         public override void Init()
         {
-            if (source != null)
-                source.Init();
             base.Init();
 
-            SetValue(this);
+            OnValueChanged(null, this);
         }
 
         public override void Dispose()
@@ -139,14 +202,10 @@ namespace OLinq
                 if (sourceValue != null)
                     sourceValue.CollectionChanged -= source_CollectionChanged;
             }
-            foreach (var func in funcs.Values)
-            {
-                func.ValueChanged -= func_ValueChanged;
-                func.Dispose();
-                foreach (var var in func.Context.Variables)
-                    var.Value.Dispose();
-            }
-            funcs = null;
+
+            foreach (var selector in selectors.Values)
+                ReleaseSelector(selector);
+            selectors = null;
 
             base.Dispose();
         }

@@ -51,6 +51,7 @@
     <Compile Include="ObservableView.cs" />
     <Compile Include="SingleOrDefaultOperation.cs" />
     <Compile Include="SingleOperation.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="ValueChangedEventHandler.cs" />
     <Compile Include="CountOperation.cs" />
     <Compile Include="GroupOperation.cs" />
