@@ -71,7 +71,7 @@ namespace OLinq
 
             if (result.Value != null)
             {
-                var op = (IOperation<object>)sender;
+                var op = (IOperation)sender;
                 var assignment = (MemberAssignment)op.Tag;
                 SetAssignment(result.Value, op);
             }

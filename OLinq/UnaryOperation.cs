@@ -4,18 +4,19 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class UnaryOperation<T> : Operation<T>
+    abstract class UnaryOperation<TIn, TOut> : Operation<TOut>
     {
 
-        IOperation<T> operand;
+        IOperation<TIn> operand;
 
         protected UnaryOperation(OperationContext context, UnaryExpression expression)
             : base(context, expression)
         {
             if (expression.Operand != null)
             {
-                operand = OperationFactory.FromExpression<T>(context, expression.Operand);
+                operand = OperationFactory.FromExpression<TIn>(context, expression.Operand);
                 operand.ValueChanged += operand_ValueChanged;
+                operand.Init();
             }
         }
 
@@ -26,13 +27,20 @@ namespace OLinq
         /// <param name="args"></param>
         void operand_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            SetValue((T)args.NewValue);
+            SetValue(CoerceValue((TIn)args.NewValue));
         }
+
+        /// <summary>
+        /// Used to coerce the value from the input type to the output type.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        protected abstract TOut CoerceValue(TIn value);
 
         public override void Init()
         {
             if (operand != null)
-                operand.Init();
+                OnValueChanged(null, Value);
             base.Init();
         }
 

@@ -73,6 +73,10 @@ namespace OLinq
                 case ExpressionType.LessThan:
                 case ExpressionType.LessThanOrEqual:
                     return new BinaryOperation(context, (BinaryExpression)expression);
+                case ExpressionType.Convert:
+                    var inType = ((UnaryExpression)expression).Operand.Type;
+                    var outType = ((UnaryExpression)expression).Type;
+                    return (IOperation)Activator.CreateInstance(typeof(ConvertOperation<,>).MakeGenericType(inType, outType), context, expression);
             }
 
             throw new NotSupportedException(string.Format("{0} expression not supported.", expression.NodeType));

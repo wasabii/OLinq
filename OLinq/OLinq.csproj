@@ -44,7 +44,11 @@
     <Compile Include="AnyOperation.cs" />
     <Compile Include="BinaryOperation.cs" />
     <Compile Include="AllOperation.cs" />
+    <Compile Include="ConvertOperation.cs" />
+    <Compile Include="LambdaValueChangedEventArgs.cs" />
+    <Compile Include="LambdaValueChangedEventHandler.cs" />
     <Compile Include="DistinctOperation.cs" />
+    <Compile Include="LambdaOperationContainer.cs" />
     <Compile Include="SelectManyOperation.cs" />
     <Compile Include="GroupByOperation.cs" />
     <Compile Include="ObservableQueryConstantOperation.cs" />
