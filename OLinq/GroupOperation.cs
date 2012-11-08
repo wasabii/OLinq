@@ -18,11 +18,8 @@ namespace OLinq
         {
             if (expression.Arguments.Count >= 1)
             {
-                // extract expressions
-                sourceExpr = expression.Arguments[0];
-
                 // source operation
-                sourceOp = OperationFactory.FromExpression<IEnumerable<TSource>>(context, sourceExpr);
+                sourceOp = OperationFactory.FromExpression<IEnumerable<TSource>>(context, expression.Arguments[0]);
                 sourceOp.Init();
                 SubscribeSourceOperation(sourceOp);
 

@@ -40,7 +40,14 @@ namespace OLinq
             return v;
         }
 
-        public static Expression<Func<T, TResult>> UnpackLambda<T, TResult>(Expression e)
+        /// <summary>
+        /// Unpacks an expression into a <see cref="LambdaExpression" />.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        public static Expression<Func<T, TResult>> UnpackLambda<T, TResult>(this Expression e)
         {
             var expr = e as Expression<Func<T, TResult>>;
             if (expr == null)
@@ -53,17 +60,34 @@ namespace OLinq
             return expr;
         }
 
-        public static LambdaExpression UnpackLambda(Expression e)
+        /// <summary>
+        /// Unpacks an <see cref="Expression"/> into a <see cref="LambdaExpression"/>.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public static LambdaExpression UnpackLambda(this Expression expression)
         {
-            var expr = e as LambdaExpression;
+            var expr = expression as LambdaExpression;
             if (expr == null)
             {
-                var unaryExpr = e as UnaryExpression;
+                var unaryExpr = expression as UnaryExpression;
                 if (unaryExpr != null)
                     expr = unaryExpr.Operand as LambdaExpression;
             }
 
             return expr;
+        }
+
+        /// <summary>
+        /// Gets the method expression argument at the given index, or the default value if not available.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="index"></param>
+        /// <param name="def"></param>
+        /// <returns></returns>
+        public static Expression GetArgument(this MethodCallExpression expression, int index, Expression def = null)
+        {
+            return expression.Arguments.Count > index ? expression.Arguments[index] : def;
         }
 
     }

@@ -96,12 +96,13 @@ namespace OLinq
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    AddItems(args.NewItems.Cast<TSource>());
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, args.NewItems.Cast<TSource>().Select(i => GetOrCreateLambda(i)).ToList(), args.NewStartingIndex));
+                    var newLambdas = args.NewItems.Cast<TSource>().Select(i => GetOrCreateLambda(i)).ToList();
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newLambdas, args.NewStartingIndex));
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    RemoveItems(args.OldItems.Cast<TSource>());
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, args.OldItems.Cast<TSource>().Select(i => GetOrCreateLambda(i)).ToList(), args.OldStartingIndex));
+                    var oldLambdas = args.OldItems.Cast<TSource>().Select(i => GetOrCreateLambda(i)).ToList();
+                    ReleaseLambdaOperations(oldLambdas);
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldLambdas, args.OldStartingIndex));
                     break;
             }
         }
@@ -111,30 +112,13 @@ namespace OLinq
         /// </summary>
         void Reset()
         {
-            RemoveItems(lambdas.Keys.Except(Items ?? Enumerable.Empty<TSource>()).ToList());
-            AddItems(items);
-        }
+            // release all missing lambdas
+            ReleaseLambdaOperations(lambdas.Values.Except((Items ?? Enumerable.Empty<TSource>()).Select(i => GetLambda(i))).ToList());
 
-        /// <summary>
-        /// Invoked when items are added to the collection.
-        /// </summary>
-        /// <param name="newItems"></param>
-        void AddItems(IEnumerable<TSource> newItems)
-        {
-            if (newItems != null)
-                foreach (var item in newItems)
-                    GetOrCreateLambda(item);
-        }
-
-        /// <summary>
-        /// Invoked when items are removed from the collection.
-        /// </summary>
-        /// <param name="oldItems"></param>
-        void RemoveItems(IEnumerable<TSource> oldItems)
-        {
-            if (oldItems != null)
-                foreach (var lambda in oldItems.Select(i => GetLambda(i)).Where(i => i != null))
-                    ReleaseLambdaOperation(lambda);
+            // ensure new lambdas
+            if (Items != null)
+                foreach (var lambda in Items)
+                    GetOrCreateLambda(lambda);
         }
 
         /// <summary>
@@ -177,6 +161,16 @@ namespace OLinq
             lambdas[item] = lambda;
 
             return lambda;
+        }
+
+        /// <summary>
+        /// Disposes of the given lambda operations.
+        /// </summary>
+        /// <param name="lambdas"></param>
+        void ReleaseLambdaOperations(IEnumerable<LambdaOperation<TResult>> lambdas)
+        {
+            foreach (var lambda in lambdas)
+                ReleaseLambdaOperation(lambda);
         }
 
         /// <summary>

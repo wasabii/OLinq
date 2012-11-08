@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
@@ -9,21 +10,26 @@ namespace OLinq
     class AnyOperation<TSource> : GroupOperation<TSource, bool>
     {
 
+        /// <summary>
+        /// Default predicate expression. Simply returns <c>true</c>.
+        /// </summary>
+        static readonly Expression defaultPredicateExpression =
+            Expression.Lambda<Func<TSource, bool>>(
+                Expression.Constant(true, typeof(bool)),
+                Expression.Parameter(typeof(TSource), "i"));
+
         LambdaOperationContainer<TSource, bool> predicates;
 
         public AnyOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression)
         {
-            var expr = (MethodCallExpression)Expression;
-            if (expr.Arguments.Count >= 2)
-            {
-                predicates = new LambdaOperationContainer<TSource, bool>(Utils.UnpackLambda(expr.Arguments[1]), CreatePredicateContext);
-                predicates.CollectionChanged += predicates_CollectionChanged;
-                predicates.LambdaValueChanged += predicates_LambdaValueChanged;
-                predicates.Items = SourceCollection;
-            }
-
-            OnValueChanged(null, Value);
+            SetValue(false);
+            predicates = new LambdaOperationContainer<TSource, bool>(
+                ((MethodCallExpression)Expression).GetArgument(1, defaultPredicateExpression).UnpackLambda<TSource, bool>(),
+                CreatePredicateContext);
+            predicates.CollectionChanged += predicates_CollectionChanged;
+            predicates.LambdaValueChanged += predicates_LambdaValueChanged;
+            predicates.Items = SourceCollection;
         }
 
         /// <summary>
@@ -40,6 +46,11 @@ namespace OLinq
             return ctx;
         }
 
+        /// <summary>
+        /// Invoked when the predicate collection changes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         void predicates_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             switch (args.Action)
@@ -50,8 +61,7 @@ namespace OLinq
                     ResetValue();
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    if (Value || args.NewItems.Cast<LambdaOperation<bool>>().Any(i => i.Value))
-                        SetValue(true);
+                    ResetValue();
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     ResetValue();
@@ -81,6 +91,7 @@ namespace OLinq
         {
             base.SourceChanged(oldSource, newSource);
 
+            // update the predicate collection
             if (predicates != null)
                 predicates.Items = newSource;
         }
@@ -96,6 +107,8 @@ namespace OLinq
         public override void Init()
         {
             base.Init();
+
+            // so event gets raised regardless of order of initialization
             OnValueChanged(null, Value);
         }
 

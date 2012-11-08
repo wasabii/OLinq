@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace OLinq
@@ -7,30 +10,119 @@ namespace OLinq
     class CountOperation<TSource> : GroupOperation<TSource, int>
     {
 
+        /// <summary>
+        /// Default predicate expression. Simply returns <c>true</c>.
+        /// </summary>
+        static readonly Expression defaultPredicateExpression =
+            Expression.Lambda<Func<TSource, bool>>(
+                Expression.Constant(true, typeof(bool)),
+                Expression.Parameter(typeof(TSource), "i"));
+
         int count = 0;
+        LambdaOperationContainer<TSource, bool> predicates;
 
         public CountOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression)
         {
-
+            SetValue(0);
+            predicates = new LambdaOperationContainer<TSource, bool>(
+                ((MethodCallExpression)Expression).GetArgument(1, defaultPredicateExpression).UnpackLambda<TSource, bool>(),
+                CreatePredicateContext);
+            predicates.CollectionChanged += predicates_CollectionChanged;
+            predicates.LambdaValueChanged += predicates_LambdaValueChanged;
+            predicates.Items = SourceCollection;
         }
 
-        protected override void SourceCollectionReset()
+        /// <summary>
+        /// Creates a context for a new predicate operation.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        OperationContext CreatePredicateContext(TSource item)
         {
-            base.SourceCollectionReset();
-            SetValue(count = SourceCollection.Count());
+            // generate new parameter
+            var ctx = new OperationContext(Context);
+            var var = OperationFactory.FromValue(item);
+            ctx.Variables[predicates.Expression.Parameters[0].Name] = var;
+            return ctx;
         }
 
-        protected override void SourceCollectionAddItem(TSource item, int index)
+        /// <summary>
+        /// Invoked when the predicate collection changes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        void predicates_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-            base.SourceCollectionAddItem(item, index);
-            SetValue(++count);
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Move:
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Reset:
+                    ResetValue();
+                    break;
+                case NotifyCollectionChangedAction.Add:
+                    SetValue(count += args.NewItems.Cast<LambdaOperation<bool>>().Count(i => i.Value));
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    SetValue(count -= args.OldItems.Cast<LambdaOperation<bool>>().Count(i => i.Value));
+                    break;
+            }
         }
 
-        protected override void SourceCollectionRemoveItem(TSource item, int index)
+        /// <summary>
+        /// Invoked when one of the predicates has a value change.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        void predicates_LambdaValueChanged(object sender, LambdaValueChangedEventArgs<TSource, bool> args)
         {
-            base.SourceCollectionRemoveItem(item, index);
-            SetValue(--count);
+            if (!args.OldValue && args.NewValue)
+                SetValue(++count);
+            else if (args.OldValue && !args.NewValue)
+                SetValue(--count);
+        }
+
+        /// <summary>
+        /// Invoked when the underlying source changes.
+        /// </summary>
+        /// <param name="oldSource"></param>
+        /// <param name="newSource"></param>
+        protected override void SourceChanged(IEnumerable<TSource> oldSource, IEnumerable<TSource> newSource)
+        {
+            base.SourceChanged(oldSource, newSource);
+
+            // update the predicate collection
+            if (predicates != null)
+                predicates.Items = newSource;
+        }
+
+        /// <summary>
+        /// Recalculates the value.
+        /// </summary>
+        void ResetValue()
+        {
+            SetValue(count = predicates.Count(i => i.Value));
+        }
+
+        public override void Init()
+        {
+            base.Init();
+
+            // so event gets raised regardless of order of initialization
+            ResetValue();
+            OnValueChanged(null, Value);
+        }
+
+        public override void Dispose()
+        {
+            if (predicates != null)
+            {
+                predicates.Dispose();
+                predicates = null;
+            }
+
+            base.Dispose();
         }
 
     }
