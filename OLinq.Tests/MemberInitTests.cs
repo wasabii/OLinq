@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace OLinq.Tests
@@ -65,8 +60,6 @@ namespace OLinq.Tests
         [TestMethod]
         public void MemberInitTest1()
         {
-            int count = 0;
-
             var v = c.AsObservableQuery()
                 .Select(i => new FooOut()
                 {

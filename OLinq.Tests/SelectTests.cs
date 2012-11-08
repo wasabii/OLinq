@@ -51,6 +51,31 @@ namespace OLinq.Tests
                 removed++;
         }
 
+        [TestMethod]
+        public void SelectManyTest()
+        {
+            var c = new ObservableCollection<ObservableCollection<string>>()
+            {
+                new ObservableCollection<string>() { "Item1", "Item2" },
+                new ObservableCollection<string>() { "Item3", "Item4" },
+                new ObservableCollection<string>() { "Item5", "Item6" },
+            };
+
+            var q = c.AsObservableQuery()
+                .SelectMany(i => i)
+                .AsObservableQuery()
+                .ToView();
+            q.CollectionChanged += q_CollectionChanged;
+
+            Assert.AreEqual(q.Count(), 6);
+
+            c[0].Add("Item2.5");
+            Assert.AreEqual(q.Count(), 7);
+
+            c[0].Remove("Item2.5");
+            Assert.AreEqual(q.Count(), 6);
+        }
+
     }
 
 }
