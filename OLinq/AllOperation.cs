@@ -9,7 +9,7 @@ namespace OLinq
 
     class AllOperation<TSource> : GroupOperation<TSource, bool>
     {
-        
+
         LambdaOperationContainer<TSource, bool> predicates;
 
         public AllOperation(OperationContext context, MethodCallExpression expression)
