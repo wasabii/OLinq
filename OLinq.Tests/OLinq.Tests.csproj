@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="ConcatTests.cs" />
     <Compile Include="AnyTests.cs" />
+    <Compile Include="CountTests.cs" />
     <Compile Include="CoreTests.cs" />
     <Compile Include="MemberInitTests.cs" />
     <Compile Include="ValueTests.cs" />

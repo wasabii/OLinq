@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,10 +24,16 @@ namespace OLinq.Tests
             public string Name
             {
                 get { return name; }
-                set { name = value; if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Name")); }
+                set { name = value; OnPropertyChanged("Name"); }
             }
 
             public event PropertyChangedEventHandler PropertyChanged;
+
+            protected void OnPropertyChanged(string propertyName)
+            {
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
 
         }
 
@@ -40,15 +47,19 @@ namespace OLinq.Tests
         public class FooOut : Foo
         {
 
+            private bool isItTrue;
+
+            public bool IsItTrue
+            {
+                get { return isItTrue; }
+                set { isItTrue = value; OnPropertyChanged("IsItTrue"); }
+            }
 
         }
 
         ObservableCollection<FooIn> c = new ObservableCollection<FooIn>()
         {
             new FooIn() { Name = "A" },
-            new FooIn() { Name = "AA" },
-            new FooIn() { Name = "AAA" },
-            new FooIn() { Name = "AAAA" },
         };
 
         [TestMethod]
@@ -59,17 +70,13 @@ namespace OLinq.Tests
             var v = c.AsObservableQuery()
                 .Select(i => new FooOut()
                 {
-                    Name = i.Name,
+                    IsItTrue = i.Name.Any(j => j == 'Z'),
                 })
-                .Where(i => i.Name.EndsWith("_End"))
                 .AsObservableQuery()
                 .ToView();
-            v.CollectionChanged += (s, a) => count++;
 
-            foreach (var i in c)
-                i.Name = i.Name + "_End";
-
-            Assert.AreEqual(4, count);
+            c[0].Name += "Z";
+            Assert.AreEqual(true, v.Count(i => i.IsItTrue) == 1);
         }
 
     }
