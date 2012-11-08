@@ -10,6 +10,13 @@ namespace OLinq
     public static class Utils
     {
 
+        public static LambdaExpression CreateSelfLambdaExpression(Type type)
+        {
+            return Expression.Lambda(
+                Expression.Parameter(type, "p"),
+                Expression.Parameter(type, "p"));
+        }
+
         public static IEnumerable<T> AsEnumerable<T>(object o)
         {
             var e1 = o as IEnumerable<T>;
@@ -85,9 +92,9 @@ namespace OLinq
         /// <param name="index"></param>
         /// <param name="def"></param>
         /// <returns></returns>
-        public static Expression GetArgument(this MethodCallExpression expression, int index, Expression def = null)
+        public static Expression GetArgument(this MethodCallExpression expression, int index)
         {
-            return expression.Arguments.Count > index ? expression.Arguments[index] : def;
+            return expression.Arguments.Count > index ? expression.Arguments[index] : null;
         }
 
         /// <summary>
@@ -97,11 +104,10 @@ namespace OLinq
         /// <typeparam name="TResult"></typeparam>
         /// <param name="expression"></param>
         /// <param name="index"></param>
-        /// <param name="def"></param>
         /// <returns></returns>
-        public static Expression<Func<T, TResult>> GetLambdaArgument<T, TResult>(this MethodCallExpression expression, int index, Expression def = null)
+        public static Expression<Func<T, TResult>> GetLambdaArgument<T, TResult>(this MethodCallExpression expression, int index)
         {
-            return expression.GetArgument(index, def).UnpackLambda<T, TResult>();
+            return expression.GetArgument(index).UnpackLambda<T, TResult>();
         }
 
         /// <summary>
@@ -109,11 +115,10 @@ namespace OLinq
         /// </summary>
         /// <param name="expression"></param>
         /// <param name="index"></param>
-        /// <param name="def"></param>
         /// <returns></returns>
-        public static LambdaExpression GetLambdaArgument(this MethodCallExpression expression, int index, Expression def = null)
+        public static LambdaExpression GetLambdaArgument(this MethodCallExpression expression, int index)
         {
-            return expression.GetArgument(index, def).UnpackLambda();
+            return expression.GetArgument(index).UnpackLambda();
         }
 
     }

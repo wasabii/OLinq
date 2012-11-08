@@ -11,7 +11,7 @@ namespace OLinq
     {
 
         public SelectManyOperation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression)
+            : base(context, expression, expression.GetLambdaArgument<TSource, IEnumerable<TResult>>(1))
         {
             SetValue(this);
         }

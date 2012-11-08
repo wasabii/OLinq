@@ -18,6 +18,8 @@ namespace OLinq
             {
                 target = OperationFactory.FromExpression(context, expression.Expression);
                 target.ValueChanged += target_ValueChanged;
+                target.Init();
+                Refresh();
             }
         }
 
@@ -66,9 +68,9 @@ namespace OLinq
 
         public override void Init()
         {
-            if (target != null)
-                target.Init();
             base.Init();
+
+            OnValueChanged(null, Value);
         }
 
         public override void Dispose()

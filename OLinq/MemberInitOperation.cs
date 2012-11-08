@@ -10,7 +10,7 @@ namespace OLinq
     {
 
         IOperation<T> newOp;
-        List<IOperation> memberAssignments = new List<IOperation>();
+        List<IOperation> memberAssignmentOps = new List<IOperation>();
 
         public MemberInitOperation(OperationContext context, MemberInitExpression expression)
             : base(context, expression)
@@ -19,7 +19,7 @@ namespace OLinq
             {
                 newOp = OperationFactory.FromExpression<T>(context, expression.NewExpression);
                 newOp.Init();
-                newOp.ValueChanged += result_ValueChanged;
+                newOp.ValueChanged += newOp_ValueChanged;
                 SetValue(newOp.Value);
             }
 
@@ -32,8 +32,8 @@ namespace OLinq
                     op.Tag = memberAssignment;
                     op.Init();
                     SetAssignment(Value, op);
-                    op.ValueChanged += memberAssignment_ValueChanged;
-                    memberAssignments.Add(op);
+                    op.ValueChanged += memberAssignmentOp_ValueChanged;
+                    memberAssignmentOps.Add(op);
                 }
 
                 var list = binding as MemberListBinding;
@@ -51,11 +51,8 @@ namespace OLinq
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        void result_ValueChanged(object sender, ValueChangedEventArgs args)
+        void newOp_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (!IsInitialized)
-                return;
-
             var value = newOp.Value;
             if (value != null)
                 SetAssignments(value);
@@ -68,7 +65,7 @@ namespace OLinq
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        void memberAssignment_ValueChanged(object sender, ValueChangedEventArgs args)
+        void memberAssignmentOp_ValueChanged(object sender, ValueChangedEventArgs args)
         {
             if (newOp.Value != null)
             {
@@ -91,7 +88,7 @@ namespace OLinq
 
         void SetAssignments(object target)
         {
-            foreach (var op in memberAssignments)
+            foreach (var op in memberAssignmentOps)
                 SetAssignment(target, op);
         }
 
@@ -142,12 +139,12 @@ namespace OLinq
         {
             if (newOp != null)
             {
-                newOp.ValueChanged -= result_ValueChanged;
+                newOp.ValueChanged -= newOp_ValueChanged;
                 newOp.Dispose();
             }
-            foreach (var assignment in memberAssignments)
+            foreach (var assignment in memberAssignmentOps)
             {
-                assignment.ValueChanged -= memberAssignment_ValueChanged;
+                assignment.ValueChanged -= memberAssignmentOp_ValueChanged;
                 assignment.Dispose();
             }
 

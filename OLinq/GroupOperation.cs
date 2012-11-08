@@ -8,14 +8,14 @@ namespace OLinq
     abstract class GroupOperation<TSource, TLambdaResult, TResult> : SingleEnumerableLambdaSourceOperation<TSource, TLambdaResult, TResult>
     {
 
-        public GroupOperation(OperationContext context, MethodCallExpression expression, TLambdaResult defaultLambdaResult)
-            : base(context, expression, defaultLambdaResult)
+        public GroupOperation(OperationContext context, MethodCallExpression expression, Expression<Func<TSource, TLambdaResult>> lambdaExpression)
+            : base(context, expression, lambdaExpression)
         {
             ResetValue();
         }
 
-        public GroupOperation(OperationContext context, MethodCallExpression expression, Expression<Func<TSource, TLambdaResult>> defaultLambdaExpression)
-            : base(context, expression, defaultLambdaExpression)
+        public GroupOperation(OperationContext context, MethodCallExpression expression, TLambdaResult defaultLambdaResult)
+            : base(context, expression, defaultLambdaResult)
         {
             ResetValue();
         }

@@ -114,7 +114,7 @@ namespace OLinq
         /// <returns></returns>
         private static IOperation FromQueryableExpression(OperationContext context, MethodCallExpression expression)
         {
-            Type resultItemType, sourceItemType, keyItemType;
+            Type resultItemType, sourceItemType, keyItemType, returnType;
 
             switch (expression.Method.Name)
             {
@@ -154,6 +154,13 @@ namespace OLinq
                 case "Distinct":
                     sourceItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(DistinctOperation<>).MakeGenericType(sourceItemType), context, expression);
+                case "Sum":
+                    sourceItemType = expression.Method.GetGenericArguments()[0];
+                    returnType = expression.Method.ReturnType;
+                    if (returnType == typeof(int))
+                        return (IOperation)Activator.CreateInstance(typeof(SumInt32Operation<>).MakeGenericType(sourceItemType), context, expression);
+                    else
+                        throw new InvalidOperationException("Unsupported Sum return type.");
                 default:
                     throw new NotSupportedException(expression.Method.Name);
             }

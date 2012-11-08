@@ -20,29 +20,23 @@ namespace OLinq
                 Expression.Parameter(typeof(TSource), "i"));
         }
 
-        LambdaContainer<TSource, TLambdaResult> lambdas;
-
-        public SingleEnumerableLambdaSourceOperation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression)
+        /// <summary>
+        /// Generates a default lambda expression that simply returns the result.
+        /// </summary>
+        /// <param name="defaultLambdaResult"></param>
+        /// <returns></returns>
+        static Expression<Func<TSource, TLambdaResult>> CreateSourceLambdaExpression()
         {
-            // determine lambda expression
-            var lambdaExpression = expression.GetLambdaArgument<TSource, TLambdaResult>(1);
-            if (lambdaExpression == null)
-                throw new InvalidOperationException("No lambda expression found nor default provided.");
-
-            // generate lambda collection
-            lambdas = new LambdaContainer<TSource, TLambdaResult>(lambdaExpression, CreateLambdaContext);
-            lambdas.CollectionChanged += lambdas_CollectionChanged;
-            lambdas.ValueChanged += lambdas_ValueChanged;
-            lambdas.Items = SourceCollection;
+            return Expression.Lambda<Func<TSource, TLambdaResult>>(
+                Expression.Parameter(typeof(TSource), "i"),
+                Expression.Parameter(typeof(TSource), "i"));
         }
 
-        public SingleEnumerableLambdaSourceOperation(OperationContext context, MethodCallExpression expression, Expression<Func<TSource, TLambdaResult>> defaultLambdaExpression)
+        LambdaContainer<TSource, TLambdaResult> lambdas;
+
+        public SingleEnumerableLambdaSourceOperation(OperationContext context, MethodCallExpression expression, Expression<Func<TSource, TLambdaResult>> lambdaExpression)
             : base(context, expression)
         {
-            // determine lambda expression
-            var lambdaExpression = expression.GetLambdaArgument<TSource, TLambdaResult>(1, defaultLambdaExpression);
-
             // generate lambda collection
             lambdas = new LambdaContainer<TSource, TLambdaResult>(lambdaExpression, CreateLambdaContext);
             lambdas.CollectionChanged += lambdas_CollectionChanged;
