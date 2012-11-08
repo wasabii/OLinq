@@ -10,7 +10,6 @@ namespace OLinq
     abstract class GroupOperation<TSource, TResult> : Operation<TResult>
     {
 
-        Expression sourceExpr;
         IOperation<IEnumerable<TSource>> sourceOp;
 
         public GroupOperation(OperationContext context, MethodCallExpression expression)
