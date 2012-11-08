@@ -7,12 +7,12 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    abstract class EnumerableSourceOperation<TSource, TResult> : Operation<TResult>
+    abstract class SingleEnumerableSourceOperation<TSource, TResult> : Operation<TResult>
     {
 
         IOperation<IEnumerable<TSource>> sourceOp;
 
-        public EnumerableSourceOperation(OperationContext context, MethodCallExpression expression)
+        public SingleEnumerableSourceOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression)
         {
             // source operation

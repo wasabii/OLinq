@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class SelectManyOperation<TSource, TResult> : EnumerableSourceOperation<TSource, IEnumerable<TResult>>, IEnumerable<TResult>, INotifyCollectionChanged
+    class SelectManyOperation<TSource, TResult> : SingleEnumerableSourceOperation<TSource, IEnumerable<TResult>>, IEnumerable<TResult>, INotifyCollectionChanged
     {
 
         LambdaOperationContainer<TSource, IEnumerable<TResult>> selectors;
