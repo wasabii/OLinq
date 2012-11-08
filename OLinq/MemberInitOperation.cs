@@ -18,7 +18,9 @@ namespace OLinq
             if (expression.NewExpression != null)
             {
                 result = OperationFactory.FromExpression<T>(context, expression.NewExpression);
+                result.Init();
                 result.ValueChanged += result_ValueChanged;
+                SetValue(result.Value);
             }
 
             foreach (var binding in expression.Bindings)
@@ -28,6 +30,8 @@ namespace OLinq
                 {
                     var op = OperationFactory.FromExpression(Context, memberAssignment.Expression);
                     op.Tag = memberAssignment;
+                    op.Init();
+                    SetAssignment(Value, op);
                     op.ValueChanged += memberAssignment_ValueChanged;
                     memberAssignments.Add(op);
                 }
@@ -140,6 +144,7 @@ namespace OLinq
             if (result.Value != null)
                 SetAssignments(result.Value);
             SetValue(result.Value);
+            OnValueChanged(null, Value);
         }
 
         public override void Dispose()
