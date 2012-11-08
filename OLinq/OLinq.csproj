@@ -42,11 +42,12 @@
     <Compile Include="BinaryOperation.cs" />
     <Compile Include="AllOperation.cs" />
     <Compile Include="ConvertOperation.cs" />
-    <Compile Include="SingleEnumerableSourceOperation.cs" />
+    <Compile Include="SingleEnumerableLambdaSourceOperation.cs" />
+    <Compile Include="EnumerableSourceOperation.cs" />
     <Compile Include="LambdaValueChangedEventArgs.cs" />
     <Compile Include="LambdaValueChangedEventHandler.cs" />
     <Compile Include="DistinctOperation.cs" />
-    <Compile Include="LambdaOperationContainer.cs" />
+    <Compile Include="LambdaContainer.cs" />
     <Compile Include="MemberInitOperation.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class LambdaOperationContainer<TSource, TResult> : IEnumerable<LambdaOperation<TResult>>, INotifyPropertyChanging, INotifyPropertyChanged, INotifyCollectionChanged, IDisposable
+    class LambdaContainer<TSource, TResult> : IEnumerable<LambdaOperation<TResult>>, INotifyPropertyChanging, INotifyPropertyChanged, INotifyCollectionChanged, IDisposable
     {
 
         IEnumerable<TSource> items;
@@ -19,7 +19,7 @@ namespace OLinq
         /// Initializes a new instance.
         /// </summary>
         /// <param name="createContextAction"></param>
-        public LambdaOperationContainer(LambdaExpression expression, Func<TSource, OperationContext> createContextAction)
+        public LambdaContainer(Expression<Func<TSource, TResult>> expression, Func<TSource, ParameterExpression[], OperationContext> createContextAction)
         {
             Expression = expression;
             CreateContextAction = createContextAction;
@@ -36,7 +36,7 @@ namespace OLinq
         /// <summary>
         /// Gets the action that will generate a new context for lambda operations.
         /// </summary>
-        public Func<TSource, OperationContext> CreateContextAction { get; private set; }
+        public Func<TSource, ParameterExpression[], OperationContext> CreateContextAction { get; private set; }
 
         /// <summary>
         /// Gets the Lambda operation for the given source item.
@@ -46,6 +46,16 @@ namespace OLinq
         public LambdaOperation<TResult> this[TSource item]
         {
             get { return GetOrCreateLambda(item); }
+        }
+
+        /// <summary>
+        /// Gets the original source for the given lambda.
+        /// </summary>
+        /// <param name="lambda"></param>
+        /// <returns></returns>
+        public TSource this[LambdaOperation<TResult> lambda]
+        {
+            get { return (TSource)lambda.Tag; }
         }
 
         /// <summary>
@@ -149,7 +159,7 @@ namespace OLinq
         LambdaOperation<TResult> CreateLambdaOperation(TSource item)
         {
             // generate new context
-            var ctx = CreateContextAction(item);
+            var ctx = CreateContextAction(item, Expression.Parameters.ToArray());
             if (ctx == null)
                 throw new InvalidOperationException("Could not generate context for new lambda operation.");
 
@@ -201,7 +211,7 @@ namespace OLinq
             var item = (TSource)lambda.Tag;
 
             // raise the lambda notification
-            RaiseLambdaValueChanged(item, lambda, (TResult)args.OldValue, (TResult)args.NewValue);
+            RaiseValueChanged(item, lambda, (TResult)args.OldValue, (TResult)args.NewValue);
         }
 
         public event PropertyChangingEventHandler PropertyChanging;
@@ -231,19 +241,19 @@ namespace OLinq
         /// <summary>
         /// Raised when the value of one of the maintained lambda operations is changed.
         /// </summary>
-        public event LambdaValueChangedEventHandler<TSource, TResult> LambdaValueChanged;
+        public event LambdaValueChangedEventHandler<TSource, TResult> ValueChanged;
 
         /// <summary>
-        /// Raises the LambdaValueChanged event.
+        /// Raises the LambdaValuesChanged event.
         /// </summary>
         /// <param name="item"></param>
         /// <param name="operation"></param>
         /// <param name="oldValue"></param>
         /// <param name="newValue"></param>
-        void RaiseLambdaValueChanged(TSource item, LambdaOperation<TResult> operation, TResult oldValue, TResult newValue)
+        void RaiseValueChanged(TSource item, LambdaOperation<TResult> operation, TResult oldValue, TResult newValue)
         {
-            if (LambdaValueChanged != null)
-                LambdaValueChanged(this, new LambdaValueChangedEventArgs<TSource, TResult>(item, operation, oldValue, newValue));
+            if (ValueChanged != null)
+                ValueChanged(this, new LambdaValueChangedEventArgs<TSource, TResult>(item, operation, oldValue, newValue));
         }
 
         public IEnumerator<LambdaOperation<TResult>> GetEnumerator()

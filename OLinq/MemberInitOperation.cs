@@ -9,7 +9,7 @@ namespace OLinq
     class MemberInitOperation<T> : Operation<T>
     {
 
-        IOperation<T> result;
+        IOperation<T> newOp;
         List<IOperation> memberAssignments = new List<IOperation>();
 
         public MemberInitOperation(OperationContext context, MemberInitExpression expression)
@@ -17,10 +17,10 @@ namespace OLinq
         {
             if (expression.NewExpression != null)
             {
-                result = OperationFactory.FromExpression<T>(context, expression.NewExpression);
-                result.Init();
-                result.ValueChanged += result_ValueChanged;
-                SetValue(result.Value);
+                newOp = OperationFactory.FromExpression<T>(context, expression.NewExpression);
+                newOp.Init();
+                newOp.ValueChanged += result_ValueChanged;
+                SetValue(newOp.Value);
             }
 
             foreach (var binding in expression.Bindings)
@@ -56,11 +56,11 @@ namespace OLinq
             if (!IsInitialized)
                 return;
 
-            var value = result.Value;
+            var value = newOp.Value;
             if (value != null)
                 SetAssignments(value);
 
-            SetValue(result.Value);
+            SetValue(newOp.Value);
         }
 
         /// <summary>
@@ -70,14 +70,11 @@ namespace OLinq
         /// <param name="args"></param>
         void memberAssignment_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (!IsInitialized)
-                return;
-
-            if (result.Value != null)
+            if (newOp.Value != null)
             {
                 var op = (IOperation)sender;
                 var assignment = (MemberAssignment)op.Tag;
-                SetAssignment(result.Value, op);
+                SetAssignment(newOp.Value, op);
             }
         }
 
@@ -132,27 +129,21 @@ namespace OLinq
 
         public override void Init()
         {
-            if (result != null)
-                result.Init();
-
-            foreach (var op in memberAssignments)
-                op.Init();
-
             base.Init();
 
             // set up initial value
-            if (result.Value != null)
-                SetAssignments(result.Value);
-            SetValue(result.Value);
+            if (newOp.Value != null)
+                SetAssignments(newOp.Value);
+
             OnValueChanged(null, Value);
         }
 
         public override void Dispose()
         {
-            if (result != null)
+            if (newOp != null)
             {
-                result.ValueChanged -= result_ValueChanged;
-                result.Dispose();
+                newOp.ValueChanged -= result_ValueChanged;
+                newOp.Dispose();
             }
             foreach (var assignment in memberAssignments)
             {

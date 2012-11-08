@@ -7,12 +7,12 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    abstract class SingleEnumerableSourceOperation<TSource, TResult> : Operation<TResult>
+    abstract class EnumerableSourceOperation<TSource, TResult> : Operation<TResult>
     {
 
         IOperation<IEnumerable<TSource>> sourceOp;
 
-        public SingleEnumerableSourceOperation(OperationContext context, MethodCallExpression expression)
+        public EnumerableSourceOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression)
         {
             // source operation
@@ -43,13 +43,13 @@ namespace OLinq
                 case NotifyCollectionChangedAction.Reset:
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Replace:
-                    SourceCollectionReset();
+                    OnSourceCollectionReset();
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    SourceCollectionAdd(Utils.AsEnumerable<TSource>(args.NewItems), args.NewStartingIndex);
+                    OnSourceCollectionItemsAdded(Utils.AsEnumerable<TSource>(args.NewItems), args.NewStartingIndex);
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    SourceCollectionRemove(Utils.AsEnumerable<TSource>(args.OldItems), args.OldStartingIndex);
+                    OnSourceCollectionItemsRemoved(Utils.AsEnumerable<TSource>(args.OldItems), args.OldStartingIndex);
                     break;
             }
         }
@@ -61,7 +61,7 @@ namespace OLinq
         {
             UnsubscribeSourceCollection(oldSource);
             SubscribeSourceCollection(newSource);
-            SourceCollectionReset();
+            OnSourceCollectionReset();
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace OLinq
         /// </summary>
         /// <param name="oldItems"></param>
         /// <param name="newItems"></param>
-        protected virtual void SourceCollectionReset()
+        protected virtual void OnSourceCollectionReset()
         {
 
         }
@@ -87,17 +87,17 @@ namespace OLinq
         /// </summary>
         /// <param name="newItems"></param>
         /// <param name="startingIndex"></param>
-        protected virtual void SourceCollectionAdd(IEnumerable<TSource> newItems, int startingIndex)
+        protected virtual void OnSourceCollectionItemsAdded(IEnumerable<TSource> newItems, int startingIndex)
         {
             foreach (var item in newItems)
-                SourceCollectionAddItem(item, startingIndex >= 0 ? startingIndex++ : -1);
+                OnSourceCollectionItemAdded(item, startingIndex >= 0 ? startingIndex++ : -1);
         }
 
         /// <summary>
         /// Override to implement the logic required to acknowledge an item being added from the underlying operation.
         /// </summary>
         /// <param name="item"></param>
-        protected virtual void SourceCollectionAddItem(TSource item, int index)
+        protected virtual void OnSourceCollectionItemAdded(TSource item, int index)
         {
 
         }
@@ -107,17 +107,17 @@ namespace OLinq
         /// </summary>
         /// <param name="oldItems"></param>
         /// <param name="startingIndex"></param>
-        protected virtual void SourceCollectionRemove(IEnumerable<TSource> oldItems, int startingIndex)
+        protected virtual void OnSourceCollectionItemsRemoved(IEnumerable<TSource> oldItems, int startingIndex)
         {
             foreach (var item in oldItems.ToList())
-                SourceCollectionRemoveItem(item, startingIndex >= 0 ? startingIndex++ : -1);
+                OnSourceCollectionItemRemoved(item, startingIndex >= 0 ? startingIndex++ : -1);
         }
 
         /// <summary>
         /// Override to implement the logic required to remove an underlying item from the operation.
         /// </summary>
         /// <param name="item"></param>
-        protected virtual void SourceCollectionRemoveItem(TSource item, int index)
+        protected virtual void OnSourceCollectionItemRemoved(TSource item, int index)
         {
 
         }

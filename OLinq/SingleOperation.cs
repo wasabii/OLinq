@@ -4,30 +4,19 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class SingleOperation<T> : GroupOperation<T, T>
+    class SingleOperation<TSource> : SingleOrDefaultOperation<TSource>
     {
 
         public SingleOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression)
         {
-            Reset();
+
         }
 
-        protected override void SourceCollectionAddItem(T item, int index)
+        protected override TSource RecalculateValue()
         {
-            base.SourceCollectionAddItem(item, index);
-            Reset();
-        }
-
-        protected override void SourceCollectionRemoveItem(T item, int index)
-        {
-            base.SourceCollectionRemoveItem(item, index);
-            Reset();
-        }
-
-        T Reset()
-        {
-            return SetValue(SourceCollection.Single());
+            var l = Lambdas.Single(i => i.Value);
+            return l != null ? Lambdas[l] : default(TSource);
         }
 
     }

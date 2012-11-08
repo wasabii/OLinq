@@ -90,6 +90,32 @@ namespace OLinq
             return expression.Arguments.Count > index ? expression.Arguments[index] : def;
         }
 
+        /// <summary>
+        /// Gets the lambda expression given by the first argument.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="expression"></param>
+        /// <param name="index"></param>
+        /// <param name="def"></param>
+        /// <returns></returns>
+        public static Expression<Func<T, TResult>> GetLambdaArgument<T, TResult>(this MethodCallExpression expression, int index, Expression def = null)
+        {
+            return expression.GetArgument(index, def).UnpackLambda<T, TResult>();
+        }
+
+        /// <summary>
+        /// Gets the lambda expression given by the first argument.
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="index"></param>
+        /// <param name="def"></param>
+        /// <returns></returns>
+        public static LambdaExpression GetLambdaArgument(this MethodCallExpression expression, int index, Expression def = null)
+        {
+            return expression.GetArgument(index, def).UnpackLambda();
+        }
+
     }
 
 }

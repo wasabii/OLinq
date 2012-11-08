@@ -1,33 +1,23 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace OLinq
 {
 
-    class SingleOrDefaultOperation<T> : GroupOperation<T,T>
+    class SingleOrDefaultOperation<TSource> : GroupOperation<TSource, bool, TSource>
     {
 
         public SingleOrDefaultOperation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression)
+            : base(context, expression, true)
         {
-            Reset();
+
         }
 
-        protected override void SourceCollectionAddItem(T item, int index)
+        protected override TSource RecalculateValue()
         {
-            base.SourceCollectionAddItem(item, index);
-            Reset();
-        }
-
-        protected override void SourceCollectionRemoveItem(T item, int index)
-        {
-            base.SourceCollectionRemoveItem(item, index);
-            Reset();
-        }
-
-        T Reset()
-        {
-            return SetValue(SourceCollection.SingleOrDefault());
+            var l = Lambdas.SingleOrDefault(i => i.Value);
+            return l != null ? Lambdas[l] : default(TSource);
         }
 
     }
