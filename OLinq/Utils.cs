@@ -10,6 +10,13 @@ namespace OLinq
     public static class Utils
     {
 
+        public static LambdaExpression CreateConstantLambdaExpression(object value, Type type)
+        {
+            return Expression.Lambda(
+                Expression.Constant(value, type),
+                Expression.Parameter(type, "p")); ;
+        }
+
         public static LambdaExpression CreateSelfLambdaExpression(Type type)
         {
             return Expression.Lambda(

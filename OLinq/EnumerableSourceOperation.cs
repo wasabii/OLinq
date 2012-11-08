@@ -67,7 +67,7 @@ namespace OLinq
         /// <summary>
         /// Gets the current source collection.
         /// </summary>
-        protected IEnumerable<TSource> SourceCollection
+        protected IEnumerable<TSource> Source
         {
             get { return sourceOp.Value; }
         }

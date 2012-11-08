@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Linq;
 
 namespace OLinq
 {
@@ -9,6 +10,20 @@ namespace OLinq
     /// </summary>
     abstract class Operation : IDisposable
     {
+
+        /// <summary>
+        /// Generates a new method call operation.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="type"></param>
+        /// <param name="context"></param>
+        /// <param name="expression"></param>
+        /// <param name="genericArgIndexes"></param>
+        /// <returns></returns>
+        public static IOperation CreateMethodCallOperation(Type type, OperationContext context, MethodCallExpression expression, params int[] genericArgIndexes)
+        {
+            return (IOperation)Activator.CreateInstance(type.MakeGenericType(genericArgIndexes.Select(i => expression.Method.GetGenericArguments()[i]).ToArray()), context, expression);
+        }
 
         /// <summary>
         /// Initializes a new instance.

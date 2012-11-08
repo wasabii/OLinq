@@ -42,7 +42,7 @@
     <Compile Include="BinaryOperation.cs" />
     <Compile Include="AllOperation.cs" />
     <Compile Include="ConvertOperation.cs" />
-    <Compile Include="SumInt32Operation.cs" />
+    <Compile Include="SumOperation.cs" />
     <Compile Include="SingleEnumerableLambdaSourceOperation.cs" />
     <Compile Include="EnumerableSourceOperation.cs" />
     <Compile Include="LambdaValueChangedEventArgs.cs" />

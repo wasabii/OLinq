@@ -133,20 +133,15 @@ namespace OLinq
                     resultItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(WhereOperation<>).MakeGenericType(resultItemType), context, expression);
                 case "All":
-                    sourceItemType = expression.Method.GetGenericArguments()[0];
-                    return (IOperation)Activator.CreateInstance(typeof(AllOperation<>).MakeGenericType(sourceItemType), context, expression);
+                    return AllOperation.CreateOperation(context, expression);
                 case "Any":
-                    sourceItemType = expression.Method.GetGenericArguments()[0];
-                    return (IOperation)Activator.CreateInstance(typeof(AnyOperation<>).MakeGenericType(sourceItemType), context, expression);
+                    return AnyOperation.CreateOperation(context, expression);
                 case "Count":
-                    sourceItemType = expression.Method.GetGenericArguments()[0];
-                    return (IOperation)Activator.CreateInstance(typeof(CountOperation<>).MakeGenericType(sourceItemType), context, expression);
+                    return CountOperation.CreateOperation(context, expression);
                 case "Single":
-                    resultItemType = expression.Method.GetGenericArguments()[0];
-                    return (IOperation)Activator.CreateInstance(typeof(SingleOperation<>).MakeGenericType(resultItemType), context, expression);
+                    return SingleOperation.CreateOperation(context, expression);
                 case "SingleOrDefault":
-                    resultItemType = expression.Method.GetGenericArguments()[0];
-                    return (IOperation)Activator.CreateInstance(typeof(SingleOperation<>).MakeGenericType(resultItemType), context, expression);
+                    return SingleOrDefaultOperation.CreateOperation(context, expression);
                 case "GroupBy":
                     sourceItemType = expression.Method.GetGenericArguments()[0];
                     keyItemType = expression.Method.GetGenericArguments()[1];
@@ -155,12 +150,7 @@ namespace OLinq
                     sourceItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(DistinctOperation<>).MakeGenericType(sourceItemType), context, expression);
                 case "Sum":
-                    sourceItemType = expression.Method.GetGenericArguments()[0];
-                    returnType = expression.Method.ReturnType;
-                    if (returnType == typeof(int))
-                        return (IOperation)Activator.CreateInstance(typeof(SumInt32Operation<>).MakeGenericType(sourceItemType), context, expression);
-                    else
-                        throw new InvalidOperationException("Unsupported Sum return type.");
+                    return SumOperation.CreateOperation(context, expression);
                 default:
                     throw new NotSupportedException(expression.Method.Name);
             }

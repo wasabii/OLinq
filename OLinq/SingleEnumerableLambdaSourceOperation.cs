@@ -8,30 +8,6 @@ namespace OLinq
     abstract class SingleEnumerableLambdaSourceOperation<TSource, TLambdaResult, TResult> : EnumerableSourceOperation<TSource, TResult>
     {
 
-        /// <summary>
-        /// Generates a default lambda expression that simply returns the result.
-        /// </summary>
-        /// <param name="defaultLambdaResult"></param>
-        /// <returns></returns>
-        static Expression<Func<TSource, TLambdaResult>> CreateDefaultLambdaExpression(TLambdaResult defaultLambdaResult)
-        {
-            return Expression.Lambda<Func<TSource, TLambdaResult>>(
-                Expression.Constant(defaultLambdaResult, typeof(TLambdaResult)),
-                Expression.Parameter(typeof(TSource), "i"));
-        }
-
-        /// <summary>
-        /// Generates a default lambda expression that simply returns the result.
-        /// </summary>
-        /// <param name="defaultLambdaResult"></param>
-        /// <returns></returns>
-        static Expression<Func<TSource, TLambdaResult>> CreateSourceLambdaExpression()
-        {
-            return Expression.Lambda<Func<TSource, TLambdaResult>>(
-                Expression.Parameter(typeof(TSource), "i"),
-                Expression.Parameter(typeof(TSource), "i"));
-        }
-
         LambdaContainer<TSource, TLambdaResult> lambdas;
 
         public SingleEnumerableLambdaSourceOperation(OperationContext context, MethodCallExpression expression, Expression<Func<TSource, TLambdaResult>> lambdaExpression)
@@ -41,13 +17,7 @@ namespace OLinq
             lambdas = new LambdaContainer<TSource, TLambdaResult>(lambdaExpression, CreateLambdaContext);
             lambdas.CollectionChanged += lambdas_CollectionChanged;
             lambdas.ValueChanged += lambdas_ValueChanged;
-            lambdas.Items = SourceCollection;
-        }
-
-        public SingleEnumerableLambdaSourceOperation(OperationContext context, MethodCallExpression expression, TLambdaResult defaultLambdaResult)
-            : this(context, expression, CreateDefaultLambdaExpression(defaultLambdaResult))
-        {
-
+            lambdas.Items = Source;
         }
 
         /// <summary>
@@ -78,7 +48,7 @@ namespace OLinq
         /// </summary>
         protected override void OnSourceCollectionReset()
         {
-            lambdas.Items = SourceCollection;
+            lambdas.Items = Source;
         }
 
         /// <summary>
