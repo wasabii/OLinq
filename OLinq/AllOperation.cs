@@ -10,11 +10,26 @@ namespace OLinq
     static class AllOperation
     {
 
+        static readonly MethodInfo QueryableAllMethod = typeof(Queryable).GetMethods()
+            .Where(i => i.Name == "All")
+            .Where(i => i.IsGenericMethodDefinition)
+            .Where(i => i.GetGenericArguments().Length == 1)
+            .Where(i => i.GetParameters().Length == 2)
+            .Single();
+
+        static readonly MethodInfo EnumerableAllMethod = typeof(Enumerable).GetMethods()
+            .Where(i => i.Name == "All")
+            .Where(i => i.IsGenericMethodDefinition)
+            .Where(i => i.GetGenericArguments().Length == 1)
+            .Where(i => i.GetParameters().Length == 2)
+            .Single();
+
         public static IOperation CreateOperation(OperationContext context, MethodCallExpression expression)
         {
             var method = expression.Method.GetGenericMethodDefinition();
-            if (method.GetGenericArguments().Length == 1 &&
-                method.GetParameters().Length == 2)
+            if (method == QueryableAllMethod)
+                return Operation.CreateMethodCallOperation(typeof(AllOperation<>), context, expression, 0);
+            if (method == EnumerableAllMethod)
                 return Operation.CreateMethodCallOperation(typeof(AllOperation<>), context, expression, 0);
 
             throw new NotImplementedException("All operation not found.");

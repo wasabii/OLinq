@@ -11,14 +11,42 @@ namespace OLinq
     static class AnyOperation
     {
 
+        static readonly MethodInfo QueryableAnyMethod = typeof(Queryable).GetMethods()
+            .Where(i => i.Name == "Any")
+            .Where(i => i.IsGenericMethodDefinition)
+            .Where(i => i.GetGenericArguments().Length == 1)
+            .Where(i => i.GetParameters().Length == 1)
+            .Single();
+
+        static readonly MethodInfo QueryableAnyMethodWithPredicate = typeof(Queryable).GetMethods()
+            .Where(i => i.Name == "Any")
+            .Where(i => i.IsGenericMethodDefinition)
+            .Where(i => i.GetGenericArguments().Length == 1)
+            .Where(i => i.GetParameters().Length == 2)
+            .Single();
+
+        static readonly MethodInfo EnumerableAnyMethod = typeof(Enumerable).GetMethods()
+            .Where(i => i.Name == "Any")
+            .Where(i => i.IsGenericMethodDefinition)
+            .Where(i => i.GetGenericArguments().Length == 1)
+            .Where(i => i.GetParameters().Length == 1)
+            .Single();
+
+        static readonly MethodInfo EnumerableAnyMethodWithPredicate = typeof(Enumerable).GetMethods()
+            .Where(i => i.Name == "Any")
+            .Where(i => i.IsGenericMethodDefinition)
+            .Where(i => i.GetGenericArguments().Length == 1)
+            .Where(i => i.GetParameters().Length == 2)
+            .Single();
+
         public static IOperation CreateOperation(OperationContext context, MethodCallExpression expression)
         {
             var method = expression.Method.GetGenericMethodDefinition();
-            if (method.GetGenericArguments().Length == 1 &&
-                method.GetParameters().Length == 1)
+            if (method == QueryableAnyMethod ||
+                method == EnumerableAnyMethod)
                 return Operation.CreateMethodCallOperation(typeof(AnyOperation<>), context, expression, 0);
-            if (method.GetGenericArguments().Length == 1 &&
-                method.GetParameters().Length == 2)
+            if (method == QueryableAnyMethodWithPredicate ||
+                method == EnumerableAnyMethodWithPredicate)
                 return Operation.CreateMethodCallOperation(typeof(AnyOperationWithPredicate<>), context, expression, 0);
 
             throw new NotImplementedException("Any operation not found.");
