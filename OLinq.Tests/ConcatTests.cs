@@ -38,7 +38,7 @@ namespace OLinq.Tests
             var q = c1.AsObservableQuery()
                 .Concat(c2)
                 .AsObservableQuery()
-                .ToView();
+                .ToObservableView();
             q.CollectionChanged += (s, a) => changes++;
 
             Assert.AreEqual(q.Count(), 10);

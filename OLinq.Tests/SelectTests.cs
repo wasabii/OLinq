@@ -29,7 +29,7 @@ namespace OLinq.Tests
             var q = c.AsObservableQuery()
                 .Select(i => new { Value = i })
                 .AsObservableQuery()
-                .ToView();
+                .ToObservableView();
             q.CollectionChanged += q_CollectionChanged;
 
             Assert.AreEqual(q.Count(), 5);
@@ -64,7 +64,7 @@ namespace OLinq.Tests
             var q = c.AsObservableQuery()
                 .SelectMany(i => i)
                 .AsObservableQuery()
-                .ToView();
+                .ToObservableView();
             q.CollectionChanged += q_CollectionChanged;
 
             Assert.AreEqual(q.Count(), 6);

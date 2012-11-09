@@ -28,12 +28,12 @@ namespace OLinq.Tests
             var c1 = c.AsObservableQuery()
                 .Where(i => i.Length >= 3)
                 .AsObservableQuery()
-                .ToView();
+                .ToObservableView();
 
             var c2 = c1.Query()
                 .Where(i => i == "ChainTest")
                 .AsObservableQuery()
-                .ToView();
+                .ToObservableView();
 
             bool s1 = false;
             c2.CollectionChanged += (s, a) => s1 = true;

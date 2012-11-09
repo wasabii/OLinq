@@ -136,7 +136,7 @@ namespace OLinq.Tests
             var q = c.AsObservableQuery()
                 .Where(i => i == "True")
                 .AsObservableQuery()
-                .ToView();
+                .ToObservableView();
             q.CollectionChanged += (s, a) => changed++;
 
             Assert.AreEqual(1, q.Count());
