@@ -39,6 +39,9 @@
     <Compile Include="ConcatOperation.cs" />
     <Compile Include="ConstantOperation.cs" />
     <Compile Include="AverageOperation.cs" />
+    <Compile Include="CastOperation.cs" />
+    <Compile Include="MinOperation.cs" />
+    <Compile Include="MaxOperation.cs" />
     <Compile Include="EnumerableSource2Operation.cs" />
     <Compile Include="AnyOperation.cs" />
     <Compile Include="BinaryOperation.cs" />

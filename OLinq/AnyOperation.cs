@@ -114,7 +114,7 @@ namespace OLinq
             if (args.NewValue)
                 SetValue(true);
             else
-                base.OnProjectionValueChanged(args);
+                base.OnPredicateValueChanged(args);
         }
 
         protected override bool RecalculateValue()

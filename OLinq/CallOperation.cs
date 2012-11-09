@@ -19,15 +19,15 @@ namespace OLinq
         {
             if (expression.Object != null)
             {
-                targetOp = OperationFactory.FromExpression<object>(context, expression.Object);
+                targetOp = OperationFactory.FromExpression(context, expression.Object);
                 targetOp.Init();
                 targetOp.ValueChanged += targetOp_ValueChanged;
             }
 
-            parameterOps = new IOperation<object>[expression.Arguments.Count];
+            parameterOps = new IOperation[expression.Arguments.Count];
             for (int i = 0; i < expression.Arguments.Count; i++)
             {
-                parameterOps[i] = OperationFactory.FromExpression<object>(context, expression.Arguments[i]);
+                parameterOps[i] = OperationFactory.FromExpression(context, expression.Arguments[i]);
                 parameterOps[i].Init();
                 parameterOps[i].ValueChanged += parameterOp_ValueChanged;
             }
@@ -69,7 +69,7 @@ namespace OLinq
             for (int i = 0; i < parameterOps.Length; i++)
                 args[i] = parameterOps[i].Value;
 
-            SetValue(Invoke(targetOp.Value, args));
+            SetValue(Invoke(targetOp != null ? targetOp.Value : null, args));
         }
 
         public override void Dispose()

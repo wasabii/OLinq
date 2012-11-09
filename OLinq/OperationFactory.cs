@@ -17,8 +17,6 @@ namespace OLinq
             for (int i = 0; i < oldArgs.Length; i++)
                 newArgs[i] = Fix(oldArgs[i]);
 
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IQueryable<>))
-                return typeof(IEnumerable<>).MakeGenericType(newArgs);
             if (type.IsGenericType)
                 return type.GetGenericTypeDefinition().MakeGenericType(newArgs);
             else
@@ -114,7 +112,7 @@ namespace OLinq
         /// <returns></returns>
         private static IOperation FromQueryableExpression(OperationContext context, MethodCallExpression expression)
         {
-            Type resultItemType, sourceItemType, keyItemType, returnType;
+            Type resultItemType, sourceItemType, keyItemType;
 
             switch (expression.Method.Name)
             {
@@ -153,6 +151,12 @@ namespace OLinq
                     return SumOperation.CreateOperation(context, expression);
                 case "Average":
                     return AverageOperation.CreateOperation(context, expression);
+                case "Cast":
+                    return CastOperation.CreateOperation(context, expression);
+                case "Min":
+                    return MinOperation.CreateOperation(context, expression);
+                case "Max":
+                    return MaxOperation.CreateOperation(context, expression);
                 default:
                     throw new NotSupportedException(expression.Method.Name);
             }

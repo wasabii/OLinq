@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace OLinq
 {
@@ -34,6 +33,14 @@ namespace OLinq
                 method.GetParameters().Length == 2 &&
                 method.ReturnType == typeof(float))
                 return Operation.CreateMethodCallOperation(typeof(AverageSingleWithProjectionOperation<>), context, expression, 0);
+            if (method.GetGenericArguments().Length == 0 &&
+                method.GetParameters().Length == 1 &&
+                method.ReturnType == typeof(double))
+                return Operation.CreateMethodCallOperation(typeof(AverageDoubleOperation), context, expression);
+            if (method.GetGenericArguments().Length == 1 &&
+                method.GetParameters().Length == 2 &&
+                method.ReturnType == typeof(double))
+                return Operation.CreateMethodCallOperation(typeof(AverageDoubleWithProjectionOperation<>), context, expression, 0);
 
             throw new NotSupportedException("Average operation not found.");
         }
@@ -180,6 +187,79 @@ namespace OLinq
         }
 
         protected override float RecalculateValue()
+        {
+            return average = (sum = Projections.Sum(i => i.Value)) / (count = Projections.Count());
+        }
+
+    }
+
+    class AverageDoubleOperation : GroupOperation<double, double>
+    {
+
+        int count = 0;
+        double sum = 0;
+        double average = 0;
+
+        public AverageDoubleOperation(OperationContext context, MethodCallExpression expression)
+            : base(context, expression, expression.Arguments[0])
+        {
+
+        }
+
+        protected override void OnSourceCollectionItemsAdded(IEnumerable<double> newItems, int startingIndex)
+        {
+            SetValue(average = (sum += newItems.Sum()) / (count += newItems.Count()));
+        }
+
+        protected override void OnSourceCollectionItemsRemoved(IEnumerable<double> oldItems, int startingIndex)
+        {
+            SetValue(average = (sum -= oldItems.Sum()) / (count -= oldItems.Count()));
+        }
+
+        protected override double RecalculateValue()
+        {
+            return average = (sum = Source.Sum()) / (count = Source.Count());
+        }
+
+    }
+
+    class AverageDoubleWithProjectionOperation<TSource> : GroupOperationWithProjection<TSource, double, double>
+    {
+
+        int count = 0;
+        double sum = 0;
+        double average = 0;
+
+        public AverageDoubleWithProjectionOperation(OperationContext context, MethodCallExpression expression)
+            : base(context, expression, expression.Arguments[0], expression.GetLambdaArgument<TSource, double>(1))
+        {
+
+        }
+
+        protected override void OnProjectionCollectionChanged(NotifyCollectionChangedEventArgs args)
+        {
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Move:
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Reset:
+                    ResetValue();
+                    break;
+                case NotifyCollectionChangedAction.Add:
+                    SetValue(average = (sum += args.NewItems.Cast<LambdaOperation<double>>().Sum(i => i.Value)) / (count += args.NewItems.Cast<LambdaOperation<double>>().Count()));
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    SetValue(average = (sum -= args.OldItems.Cast<LambdaOperation<double>>().Sum(i => i.Value)) / (count -= args.OldItems.Cast<LambdaOperation<double>>().Count()));
+                    break;
+            }
+        }
+
+        protected override void OnProjectionValueChanged(LambdaValueChangedEventArgs<TSource, double> args)
+        {
+            SetValue(average = (sum = sum - args.OldValue + args.NewValue) / count);
+        }
+
+        protected override double RecalculateValue()
         {
             return average = (sum = Projections.Sum(i => i.Value)) / (count = Projections.Count());
         }
