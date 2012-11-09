@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace OLinq
 {
@@ -7,8 +6,8 @@ namespace OLinq
     class CallOperation<T> : Operation<T>
     {
 
-        IOperation target;
-        IOperation[] arguments;
+        IOperation targetOp;
+        IOperation[] parameterOps;
 
         /// <summary>
         /// Initializes a new instance.
@@ -20,16 +19,20 @@ namespace OLinq
         {
             if (expression.Object != null)
             {
-                target = OperationFactory.FromExpression<object>(context, expression.Object);
-                target.ValueChanged += target_ValueChanged;
+                targetOp = OperationFactory.FromExpression<object>(context, expression.Object);
+                targetOp.Init();
+                targetOp.ValueChanged += targetOp_ValueChanged;
             }
 
-            arguments = new IOperation<object>[expression.Arguments.Count];
+            parameterOps = new IOperation<object>[expression.Arguments.Count];
             for (int i = 0; i < expression.Arguments.Count; i++)
             {
-                arguments[i] = OperationFactory.FromExpression<object>(context, expression.Arguments[i]);
-                arguments[i].ValueChanged += argument_ValueChanged;
+                parameterOps[i] = OperationFactory.FromExpression<object>(context, expression.Arguments[i]);
+                parameterOps[i].Init();
+                parameterOps[i].ValueChanged += parameterOp_ValueChanged;
             }
+
+            Invoke();
         }
 
         /// <summary>
@@ -37,10 +40,9 @@ namespace OLinq
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        void target_ValueChanged(object sender, ValueChangedEventArgs args)
+        void targetOp_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (IsInitialized)
-                Invoke();
+            Invoke();
         }
 
         /// <summary>
@@ -48,29 +50,21 @@ namespace OLinq
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        void argument_ValueChanged(object sender, ValueChangedEventArgs args)
+        void parameterOp_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (IsInitialized)
-                Invoke();
+            Invoke();
         }
 
         public override void Init()
         {
-            if (target != null)
-                target.Init();
-
-            foreach (var arg in arguments)
-                arg.Init();
-
             base.Init();
 
-            // obtain initial value
-            Invoke();
+            OnValueChanged(null, Value);
         }
 
-        protected virtual T Invoke(object target, params object[] args)
+        protected virtual T Invoke(object target, params object[] parameters)
         {
-            return (T)((MethodCallExpression)Expression).Method.Invoke(target, args);
+            return (T)((MethodCallExpression)Expression).Method.Invoke(target, parameters);
         }
 
         /// <summary>
@@ -78,24 +72,25 @@ namespace OLinq
         /// </summary>
         void Invoke()
         {
-            var args = new object[arguments.Length];
-            for (int i = 0; i < arguments.Length; i++)
-                args[i] = arguments[i].Value;
+            var args = new object[parameterOps.Length];
+            for (int i = 0; i < parameterOps.Length; i++)
+                args[i] = parameterOps[i].Value;
 
-            SetValue(Invoke(target.Value, args));
+            SetValue(Invoke(targetOp.Value, args));
         }
 
         public override void Dispose()
         {
-            if (target != null)
+            if (targetOp != null)
             {
-                target.ValueChanged -= target_ValueChanged;
-                target.Dispose();
+                targetOp.ValueChanged -= targetOp_ValueChanged;
+                targetOp.Dispose();
             }
-            foreach (var arg in arguments)
+
+            foreach (var op in parameterOps)
             {
-                arg.ValueChanged -= argument_ValueChanged;
-                arg.Dispose();
+                op.ValueChanged -= parameterOp_ValueChanged;
+                op.Dispose();
             }
 
             base.Dispose();
