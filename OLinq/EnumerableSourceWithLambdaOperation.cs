@@ -48,7 +48,8 @@ namespace OLinq
         /// </summary>
         protected override void OnSourceCollectionReset()
         {
-            lambdas.Items = Source;
+            if (lambdas != null)
+                lambdas.Items = Source;
         }
 
         /// <summary>

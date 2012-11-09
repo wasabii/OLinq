@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="ConcatOperation.cs" />
     <Compile Include="ConstantOperation.cs" />
+    <Compile Include="AverageOperation.cs" />
     <Compile Include="EnumerableSource2Operation.cs" />
     <Compile Include="AnyOperation.cs" />
     <Compile Include="BinaryOperation.cs" />

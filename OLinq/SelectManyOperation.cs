@@ -18,12 +18,36 @@ namespace OLinq
 
         protected override void OnLambdaCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Move:
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move));
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Reset:
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                    break;
+                case NotifyCollectionChangedAction.Add:
+                    var newItems = args.NewItems.Cast<LambdaOperation<IEnumerable<TResult>>>().SelectMany(i => i.Value).ToList();
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems));
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    var oldItems = args.OldItems.Cast<LambdaOperation<IEnumerable<TResult>>>().SelectMany(i => i.Value).ToList();
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems));
+                    break;
+            }
         }
 
         protected override void OnLambdaValueChanged(LambdaValueChangedEventArgs<TSource, IEnumerable<TResult>> args)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            var oldValues = args.OldValue.Except(args.NewValue).ToList();
+            var newValues = args.NewValue.Except(args.OldValue).ToList();
+            if (oldValues.Count == 0 && newValues.Count >= 1)
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newValues));
+            else if (oldValues.Count >= 1 && newValues.Count == 0)
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldValues));
+            else if (oldValues.Count >= 1 && newValues.Count >= 1)
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, oldValues, newValues));
         }
 
         public IEnumerator<TResult> GetEnumerator()

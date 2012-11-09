@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -172,12 +171,24 @@ namespace OLinq
             return (S)Execute(expression);
         }
 
+        /// <summary>
+        /// Obtains an <see cref="ObservableValue`1"/> for a scalar query result, from which you can watch for change
+        /// notifications of the scalar value.
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="scalarFunc"></param>
+        /// <returns></returns>
         public ObservableValue<IEnumerable<T>, TResult> Observe<TResult>(Expression<Func<IQueryable<T>, TResult>> scalarFunc)
         {
             return new ObservableValue<IEnumerable<T>, TResult>(expression, scalarFunc);
         }
 
-        public ObservableView<T> ToView()
+        /// <summary>
+        /// Obtains an <see cref="ObservableView`1"/> for this query, from which you can watch for change notifications
+        /// in the query results.
+        /// </summary>
+        /// <returns></returns>
+        public ObservableView<T> ToObservableView()
         {
             return new ObservableView<T>(this);
         }

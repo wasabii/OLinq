@@ -151,6 +151,8 @@ namespace OLinq
                     return (IOperation)Activator.CreateInstance(typeof(DistinctOperation<>).MakeGenericType(sourceItemType), context, expression);
                 case "Sum":
                     return SumOperation.CreateOperation(context, expression);
+                case "Average":
+                    return AverageOperation.CreateOperation(context, expression);
                 default:
                     throw new NotSupportedException(expression.Method.Name);
             }
