@@ -17,6 +17,8 @@ namespace OLinq
             for (int i = 0; i < oldArgs.Length; i++)
                 newArgs[i] = Fix(oldArgs[i]);
 
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IQueryable<>))
+                return typeof(IEnumerable<>).MakeGenericType(newArgs);
             if (type.IsGenericType)
                 return type.GetGenericTypeDefinition().MakeGenericType(newArgs);
             else
