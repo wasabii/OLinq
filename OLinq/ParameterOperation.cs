@@ -14,7 +14,11 @@ namespace OLinq
         {
             variable = Context.GetVariable<T>(expression.Name);
             if (variable != null)
+            {
+                variable.Init();
                 variable.ValueChanged += variable_ValueChanged;
+                SetValue(variable.Value);
+            }
         }
 
         /// <summary>
@@ -25,13 +29,6 @@ namespace OLinq
         void variable_ValueChanged(object sender, ValueChangedEventArgs args)
         {
             SetValue(variable.Value);
-        }
-
-        public override void Init()
-        {
-            if (variable != null)
-                variable.Init();
-            base.Init();
         }
 
         public override void Dispose()

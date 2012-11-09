@@ -9,17 +9,17 @@ namespace OLinq
     class MemberAccessOperation<T> : Operation<T>
     {
 
-        IOperation target;
+        IOperation targetOp;
 
         public MemberAccessOperation(OperationContext context, MemberExpression expression)
             : base(context, expression)
         {
             if (expression.Expression != null)
             {
-                target = OperationFactory.FromExpression(context, expression.Expression);
-                target.ValueChanged += target_ValueChanged;
-                target.Init();
-                Refresh();
+                targetOp = OperationFactory.FromExpression(context, expression.Expression);
+                targetOp.Init();
+                targetOp.ValueChanged += target_ValueChanged;
+                OnTargetValueChanged(null, targetOp.Value);
             }
         }
 
@@ -30,15 +30,41 @@ namespace OLinq
         /// <param name="args"></param>
         void target_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            var oldValue = args.OldValue as INotifyPropertyChanged;
-            if (oldValue != null)
-                oldValue.PropertyChanged -= target_PropertyChanged;
+            OnTargetValueChanged(args.OldValue, args.NewValue);
+        }
 
-            var newValue = args.NewValue as INotifyPropertyChanged;
+        /// <summary>
+        /// Invoked when the result of the target operation is changed.
+        /// </summary>
+        /// <param name="oldValue"></param>
+        /// <param name="newValue"></param>
+        void OnTargetValueChanged(object oldValue, object newValue)
+        {
+            UnsubscribeTargetValue(oldValue);
+            SubscribeTargetValue(newValue);
+            ResetValue();
+        }
+
+        /// <summary>
+        /// Subscribes to notifications on the target object.
+        /// </summary>
+        /// <param name="target"></param>
+        void SubscribeTargetValue(object target)
+        {
+            var newValue = target as INotifyPropertyChanged;
             if (newValue != null)
                 newValue.PropertyChanged += target_PropertyChanged;
+        }
 
-            Refresh();
+        /// <summary>
+        /// Unsubscribes from notifications on the target object.
+        /// </summary>
+        /// <param name="target"></param>
+        void UnsubscribeTargetValue(object target)
+        {
+            var oldValue = target as INotifyPropertyChanged;
+            if (oldValue != null)
+                oldValue.PropertyChanged -= target_PropertyChanged;
         }
 
         /// <summary>
@@ -49,19 +75,19 @@ namespace OLinq
         void target_PropertyChanged(object sender, PropertyChangedEventArgs args)
         {
             if (args.PropertyName == ((MemberExpression)Expression).Member.Name)
-                Refresh();
+                ResetValue();
         }
 
         /// <summary>
         /// Sets the value from the referenced member.
         /// </summary>
-        void Refresh()
+        void ResetValue()
         {
             var expression = (MemberExpression)Expression;
             if (expression.Member is PropertyInfo)
-                SetValue((T)((PropertyInfo)expression.Member).GetValue(target.Value));
+                SetValue((T)((PropertyInfo)expression.Member).GetValue(targetOp.Value));
             else if (expression.Member is FieldInfo)
-                SetValue((T)((FieldInfo)expression.Member).GetValue(target.Value));
+                SetValue((T)((FieldInfo)expression.Member).GetValue(targetOp.Value));
             else
                 throw new NotSupportedException(string.Format("MemberAccess does not support Member of type {0}.", expression.Member.MemberType));
         }
@@ -75,13 +101,11 @@ namespace OLinq
 
         public override void Dispose()
         {
-            if (target != null)
+            if (targetOp != null)
             {
-                var targetValue = target.Value as INotifyPropertyChanged;
-                target.ValueChanged -= target_ValueChanged;
-                target.Dispose();
-                if (targetValue != null)
-                    targetValue.PropertyChanged -= target_PropertyChanged;
+                UnsubscribeTargetValue(targetOp.Value);
+                targetOp.ValueChanged -= target_ValueChanged;
+                targetOp.Dispose();
             }
 
 

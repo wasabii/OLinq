@@ -10,15 +10,17 @@ namespace OLinq
     class LambdaOperation<T> : Operation<T>
     {
 
-        IOperation body;
+        IOperation<T> body;
 
         public LambdaOperation(OperationContext context, LambdaExpression expression)
             : base(context, expression)
         {
             if (expression.Body != null)
             {
-                body = OperationFactory.FromExpression(context, expression.Body);
+                body = (IOperation<T>)OperationFactory.FromExpression(context, expression.Body);
+                body.Init();
                 body.ValueChanged += body_ValueChanged;
+                SetValue(body.Value);
             }
         }
 
@@ -34,9 +36,9 @@ namespace OLinq
 
         public override void Init()
         {
-            if (body != null)
-                body.Init();
             base.Init();
+
+            OnValueChanged(null, Value);
         }
 
         public override void Dispose()

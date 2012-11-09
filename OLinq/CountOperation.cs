@@ -10,26 +10,17 @@ namespace OLinq
     static class CountOperation
     {
 
-        static readonly MethodInfo Method = typeof(Queryable).GetMethods()
-            .Where(i => i.Name == "Count")
-            .Where(i => i.IsGenericMethodDefinition)
-            .Where(i => i.GetParameters().Length == 1)
-            .Single();
-
-        static readonly MethodInfo CountWithPredicateMethod = typeof(Queryable).GetMethods()
-            .Where(i => i.Name == "Count")
-            .Where(i => i.IsGenericMethodDefinition)
-            .Where(i => i.GetParameters().Length == 2)
-            .Single();
-
         public static IOperation CreateOperation(OperationContext context, MethodCallExpression expression)
         {
-            if (expression.Method == Method)
+            var method = expression.Method.GetGenericMethodDefinition();
+            if (method.GetGenericArguments().Length == 1 &&
+                method.GetParameters().Length == 1)
                 return Operation.CreateMethodCallOperation(typeof(CountOperation<>), context, expression, 0);
-            else if (expression.Method == CountWithPredicateMethod)
+            if (method.GetGenericArguments().Length == 1 &&
+                method.GetParameters().Length == 2)
                 return Operation.CreateMethodCallOperation(typeof(CountOperationWithPredicate<>), context, expression, 0);
-            else
-                throw new NotImplementedException("Count operation not found.");
+
+            throw new NotImplementedException("Count operation not found.");
         }
 
     }

@@ -11,25 +11,14 @@ namespace OLinq
     static class SumOperation
     {
 
-        static readonly MethodInfo Int32Method = typeof(Queryable).GetMethods()
-            .Where(i => i.Name == "Sum")
-            .Where(i => i.IsGenericMethodDefinition)
-            .Where(i => i.ReturnType == typeof(int))
-            .Where(i => i.GetParameters().Length == 1)
-            .Single();
-
-        static readonly MethodInfo Int32WithPredicateMethod = typeof(Queryable).GetMethods()
-            .Where(i => i.Name == "Sum")
-            .Where(i => i.IsGenericMethodDefinition)
-            .Where(i => i.ReturnType == typeof(int))
-            .Where(i => i.GetParameters().Length == 2)
-            .Single();
-
         public static IOperation CreateOperation(OperationContext context, MethodCallExpression expression)
         {
-            if (expression.Method == Int32Method)
+            var method = expression.Method.GetGenericMethodDefinition();
+            if (method.GetGenericArguments().Length == 1 &&
+                method.GetParameters().Length == 1)
                 return Operation.CreateMethodCallOperation(typeof(SumInt32Operation), context, expression);
-            else if (expression.Method == Int32WithPredicateMethod)
+            if (method.GetGenericArguments().Length == 1 &&
+                method.GetParameters().Length == 2)
                 return Operation.CreateMethodCallOperation(typeof(SumInt32WithProjectionOperation<>), context, expression, 0);
             else
                 throw new NotSupportedException("Sum operation not found.");

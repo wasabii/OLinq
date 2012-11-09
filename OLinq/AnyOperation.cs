@@ -11,26 +11,17 @@ namespace OLinq
     static class AnyOperation
     {
 
-        static readonly MethodInfo Method = typeof(Queryable).GetMethods()
-            .Where(i => i.Name == "Any")
-            .Where(i => i.IsGenericMethodDefinition)
-            .Where(i => i.GetParameters().Length == 1)
-            .Single();
-
-        static readonly MethodInfo WithPredicateMethod = typeof(Queryable).GetMethods()
-            .Where(i => i.Name == "Any")
-            .Where(i => i.IsGenericMethodDefinition)
-            .Where(i => i.GetParameters().Length == 2)
-            .Single();
-
         public static IOperation CreateOperation(OperationContext context, MethodCallExpression expression)
         {
-            if (expression.Method == Method)
+            var method = expression.Method.GetGenericMethodDefinition();
+            if (method.GetGenericArguments().Length == 1 &&
+                method.GetParameters().Length == 1)
                 return Operation.CreateMethodCallOperation(typeof(AnyOperation<>), context, expression, 0);
-            else if (expression.Method == WithPredicateMethod)
+            if (method.GetGenericArguments().Length == 1 &&
+                method.GetParameters().Length == 2)
                 return Operation.CreateMethodCallOperation(typeof(AnyOperationWithPredicate<>), context, expression, 0);
-            else
-                throw new NotImplementedException("Any operation not found.");
+
+            throw new NotImplementedException("Any operation not found.");
         }
 
     }
@@ -62,7 +53,7 @@ namespace OLinq
     class AnyOperationWithPredicate<TSource> : GroupOperationWithPredicate<TSource, bool>
     {
 
-        public AnyOperationWithPredicate(OperationContext context, MethodCallExpression expression, bool useArg)
+        public AnyOperationWithPredicate(OperationContext context, MethodCallExpression expression)
             : base(context, expression, expression.GetLambdaArgument<TSource, bool>(1))
         {
 
@@ -76,7 +67,7 @@ namespace OLinq
                     break;
                 case NotifyCollectionChangedAction.Replace:
                 case NotifyCollectionChangedAction.Reset:
-                    base.OnProjectionCollectionChanged(args);
+                    ResetValue();
                     break;
                 case NotifyCollectionChangedAction.Add:
                     // we are currently false, any new true items make us true
@@ -84,7 +75,7 @@ namespace OLinq
                         SetValue(args.NewItems.Cast<LambdaOperation<bool>>().Any(i => i.Value));
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    base.OnProjectionCollectionChanged(args);
+                    ResetValue();
                     break;
             }
         }

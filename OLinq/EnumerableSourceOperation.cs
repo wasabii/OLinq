@@ -19,6 +19,7 @@ namespace OLinq
             sourceOp = OperationFactory.FromExpression<IEnumerable<TSource>>(context, expression.Arguments[0]);
             sourceOp.Init();
             SubscribeSourceOperation(sourceOp);
+            SubscribeSourceCollection(sourceOp.Value);
         }
 
         /// <summary>

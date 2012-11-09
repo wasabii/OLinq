@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Linq;
+using System.Reflection;
 
 namespace OLinq
 {
@@ -10,6 +11,17 @@ namespace OLinq
     /// </summary>
     abstract class Operation : IDisposable
     {
+
+        public static bool IsMethod(MethodInfo method, string name, int typeArgs, int parameters)
+        {
+            return typeof(Queryable).GetMember(name).Concat(typeof(Enumerable).GetMember(name))
+                .OfType<MethodInfo>()
+                .Where(i => i.IsGenericMethodDefinition)
+                .Where(i => i.GetGenericArguments().Length == typeArgs)
+                .Where(i => i.GetParameters().Length == parameters)
+                .Where(i => i == method)
+                .Any();
+        }
 
         /// <summary>
         /// Generates a new method call operation.

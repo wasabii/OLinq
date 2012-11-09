@@ -8,27 +8,17 @@ namespace OLinq
 
     static class SingleOrDefaultOperation
     {
-
-        static readonly MethodInfo Method = typeof(Queryable).GetMethods()
-            .Where(i => i.Name == "SingleOrDefault")
-            .Where(i => i.IsGenericMethodDefinition)
-            .Where(i => i.GetParameters().Length == 1)
-            .Single();
-
-        static readonly MethodInfo WithPredicateMethod = typeof(Queryable).GetMethods()
-            .Where(i => i.Name == "SingleOrDefault")
-            .Where(i => i.IsGenericMethodDefinition)
-            .Where(i => i.GetParameters().Length == 2)
-            .Single();
-
-        public static IOperation CreateOperation(OperationContext context, MethodCallExpression expression)
+public static IOperation CreateOperation(OperationContext context, MethodCallExpression expression)
         {
-            if (expression.Method == Method)
+            var method = expression.Method.GetGenericMethodDefinition();
+            if (method.GetGenericArguments().Length == 1 &&
+                method.GetParameters().Length == 1)
                 return Operation.CreateMethodCallOperation(typeof(SingleOrDefaultOperation<>), context, expression, 0);
-            else if (expression.Method == WithPredicateMethod)
+            if (method.GetGenericArguments().Length == 1 &&
+                method.GetParameters().Length == 2)
                 return Operation.CreateMethodCallOperation(typeof(SingleOrDefaultWithPredicateOperation<>), context, expression, 0);
-            else
-                throw new NotImplementedException("SingleOrDefault operation not found.");
+
+            throw new NotImplementedException("SingleOrDefault operation not found.");
         }
 
     }

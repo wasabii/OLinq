@@ -9,13 +9,14 @@ namespace OLinq
         public ConstantOperation(OperationContext context, ConstantExpression expression)
             : base(context, expression)
         {
-
+            SetValue((T)((ConstantExpression)Expression).Value);
         }
 
         public override void Init()
         {
             base.Init();
-            SetValue((T)((ConstantExpression)Expression).Value);
+
+            OnValueChanged(null, Value);
         }
 
     }
