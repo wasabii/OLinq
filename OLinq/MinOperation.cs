@@ -14,7 +14,7 @@ namespace OLinq
             var method = expression.Method.GetGenericMethodDefinition();
             if (method.GetGenericArguments().Length == 1 &&
                 method.GetParameters().Length == 1)
-                return Operation.CreateMethodCallOperation(typeof(MinOperation), context, expression);
+                return Operation.CreateMethodCallOperation(typeof(MinOperation<>), context, expression, 0);
             if (method.GetGenericArguments().Length == 1 &&
                 method.GetParameters().Length == 2)
                 return Operation.CreateMethodCallOperation(typeof(MinWithProjectionOperation<,>), context, expression, 0, 1);

@@ -14,7 +14,7 @@ namespace OLinq
             var method = expression.Method.GetGenericMethodDefinition();
             if (method.GetGenericArguments().Length == 1 &&
                 method.GetParameters().Length == 1)
-                return Operation.CreateMethodCallOperation(typeof(MaxOperation), context, expression);
+                return Operation.CreateMethodCallOperation(typeof(MaxOperation<>), context, expression, 0);
             if (method.GetGenericArguments().Length == 2 &&
                 method.GetParameters().Length == 2)
                 return Operation.CreateMethodCallOperation(typeof(MaxWithProjectionOperation<,>), context, expression, 0, 1);
