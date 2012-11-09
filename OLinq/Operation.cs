@@ -157,6 +157,14 @@ namespace OLinq
             remove { ValueChanged -= value; }
         }
 
+        public override sealed void Init()
+        {
+            base.Init();
+
+            // ensure callers believe the value initially changes
+            OnValueChanged(null, Value);
+        }
+
     }
 
 }

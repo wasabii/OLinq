@@ -15,13 +15,9 @@ namespace OLinq
         public MemberInitOperation(OperationContext context, MemberInitExpression expression)
             : base(context, expression)
         {
-            if (expression.NewExpression != null)
-            {
-                newOp = OperationFactory.FromExpression<T>(context, expression.NewExpression);
-                newOp.Init();
-                newOp.ValueChanged += newOp_ValueChanged;
-                SetValue(newOp.Value);
-            }
+            newOp = OperationFactory.FromExpression<T>(context, expression.NewExpression);
+            newOp.Init();
+            newOp.ValueChanged += newOp_ValueChanged;
 
             foreach (var binding in expression.Bindings)
             {
@@ -31,9 +27,9 @@ namespace OLinq
                     var op = OperationFactory.FromExpression(Context, memberAssignment.Expression);
                     op.Tag = memberAssignment;
                     op.Init();
-                    SetAssignment(Value, op);
                     op.ValueChanged += memberAssignmentOp_ValueChanged;
                     memberAssignmentOps.Add(op);
+                    SetAssignment(newOp.Value, op);
                 }
 
                 var list = binding as MemberListBinding;
@@ -44,6 +40,8 @@ namespace OLinq
                 if (member != null)
                     throw new NotImplementedException();
             }
+
+            SetValue(newOp.Value);
         }
 
         /// <summary>
@@ -53,10 +51,12 @@ namespace OLinq
         /// <param name="args"></param>
         void newOp_ValueChanged(object sender, ValueChangedEventArgs args)
         {
+            // set assignments onto new object before setting as value to avoid multiple events
             var value = newOp.Value;
             if (value != null)
                 SetAssignments(value);
 
+            // set as value
             SetValue(newOp.Value);
         }
 
@@ -75,6 +75,21 @@ namespace OLinq
             }
         }
 
+        /// <summary>
+        /// Sets all of the member assignment operation's values onto the target.
+        /// </summary>
+        /// <param name="target"></param>
+        void SetAssignments(object target)
+        {
+            foreach (var op in memberAssignmentOps)
+                SetAssignment(target, op);
+        }
+
+        /// <summary>
+        /// Sets the given assignment operation's value onto the target.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="op"></param>
         void SetAssignment(object target, IOperation op)
         {
             var assignment = (MemberAssignment)op.Tag;
@@ -86,12 +101,12 @@ namespace OLinq
                 SetMemberValue(target, assignment.Member, currValue);
         }
 
-        void SetAssignments(object target)
-        {
-            foreach (var op in memberAssignmentOps)
-                SetAssignment(target, op);
-        }
-
+        /// <summary>
+        /// Gets the value of the specified member on <paramref name="target"/>.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="memberInfo"></param>
+        /// <returns></returns>
         object GetMemberValue(object target, MemberInfo memberInfo)
         {
             var propertyInfo = memberInfo as PropertyInfo;
@@ -105,6 +120,12 @@ namespace OLinq
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Sets the value of the specified member on <paramref name="target"/>.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="memberInfo"></param>
+        /// <param name="value"></param>
         void SetMemberValue(object target, MemberInfo memberInfo, object value)
         {
             var propertyInfo = memberInfo as PropertyInfo;
@@ -124,28 +145,15 @@ namespace OLinq
             throw new NotImplementedException();
         }
 
-        public override void Init()
-        {
-            base.Init();
-
-            // set up initial value
-            if (newOp.Value != null)
-                SetAssignments(newOp.Value);
-
-            OnValueChanged(null, Value);
-        }
-
         public override void Dispose()
         {
-            if (newOp != null)
+            newOp.ValueChanged -= newOp_ValueChanged;
+            newOp.Dispose();
+
+            foreach (var op in memberAssignmentOps)
             {
-                newOp.ValueChanged -= newOp_ValueChanged;
-                newOp.Dispose();
-            }
-            foreach (var assignment in memberAssignmentOps)
-            {
-                assignment.ValueChanged -= memberAssignmentOp_ValueChanged;
-                assignment.Dispose();
+                op.ValueChanged -= memberAssignmentOp_ValueChanged;
+                op.Dispose();
             }
 
             base.Dispose();

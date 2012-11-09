@@ -15,8 +15,9 @@ namespace OLinq
             if (expression.Operand != null)
             {
                 operand = OperationFactory.FromExpression<TIn>(context, expression.Operand);
-                operand.ValueChanged += operand_ValueChanged;
                 operand.Init();
+                operand.ValueChanged += operand_ValueChanged;
+                SetValue(CoerceValue((TIn)operand.Value));
             }
         }
 
@@ -36,13 +37,6 @@ namespace OLinq
         /// <param name="value"></param>
         /// <returns></returns>
         protected abstract TOut CoerceValue(TIn value);
-
-        public override void Init()
-        {
-            if (operand != null)
-                OnValueChanged(null, Value);
-            base.Init();
-        }
 
         public override void Dispose()
         {

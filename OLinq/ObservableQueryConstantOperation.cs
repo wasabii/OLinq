@@ -22,13 +22,6 @@ namespace OLinq
             SetValue((IEnumerable<T>)query.Enumerable);
         }
 
-        public override void Init()
-        {
-            base.Init();
-
-            OnValueChanged(null, Value);
-        }
-
     }
 
 }

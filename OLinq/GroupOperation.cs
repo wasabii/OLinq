@@ -9,8 +9,8 @@ namespace OLinq
     abstract class GroupOperation<TSource, TResult> : EnumerableSourceOperation<TSource, TResult>
     {
 
-        public GroupOperation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression)
+        public GroupOperation(OperationContext context, MethodCallExpression expression, Expression sourceExpression)
+            : base(context, expression, sourceExpression)
         {
             ResetValue();
         }
@@ -46,21 +46,13 @@ namespace OLinq
             SetValue(RecalculateValue());
         }
 
-        public override void Init()
-        {
-            base.Init();
-
-            // so event gets raised regardless of order of initialization
-            OnValueChanged(null, Value);
-        }
-
     }
 
-    abstract class GroupOperationWithLambda<TSource, TLambdaResult, TResult> : SingleEnumerableLambdaSourceOperation<TSource, TLambdaResult, TResult>
+    abstract class GroupOperationWithLambda<TSource, TLambdaResult, TResult> : EnumerableSourceWithLambdaOperation<TSource, TLambdaResult, TResult>
     {
 
-        public GroupOperationWithLambda(OperationContext context, MethodCallExpression expression, Expression<Func<TSource, TLambdaResult>> lambdaExpression)
-            : base(context, expression, lambdaExpression)
+        public GroupOperationWithLambda(OperationContext context, MethodCallExpression expression, Expression sourceExpression, Expression<Func<TSource, TLambdaResult>> lambdaExpression)
+            : base(context, expression, sourceExpression, lambdaExpression)
         {
             ResetValue();
         }
@@ -89,21 +81,13 @@ namespace OLinq
             SetValue(RecalculateValue());
         }
 
-        public override void Init()
-        {
-            base.Init();
-
-            // so event gets raised regardless of order of initialization
-            OnValueChanged(null, Value);
-        }
-
     }
 
     abstract class GroupOperationWithProjection<TSource, TProjection, TResult> : GroupOperationWithLambda<TSource, TProjection, TResult>
     {
 
-        public GroupOperationWithProjection(OperationContext context, MethodCallExpression expression, Expression<Func<TSource, TProjection>> projectionExpression)
-            : base(context, expression, projectionExpression)
+        public GroupOperationWithProjection(OperationContext context, MethodCallExpression expression, Expression sourceExpression, Expression<Func<TSource, TProjection>> projectionExpression)
+            : base(context, expression, sourceExpression, projectionExpression)
         {
 
         }
@@ -146,8 +130,8 @@ namespace OLinq
     abstract class GroupOperationWithPredicate<TSource, TResult> : GroupOperationWithProjection<TSource, bool, TResult>
     {
 
-        public GroupOperationWithPredicate(OperationContext context, MethodCallExpression expression, Expression<Func<TSource, bool>> predicateExpression)
-            : base(context, expression, predicateExpression)
+        public GroupOperationWithPredicate(OperationContext context, MethodCallExpression expression, Expression sourceExpression, Expression<Func<TSource, bool>> predicateExpression)
+            : base(context, expression, sourceExpression, predicateExpression)
         {
 
         }

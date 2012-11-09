@@ -12,13 +12,6 @@ namespace OLinq
             SetValue((T)((ConstantExpression)Expression).Value);
         }
 
-        public override void Init()
-        {
-            base.Init();
-
-            OnValueChanged(null, Value);
-        }
-
     }
 
 }

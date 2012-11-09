@@ -8,17 +8,20 @@ namespace OLinq
     class NewOperation<T> : Operation<T>
     {
 
-        IOperation[] arguments;
+        IOperation[] argumentOps;
 
         public NewOperation(OperationContext context, NewExpression expression)
             : base(context, expression)
         {
-            arguments = new IOperation[expression.Arguments.Count];
+            argumentOps = new IOperation[expression.Arguments.Count];
             for (int i = 0; i < expression.Arguments.Count; i++)
             {
-                arguments[i] = OperationFactory.FromExpression(context, expression.Arguments[i]);
-                arguments[i].ValueChanged += argument_ValueChanged;
+                argumentOps[i] = OperationFactory.FromExpression(context, expression.Arguments[i]);
+                argumentOps[i].Init();
+                argumentOps[i].ValueChanged += argument_ValueChanged;
             }
+
+            ResetValue();
         }
 
         /// <summary>
@@ -28,34 +31,24 @@ namespace OLinq
         /// <param name="args"></param>
         void argument_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (IsInitialized)
-                Refresh();
+                ResetValue();
         }
 
-        void Refresh()
+        void ResetValue()
         {
-            var args = new object[arguments.Length];
-            for (int i = 0; i < arguments.Length; i++)
-                args[i] = arguments[i].Value;
+            var args = new object[argumentOps.Length];
+            for (int i = 0; i < argumentOps.Length; i++)
+                args[i] = argumentOps[i].Value;
 
             SetValue((T)((NewExpression)Expression).Constructor.Invoke(args));
         }
 
-        public override void Init()
-        {
-            foreach (var arg in arguments)
-                arg.Init();
-            base.Init();
-
-            Refresh();
-        }
-
         public override void Dispose()
         {
-            foreach (var arg in arguments)
+            foreach (var op in argumentOps)
             {
-                arg.ValueChanged -= argument_ValueChanged;
-                arg.Dispose();
+                op.ValueChanged -= argument_ValueChanged;
+                op.Dispose();
             }
 
             base.Dispose();

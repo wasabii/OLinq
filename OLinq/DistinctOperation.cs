@@ -11,16 +11,9 @@ namespace OLinq
     {
 
         public DistinctOperation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression)
+            : base(context, expression, expression.Arguments[0])
         {
             SetValue(this);
-        }
-
-        public override void Init()
-        {
-            base.Init();
-
-            OnValueChanged(null, Value);
         }
 
         public IEnumerator<TElement> GetEnumerator()

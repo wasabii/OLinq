@@ -32,7 +32,7 @@ namespace OLinq
         int sum = 0;
 
         public SumInt32Operation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression)
+            : base(context, expression, expression.Arguments[0])
         {
 
         }
@@ -60,7 +60,7 @@ namespace OLinq
         int sum = 0;
 
         public SumInt32WithProjectionOperation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression, expression.GetLambdaArgument<TSource, int>(1))
+            : base(context, expression, expression.Arguments[0], expression.GetLambdaArgument<TSource, int>(1))
         {
 
         }

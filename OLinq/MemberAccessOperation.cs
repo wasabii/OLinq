@@ -92,13 +92,6 @@ namespace OLinq
                 throw new NotSupportedException(string.Format("MemberAccess does not support Member of type {0}.", expression.Member.MemberType));
         }
 
-        public override void Init()
-        {
-            base.Init();
-
-            OnValueChanged(null, Value);
-        }
-
         public override void Dispose()
         {
             if (targetOp != null)

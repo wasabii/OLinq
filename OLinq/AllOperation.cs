@@ -26,7 +26,7 @@ namespace OLinq
     {
 
         public AllOperation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression, expression.GetLambdaArgument<TSource, bool>(1))
+            : base(context, expression, expression.Arguments[0], expression.GetLambdaArgument<TSource, bool>(1))
         {
 
         }

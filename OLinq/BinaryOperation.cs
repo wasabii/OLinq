@@ -17,29 +17,27 @@ namespace OLinq
             self = expression;
 
             left = OperationFactory.FromExpression(context, expression.Left);
+            left.Init();
             left.ValueChanged += left_ValueChanged;
 
             right = OperationFactory.FromExpression(context, expression.Right);
+            right.Init();
             right.ValueChanged += right_ValueChanged;
+
+            ResetValue();
         }
 
         void left_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (!IsInitialized)
-                return;
-
-            Reset();
+            ResetValue();
         }
 
         void right_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            if (!IsInitialized)
-                return;
-
-            Reset();
+            ResetValue();
         }
 
-        bool Reset()
+        bool ResetValue()
         {
             return SetValue(
                 Expression.Lambda<Func<bool>>(Expression.MakeBinary(self.NodeType,
@@ -48,30 +46,20 @@ namespace OLinq
                         .Compile()());
         }
 
-        public override void Init()
-        {
-            if (left != null)
-                left.Init();
-            if (right != null)
-                right.Init();
-
-            base.Init();
-
-            // set our initial value after both left and right initial values have loaded
-            Reset();
-        }
-
         public override void Dispose()
         {
             if (left != null)
             {
                 left.ValueChanged -= left_ValueChanged;
                 left.Dispose();
+                left = null;
             }
+
             if (right != null)
             {
                 right.ValueChanged -= right_ValueChanged;
                 right.Dispose();
+                right = null;
             }
 
             base.Dispose();

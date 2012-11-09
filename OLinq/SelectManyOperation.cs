@@ -7,11 +7,11 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class SelectManyOperation<TSource, TResult> : SingleEnumerableLambdaSourceOperation<TSource, IEnumerable<TResult>, IEnumerable<TResult>>, IEnumerable<TResult>, INotifyCollectionChanged
+    class SelectManyOperation<TSource, TResult> : EnumerableSourceWithLambdaOperation<TSource, IEnumerable<TResult>, IEnumerable<TResult>>, IEnumerable<TResult>, INotifyCollectionChanged
     {
 
         public SelectManyOperation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression, expression.GetLambdaArgument<TSource, IEnumerable<TResult>>(1))
+            : base(context, expression, expression.Arguments[0], expression.GetLambdaArgument<TSource, IEnumerable<TResult>>(1))
         {
             SetValue(this);
         }
@@ -24,13 +24,6 @@ namespace OLinq
         protected override void OnLambdaValueChanged(LambdaValueChangedEventArgs<TSource, IEnumerable<TResult>> args)
         {
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        }
-
-        public override void Init()
-        {
-            base.Init();
-
-            OnValueChanged(null, Value);
         }
 
         public IEnumerator<TResult> GetEnumerator()

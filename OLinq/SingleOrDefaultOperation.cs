@@ -27,7 +27,7 @@ public static IOperation CreateOperation(OperationContext context, MethodCallExp
     {
 
         public SingleOrDefaultOperation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression)
+            : base(context, expression, expression.Arguments[0])
         {
 
         }
@@ -43,7 +43,7 @@ public static IOperation CreateOperation(OperationContext context, MethodCallExp
     {
 
         public SingleOrDefaultWithPredicateOperation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression, expression.GetLambdaArgument<TSource, bool>(1))
+            : base(context, expression, expression.Arguments[0], expression.GetLambdaArgument<TSource, bool>(1))
         {
 
         }

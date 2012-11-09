@@ -7,11 +7,11 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class SelectOperation<TSource, TResult> : SingleEnumerableLambdaSourceOperation<TSource, TResult, IEnumerable<TResult>>, IEnumerable<TResult>, INotifyCollectionChanged
+    class SelectOperation<TSource, TResult> : EnumerableSourceWithLambdaOperation<TSource, TResult, IEnumerable<TResult>>, IEnumerable<TResult>, INotifyCollectionChanged
     {
 
         public SelectOperation(OperationContext context, MethodCallExpression expression)
-            : base(context, expression, expression.GetLambdaArgument<TSource, TResult>(1))
+            : base(context, expression, expression.Arguments[0], expression.GetLambdaArgument<TSource, TResult>(1))
         {
             SetValue(this);
         }
@@ -44,13 +44,6 @@ namespace OLinq
             // single value has been replaced
             if (!object.Equals(oldValue, newValue))
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, new TResult[] { newValue }, new TResult[] { oldValue }));
-        }
-
-        public override void Init()
-        {
-            base.Init();
-
-            OnValueChanged(null, this);
         }
 
         public IEnumerator<TResult> GetEnumerator()

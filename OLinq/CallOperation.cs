@@ -55,13 +55,6 @@ namespace OLinq
             Invoke();
         }
 
-        public override void Init()
-        {
-            base.Init();
-
-            OnValueChanged(null, Value);
-        }
-
         protected virtual T Invoke(object target, params object[] parameters)
         {
             return (T)((MethodCallExpression)Expression).Method.Invoke(target, parameters);

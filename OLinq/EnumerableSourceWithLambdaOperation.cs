@@ -5,13 +5,13 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    abstract class SingleEnumerableLambdaSourceOperation<TSource, TLambdaResult, TResult> : EnumerableSourceOperation<TSource, TResult>
+    abstract class EnumerableSourceWithLambdaOperation<TSource, TLambdaResult, TResult> : EnumerableSourceOperation<TSource, TResult>
     {
 
         LambdaContainer<TSource, TLambdaResult> lambdas;
 
-        public SingleEnumerableLambdaSourceOperation(OperationContext context, MethodCallExpression expression, Expression<Func<TSource, TLambdaResult>> lambdaExpression)
-            : base(context, expression)
+        public EnumerableSourceWithLambdaOperation(OperationContext context, MethodCallExpression expression, Expression sourceExpression, Expression<Func<TSource, TLambdaResult>> lambdaExpression)
+            : base(context, expression, sourceExpression)
         {
             // generate lambda collection
             lambdas = new LambdaContainer<TSource, TLambdaResult>(lambdaExpression, CreateLambdaContext);

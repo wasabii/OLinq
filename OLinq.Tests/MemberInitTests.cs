@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -11,65 +9,42 @@ namespace OLinq.Tests
     public class MemberInitTests
     {
 
-        public class Foo : INotifyPropertyChanged
+        [TestMethod]
+        public void MemberInitOperationRead()
         {
-
-            private string name;
-
-            public string Name
+            var src = new NotificationObject<string>()
             {
-                get { return name; }
-                set { name = value; OnPropertyChanged("Name"); }
-            }
+                Value1 = "Test",
+            };
 
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            protected void OnPropertyChanged(string propertyName)
-            {
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-
+            var op = new MemberInitOperation<NotificationObject<string>>(new OperationContext(),
+                Expression.MemberInit(
+                    Expression.New(typeof(NotificationObject<string>)),
+                    Expression.Bind(typeof(NotificationObject<string>).GetProperty("Value2"),
+                        Expression.MakeMemberAccess(
+                            Expression.Constant(src),
+                            typeof(NotificationObject<string>).GetProperty("Value1")))));
+            Assert.AreEqual("Test", op.Value.Value2);
         }
-
-        public class FooIn : Foo
-        {
-
-
-
-        }
-
-        public class FooOut : Foo
-        {
-
-            private bool isItTrue;
-
-            public bool IsItTrue
-            {
-                get { return isItTrue; }
-                set { isItTrue = value; OnPropertyChanged("IsItTrue"); }
-            }
-
-        }
-
-        ObservableCollection<FooIn> c = new ObservableCollection<FooIn>()
-        {
-            new FooIn() { Name = "A" },
-        };
 
         [TestMethod]
-        public void MemberInitTest1()
+        public void MemberInitOperationWrite()
         {
-            var v = c.AsObservableQuery()
-                .Select(i => new FooOut()
-                {
-                    IsItTrue = i.Name.Any(j => j == 'Z'),
-                })
-                .AsObservableQuery()
-                .ToView();
+            var src = new NotificationObject<string>()
+            {
+                Value1 = "Test",
+            };
 
-            c[0].Name += "Z";
-            Assert.AreEqual(true, v.Count(i => i.IsItTrue) == 1);
+            var op = new MemberInitOperation<NotificationObject<string>>(new OperationContext(),
+                Expression.MemberInit(
+                    Expression.New(typeof(NotificationObject<string>)),
+                    Expression.Bind(typeof(NotificationObject<string>).GetProperty("Value2"),
+                        Expression.MakeMemberAccess(
+                            Expression.Constant(src),
+                            typeof(NotificationObject<string>).GetProperty("Value1")))));
+
+            src.Value1 = "Test2";
+            Assert.AreEqual("Test2", op.Value.Value2);
         }
 
     }

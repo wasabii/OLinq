@@ -34,13 +34,6 @@ namespace OLinq
             SetValue((T)body.Value);
         }
 
-        public override void Init()
-        {
-            base.Init();
-
-            OnValueChanged(null, Value);
-        }
-
         public override void Dispose()
         {
             if (body != null)
