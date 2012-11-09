@@ -16,6 +16,16 @@ namespace OLinq
             SetValue(this);
         }
 
+        protected override void OnPredicateCollectionChanged(NotifyCollectionChangedEventArgs args)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        protected override void OnPredicateValueChanged(LambdaValueChangedEventArgs<TElement, bool> args)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
         public IEnumerator<TElement> GetEnumerator()
         {
             return Predicates.Where(i => i.Value).Select(i => Predicates[i]).GetEnumerator();

@@ -13,15 +13,37 @@ namespace OLinq
         public ConcatOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression, expression.Arguments[0], expression.Arguments[1])
         {
-
+            SetValue(this);
         }
 
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
-
-        void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override void OnSourceCollectionReset()
         {
-            if (CollectionChanged != null)
-                CollectionChanged(this, args);
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        protected override void OnSourceCollectionItemsAdded(IEnumerable<TSource> newItems, int startingIndex)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.ToList(), -1));
+        }
+
+        protected override void OnSourceCollectionItemsRemoved(IEnumerable<TSource> oldItems, int startingIndex)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.ToList(), -1));
+        }
+
+        protected override void OnSource2CollectionReset()
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        protected override void OnSource2CollectionItemsAdded(IEnumerable<TSource> newItems, int startingIndex)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.ToList(), -1));
+        }
+
+        protected override void OnSource2CollectionItemsRemoved(IEnumerable<TSource> oldItems, int startingIndex)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.ToList(), -1));
         }
 
         public IEnumerator<TSource> GetEnumerator()
@@ -32,6 +54,14 @@ namespace OLinq
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+        void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
+        {
+            if (CollectionChanged != null)
+                CollectionChanged(this, args);
         }
 
     }
