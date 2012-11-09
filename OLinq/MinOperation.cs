@@ -18,8 +18,8 @@ namespace OLinq
             if (method.GetGenericArguments().Length == 1 &&
                 method.GetParameters().Length == 2)
                 return Operation.CreateMethodCallOperation(typeof(MinWithProjectionOperation<,>), context, expression, 0, 1);
-            else
-                throw new NotSupportedException("Min operation not found.");
+
+            throw new NotSupportedException("Min operation not found.");
         }
 
     }

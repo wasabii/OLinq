@@ -15,11 +15,11 @@ namespace OLinq
             if (method.GetGenericArguments().Length == 1 &&
                 method.GetParameters().Length == 1)
                 return Operation.CreateMethodCallOperation(typeof(MaxOperation), context, expression);
-            if (method.GetGenericArguments().Length == 1 &&
+            if (method.GetGenericArguments().Length == 2 &&
                 method.GetParameters().Length == 2)
                 return Operation.CreateMethodCallOperation(typeof(MaxWithProjectionOperation<,>), context, expression, 0, 1);
-            else
-                throw new NotSupportedException("Max operation not found.");
+
+            throw new NotSupportedException("Max operation not found.");
         }
 
     }
