@@ -11,11 +11,12 @@ namespace OLinq.Tests
     public class ConcatTests
     {
 
-        int resetted;
-
         [TestMethod]
         public void ConcatTest()
         {
+
+            int changes = 0;
+
             var c1 = new ObservableCollection<string>()
             {
                 "Item_1_1",
@@ -38,29 +39,23 @@ namespace OLinq.Tests
                 .Concat(c2)
                 .AsObservableQuery()
                 .ToView();
-            q.CollectionChanged += q_CollectionChanged;
+            q.CollectionChanged += (s, a) => changes++;
 
             Assert.AreEqual(q.Count(), 10);
 
             c1.Add("Item_1_6");
-            Assert.AreEqual(1, resetted);
+            Assert.AreEqual(1, changes);
             Assert.AreEqual(q.Count(), 11);
             c1.Remove("Item_1_6");
-            Assert.AreEqual(2, resetted);
+            Assert.AreEqual(2, changes);
             Assert.AreEqual(q.Count(), 10);
 
             c1.Add("Item_2_6");
-            Assert.AreEqual(3, resetted);
+            Assert.AreEqual(3, changes);
             Assert.AreEqual(q.Count(), 11);
             c1.Remove("Item_2_6");
-            Assert.AreEqual(4, resetted);
+            Assert.AreEqual(4, changes);
             Assert.AreEqual(q.Count(), 10);
-        }
-
-        void q_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
-        {
-            if (args.Action == NotifyCollectionChangedAction.Reset)
-                resetted++;
         }
 
     }
