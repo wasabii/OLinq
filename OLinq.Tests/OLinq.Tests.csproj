@@ -53,6 +53,8 @@
     <Compile Include="CallTests.cs" />
     <Compile Include="ConcatTests.cs" />
     <Compile Include="AnyTests.cs" />
+    <Compile Include="AverageTests.cs" />
+    <Compile Include="GroupByTests.cs" />
     <Compile Include="MaxTests.cs" />
     <Compile Include="MinTests.cs" />
     <Compile Include="MemberAccessTests.cs" />
