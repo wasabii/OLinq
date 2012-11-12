@@ -34,7 +34,11 @@ namespace OLinq
         /// <returns></returns>
         internal static IOperation<T> FromExpression<T>(OperationContext context, Expression expression)
         {
-            return (IOperation<T>)FromExpression(context, expression);
+            var op = FromExpression(context, expression);
+            if (op is IOperation<T>)
+                return (IOperation<T>)op;
+
+            throw new InvalidOperationException("Generated operation does not return expected type.");
         }
 
         /// <summary>
@@ -152,7 +156,7 @@ namespace OLinq
                 case "Sum":
                     return SumOperation.CreateOperation(context, expression);
                 case "Average":
-                    return AverageOperation.CreateOperation(context, expression);
+                    return AverageOperationFactory.CreateOperation(context, expression);
                 case "Cast":
                     return CastOperation.CreateOperation(context, expression);
                 case "Min":

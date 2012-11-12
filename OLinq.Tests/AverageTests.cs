@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace OLinq.Tests
 {
@@ -20,7 +21,7 @@ namespace OLinq.Tests
             };
 
             var q = c.AsObservableQuery()
-                .Observe(i => i.Average());
+                .Observe(i => ((IEnumerable<int>)i).Average());
         }
 
     }
