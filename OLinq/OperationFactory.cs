@@ -78,8 +78,8 @@ namespace OLinq
                 case ExpressionType.LessThanOrEqual:
                     return new BinaryOperation(context, (BinaryExpression)expression);
                 case ExpressionType.Convert:
-                    var inType = ((UnaryExpression)expression).Operand.Type;
-                    var outType = ((UnaryExpression)expression).Type;
+                    var inType = Fix(((UnaryExpression)expression).Operand.Type);
+                    var outType = Fix(((UnaryExpression)expression).Type);
                     return (IOperation)Activator.CreateInstance(typeof(ConvertOperation<,>).MakeGenericType(inType, outType), context, expression);
             }
 

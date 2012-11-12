@@ -15,7 +15,12 @@ namespace OLinq
 
         protected override TOut CoerceValue(TIn value)
         {
-            return (TOut)Convert.ChangeType(value, typeof(TOut));
+            return Coerce(value);
+        }
+
+        TOut Coerce(dynamic arg)
+        {
+            return arg;
         }
 
     }
