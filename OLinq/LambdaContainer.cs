@@ -259,7 +259,7 @@ namespace OLinq
 
         public IEnumerator<LambdaOperation<TResult>> GetEnumerator()
         {
-            return Items.Select(i => GetOrCreateLambda(i)).GetEnumerator();
+            return Items != null ? Items.Select(i => GetOrCreateLambda(i)).GetEnumerator() : Enumerable.Empty<LambdaOperation<TResult>>().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
