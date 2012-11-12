@@ -48,6 +48,7 @@
     <Compile Include="AllOperation.cs" />
     <Compile Include="ConvertOperation.cs" />
     <Compile Include="EnumerableSourceWithPredicateOperation.cs" />
+    <Compile Include="Grouping.cs" />
     <Compile Include="SumOperation.cs" />
     <Compile Include="EnumerableSourceWithLambdaOperation.cs" />
     <Compile Include="EnumerableSourceOperation.cs" />

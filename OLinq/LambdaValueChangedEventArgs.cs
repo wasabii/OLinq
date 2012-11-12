@@ -6,7 +6,10 @@
 
         internal LambdaValueChangedEventArgs(TSource item, LambdaOperation<TResult> operation, TResult oldValue, TResult newValue)
         {
-
+            Item = item;
+            Operation = operation;
+            OldValue = oldValue;
+            NewValue = newValue;
         }
 
         public TSource Item { get; private set; }

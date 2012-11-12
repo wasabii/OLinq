@@ -48,8 +48,14 @@ namespace OLinq
 
         public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> self, TKey key, Func<TKey, TValue> func)
         {
+            bool created;
+            return GetOrCreate<TKey, TValue>(self, key, func, out created);
+        }
+
+        public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> self, TKey key, Func<TKey, TValue> func, out bool created)
+        {
             TValue value;
-            if (!self.TryGetValue(key, out value))
+            if (created = !self.TryGetValue(key, out value))
                 value = self[key] = func(key);
             return value;
         }
