@@ -85,7 +85,7 @@ namespace OLinq
         {
             var expression = (MemberExpression)Expression;
             if (expression.Member is PropertyInfo)
-                SetValue((T)((PropertyInfo)expression.Member).GetValue(targetOp.Value));
+                SetValue((T)((PropertyInfo)expression.Member).GetValue(targetOp.Value, null));
             else if (expression.Member is FieldInfo)
                 SetValue((T)((FieldInfo)expression.Member).GetValue(targetOp.Value));
             else

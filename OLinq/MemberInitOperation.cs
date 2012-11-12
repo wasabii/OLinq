@@ -111,7 +111,7 @@ namespace OLinq
         {
             var propertyInfo = memberInfo as PropertyInfo;
             if (propertyInfo != null)
-                return propertyInfo.GetValue(target);
+                return propertyInfo.GetValue(target, null);
 
             var fieldInfo = memberInfo as FieldInfo;
             if (fieldInfo != null)
@@ -131,7 +131,7 @@ namespace OLinq
             var propertyInfo = memberInfo as PropertyInfo;
             if (propertyInfo != null)
             {
-                propertyInfo.SetValue(target, value);
+                propertyInfo.SetValue(target, value, null);
                 return;
             }
 
