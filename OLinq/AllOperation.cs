@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
@@ -46,25 +47,11 @@ namespace OLinq
 
         }
 
-        protected override void OnPredicateCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override void OnPredicateCollectionItemsAdded(IEnumerable<LambdaOperation<bool>> newItems, int startingIndex)
         {
-            switch (args.Action)
-            {
-                case NotifyCollectionChangedAction.Move:
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                case NotifyCollectionChangedAction.Reset:
-                    ResetValue();
-                    break;
-                case NotifyCollectionChangedAction.Add:
-                    // we are currently false, any new true items make us true
-                    if (Value)
-                        SetValue(args.NewItems.Cast<LambdaOperation<bool>>().All(i => i.Value));
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    ResetValue();
-                    break;
-            }
+            // we are currently true, any new false items make us false
+            if (Value)
+                SetValue(newItems.All(i => i.Value));
         }
 
         protected override void OnPredicateValueChanged(LambdaValueChangedEventArgs<TSource, bool> args)

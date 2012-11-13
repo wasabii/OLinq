@@ -107,20 +107,6 @@ namespace OLinq
             get { return Lambdas; }
         }
 
-        protected override sealed void OnLambdaCollectionChanged(NotifyCollectionChangedEventArgs args)
-        {
-            OnProjectionCollectionChanged(args);
-        }
-
-        /// <summary>
-        /// Invoked when the projection collection is changed.
-        /// </summary>
-        /// <param name="args"></param>
-        protected virtual void OnProjectionCollectionChanged(NotifyCollectionChangedEventArgs args)
-        {
-            base.OnLambdaCollectionChanged(args);
-        }
-
         protected override sealed void OnLambdaCollectionReset()
         {
             OnProjectionCollectionReset();
@@ -194,18 +180,47 @@ namespace OLinq
             get { return Projections; }
         }
 
-        protected override sealed void OnProjectionCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override sealed void OnProjectionCollectionReset()
         {
-            OnPredicateCollectionChanged(args);
+            OnPredicateCollectionReset();
         }
 
         /// <summary>
-        /// Invoked when the predicate collection is changed.
+        /// Invoked when the predicate collection is reset.
         /// </summary>
-        /// <param name="args"></param>
-        protected virtual void OnPredicateCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected virtual void OnPredicateCollectionReset()
         {
-            ResetValue();
+            base.OnProjectionCollectionReset();
+        }
+
+        protected override sealed void OnProjectionCollectionItemsAdded(IEnumerable<LambdaOperation<bool>> newItems, int startingIndex)
+        {
+            OnPredicateCollectionItemsAdded(newItems, startingIndex);
+        }
+
+        /// <summary>
+        /// Invoked when items are added to the predicate collection.
+        /// </summary>
+        /// <param name="newItems"></param>
+        /// <param name="startingIndex"></param>
+        protected virtual void OnPredicateCollectionItemsAdded(IEnumerable<LambdaOperation<bool>> newItems, int startingIndex)
+        {
+            base.OnProjectionCollectionItemsAdded(newItems, startingIndex);
+        }
+
+        protected override sealed void OnProjectionCollectionItemsRemoved(IEnumerable<LambdaOperation<bool>> oldItems, int startingIndex)
+        {
+            OnPredicateCollectionItemsRemoved(oldItems, startingIndex);
+        }
+
+        /// <summary>
+        /// Invoked when items are removed from the predicate collection.
+        /// </summary>
+        /// <param name="oldItems"></param>
+        /// <param name="startingIndex"></param>
+        protected virtual void OnPredicateCollectionItemsRemoved(IEnumerable<LambdaOperation<bool>> oldItems, int startingIndex)
+        {
+            base.OnProjectionCollectionItemsRemoved(oldItems, startingIndex);
         }
 
         protected override sealed void OnProjectionValueChanged(LambdaValueChangedEventArgs<TSource, bool> args)
@@ -219,7 +234,7 @@ namespace OLinq
         /// <param name="args"></param>
         protected virtual void OnPredicateValueChanged(LambdaValueChangedEventArgs<TSource, bool> args)
         {
-            ResetValue();
+            base.OnProjectionValueChanged(args);
         }
 
     }
