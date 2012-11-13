@@ -18,7 +18,7 @@ namespace OLinq
             lambdas = new LambdaContainer<TSource, TLambdaResult>(lambdaExpression, CreateLambdaContext);
             lambdas.CollectionChanged += lambdas_CollectionChanged;
             lambdas.ValueChanged += lambdas_ValueChanged;
-            lambdas.Items = Source;
+            lambdas.Source = Source;
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace OLinq
         protected override void OnSourceCollectionReset()
         {
             if (lambdas != null)
-                lambdas.Items = Source;
+                lambdas.Source = Source;
         }
 
         /// <summary>

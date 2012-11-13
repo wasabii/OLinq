@@ -12,7 +12,7 @@ namespace OLinq
     class LambdaContainer<TSource, TResult> : IEnumerable<LambdaOperation<TResult>>, INotifyPropertyChanging, INotifyPropertyChanged, INotifyCollectionChanged, IDisposable
     {
 
-        IEnumerable<TSource> items;
+        IEnumerable<TSource> source;
         Dictionary<TSource, LambdaOperation<TResult>> lambdas =
             new Dictionary<TSource, LambdaOperation<TResult>>();
 
@@ -62,20 +62,20 @@ namespace OLinq
         /// <summary>
         /// Gets or sets the set of items for which to generate lambda operations.
         /// </summary>
-        public IEnumerable<TSource> Items
+        public IEnumerable<TSource> Source
         {
-            get { return items; }
-            set { RaisePropertyChanging("Items"); items = value; RaisePropertyChanged("Items"); }
+            get { return source; }
+            set { RaisePropertyChanging("Source"); source = value; RaisePropertyChanged("Source"); }
         }
 
         void this_PropertyChanging(object sender, PropertyChangingEventArgs args)
         {
             switch (args.PropertyName)
             {
-                case "Items":
-                    var c = items as INotifyCollectionChanged;
-                    if (c != null)
-                        c.CollectionChanged -= items_CollectionChanged;
+                case "Source":
+                    var o = source as INotifyCollectionChanged;
+                    if (o != null)
+                        o.CollectionChanged -= items_CollectionChanged;
                     break;
             }
         }
@@ -84,10 +84,10 @@ namespace OLinq
         {
             switch (args.PropertyName)
             {
-                case "Items":
-                    var c = items as INotifyCollectionChanged;
-                    if (c != null)
-                        c.CollectionChanged += items_CollectionChanged;
+                case "Source":
+                    var o = source as INotifyCollectionChanged;
+                    if (o != null)
+                        o.CollectionChanged += items_CollectionChanged;
 
                     // reinitialize from new collection
                     Reset();
@@ -124,11 +124,11 @@ namespace OLinq
         void Reset()
         {
             // release all missing lambdas
-            ReleaseLambdaOperations(lambdas.Values.Except((Items ?? Enumerable.Empty<TSource>()).Select(i => GetLambda(i))).ToList());
+            ReleaseLambdaOperations(lambdas.Values.Except((Source ?? Enumerable.Empty<TSource>()).Select(i => GetLambda(i))).ToList());
 
             // ensure new lambdas
-            if (Items != null)
-                foreach (var lambda in Items)
+            if (Source != null)
+                foreach (var lambda in Source)
                     GetOrCreateLambda(lambda);
         }
 
@@ -259,7 +259,7 @@ namespace OLinq
 
         public IEnumerator<LambdaOperation<TResult>> GetEnumerator()
         {
-            return Items != null ? Items.Select(i => GetOrCreateLambda(i)).GetEnumerator() : Enumerable.Empty<LambdaOperation<TResult>>().GetEnumerator();
+            return Source != null ? Source.Select(i => GetOrCreateLambda(i)).GetEnumerator() : Enumerable.Empty<LambdaOperation<TResult>>().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -285,7 +285,7 @@ namespace OLinq
         public void Dispose()
         {
             // removes items, which results in removal and disposal of predicates
-            Items = null;
+            Source = null;
         }
 
     }
