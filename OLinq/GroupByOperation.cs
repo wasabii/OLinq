@@ -18,26 +18,21 @@ namespace OLinq
             SetValue(this);
         }
 
-        protected override void OnLambdaCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override void OnLambdaCollectionReset()
         {
-            switch (args.Action)
-            {
-                case NotifyCollectionChangedAction.Move:
-                case NotifyCollectionChangedAction.Replace:
-                case NotifyCollectionChangedAction.Reset:
-                    Reset();
-                    break;
-                case NotifyCollectionChangedAction.Add:
-                    var newItems = args.NewItems.Cast<LambdaOperation<TKey>>().Select(i => Lambdas[i]);
-                    foreach (var item in newItems)
-                        AddItem(item);
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    var oldItems = args.OldItems.Cast<LambdaOperation<TKey>>().Select(i => Lambdas[i]);
-                    foreach (var item in oldItems)
-                        RemoveItem(item);
-                    break;
-            }
+            Reset();
+        }
+
+        protected override void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<TKey>> newItems, int startingIndex)
+        {
+            foreach (var item in newItems.Select(i => Lambdas[i]))
+                AddItem(item);
+        }
+
+        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TKey>> oldItems, int startingIndex)
+        {
+            foreach (var item in oldItems.Select(i => Lambdas[i]))
+                RemoveItem(item);
         }
 
         protected override void OnLambdaValueChanged(LambdaValueChangedEventArgs<TElement, TKey> args)
@@ -46,6 +41,9 @@ namespace OLinq
             AddItem(args.Item);
         }
 
+        /// <summary>
+        /// Resets the collection by reevaluating the groupings.
+        /// </summary>
         void Reset()
         {
             // find new and old items
@@ -62,6 +60,10 @@ namespace OLinq
                 AddItem(item);
         }
 
+        /// <summary>
+        /// Adds an item to the appropriate grouping
+        /// </summary>
+        /// <param name="item"></param>
         void AddItem(TElement item)
         {
             // lambda associated with item
@@ -104,6 +106,11 @@ namespace OLinq
             }
         }
 
+        /// <summary>
+        /// Gets or creates a grouping for the specified key value.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         Grouping<TKey, TElement> GetOrCreateGroup(TKey key)
         {
             // does group already exist?

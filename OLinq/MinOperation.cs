@@ -53,24 +53,6 @@ namespace OLinq
 
         }
 
-        protected override void OnProjectionCollectionChanged(NotifyCollectionChangedEventArgs args)
-        {
-            switch (args.Action)
-            {
-                case NotifyCollectionChangedAction.Move:
-                case NotifyCollectionChangedAction.Replace:
-                case NotifyCollectionChangedAction.Reset:
-                    ResetValue();
-                    break;
-                case NotifyCollectionChangedAction.Add:
-                    ResetValue();
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    ResetValue();
-                    break;
-            }
-        }
-
         protected override TResult RecalculateValue()
         {
             return min = Projections.Min(i => i.Value);

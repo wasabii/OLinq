@@ -57,7 +57,7 @@ namespace OLinq
         /// <summary>
         /// Invoked when the value of an argument is changed.
         /// </summary>
-        protected virtual void SourceChanged(IEnumerable<TSource> oldSource, IEnumerable<TSource> newSource)
+        void SourceChanged(IEnumerable<TSource> oldSource, IEnumerable<TSource> newSource)
         {
             UnsubscribeSourceCollection(oldSource);
             SubscribeSourceCollection(newSource);
@@ -89,16 +89,6 @@ namespace OLinq
         /// <param name="startingIndex"></param>
         protected virtual void OnSourceCollectionItemsAdded(IEnumerable<TSource> newItems, int startingIndex)
         {
-            foreach (var item in newItems)
-                OnSourceCollectionItemAdded(item, startingIndex >= 0 ? startingIndex++ : -1);
-        }
-
-        /// <summary>
-        /// Override to implement the logic required to acknowledge an item being added from the underlying operation.
-        /// </summary>
-        /// <param name="item"></param>
-        protected virtual void OnSourceCollectionItemAdded(TSource item, int index)
-        {
 
         }
 
@@ -108,16 +98,6 @@ namespace OLinq
         /// <param name="oldItems"></param>
         /// <param name="startingIndex"></param>
         protected virtual void OnSourceCollectionItemsRemoved(IEnumerable<TSource> oldItems, int startingIndex)
-        {
-            foreach (var item in oldItems.ToList())
-                OnSourceCollectionItemRemoved(item, startingIndex >= 0 ? startingIndex++ : -1);
-        }
-
-        /// <summary>
-        /// Override to implement the logic required to remove an underlying item from the operation.
-        /// </summary>
-        /// <param name="item"></param>
-        protected virtual void OnSourceCollectionItemRemoved(TSource item, int index)
         {
 
         }

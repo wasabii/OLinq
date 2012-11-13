@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq.Expressions;
 
@@ -32,6 +33,49 @@ namespace OLinq
         /// </summary>
         /// <param name="args"></param>
         protected virtual void OnPredicateCollectionChanged(NotifyCollectionChangedEventArgs args)
+        {
+
+        }
+
+        protected override void OnLambdaCollectionReset()
+        {
+            OnPredicateCollectionReset();
+        }
+
+        /// <summary>
+        /// Invoked when the predicate collection is reset.
+        /// </summary>
+        protected virtual void OnPredicateCollectionReset()
+        {
+
+        }
+
+        protected override sealed void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<bool>> newItems, int startingIndex)
+        {
+            OnPredicateCollectionItemsAdded(newItems, startingIndex);
+        }
+
+        /// <summary>
+        /// Invoked when items are added to the predicate collection.
+        /// </summary>
+        /// <param name="newItems"></param>
+        /// <param name="startingIndex"></param>
+        protected virtual void OnPredicateCollectionItemsAdded(IEnumerable<LambdaOperation<bool>> newItems, int startingIndex)
+        {
+
+        }
+
+        protected override sealed void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<bool>> oldItems, int startingIndex)
+        {
+            OnPredicateCollectionItemsRemoved(oldItems, startingIndex);
+        }
+
+        /// <summary>
+        /// Invoked when items are removed from the predicate collection.
+        /// </summary>
+        /// <param name="oldItems"></param>
+        /// <param name="startingIndex"></param>
+        protected virtual void OnPredicateCollectionItemsRemoved(IEnumerable<LambdaOperation<bool>> oldItems, int startingIndex)
         {
 
         }

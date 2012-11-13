@@ -128,24 +128,16 @@ namespace OLinq
             return l / r;
         }
 
-        protected override void OnProjectionCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override void OnProjectionCollectionItemsAdded(IEnumerable<LambdaOperation<TResult>> newItems, int startingIndex)
         {
-            switch (args.Action)
-            {
-                case NotifyCollectionChangedAction.Move:
-                case NotifyCollectionChangedAction.Replace:
-                case NotifyCollectionChangedAction.Reset:
-                    ResetValue();
-                    break;
-                case NotifyCollectionChangedAction.Add:
-                    var newValues = args.NewItems.Cast<LambdaOperation<TResult>>().Select(i => i.Value);
-                    SetValue(average = Divide(sum = Add(sum, Sum(newValues)), count += newValues.Count()));
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    var oldValues = args.OldItems.Cast<LambdaOperation<TResult>>().Select(i => i.Value);
-                    SetValue(average = Divide(sum = Subtract(sum, Sum(oldValues)), count -= oldValues.Count()));
-                    break;
-            }
+            var newValues = newItems.Select(i => i.Value);
+            SetValue(average = Divide(sum = Add(sum, Sum(newValues)), count += newValues.Count()));
+        }
+
+        protected override void OnProjectionCollectionItemsRemoved(IEnumerable<LambdaOperation<TResult>> oldItems, int startingIndex)
+        {
+            var oldValues = oldItems.Select(i => i.Value);
+            SetValue(average = Divide(sum = Subtract(sum, Sum(oldValues)), count -= oldValues.Count()));
         }
 
         protected override void OnProjectionValueChanged(LambdaValueChangedEventArgs<TSource, TResult> args)

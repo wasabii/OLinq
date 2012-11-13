@@ -57,7 +57,17 @@ namespace OLinq
             ResetValue();
         }
 
-        protected override void OnLambdaCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override void OnLambdaCollectionReset()
+        {
+            ResetValue();
+        }
+
+        protected override void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<TLambdaResult>> newItems, int startingIndex)
+        {
+            ResetValue();
+        }
+
+        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TLambdaResult>> oldItems, int startingIndex)
         {
             ResetValue();
         }
@@ -108,7 +118,50 @@ namespace OLinq
         /// <param name="args"></param>
         protected virtual void OnProjectionCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
-            ResetValue();
+            base.OnLambdaCollectionChanged(args);
+        }
+
+        protected override sealed void OnLambdaCollectionReset()
+        {
+            OnProjectionCollectionReset();
+        }
+
+        /// <summary>
+        /// Invoked when the projection collection is reset.
+        /// </summary>
+        protected virtual void OnProjectionCollectionReset()
+        {
+            base.OnLambdaCollectionReset();
+        }
+
+        protected override sealed void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<TProjection>> newItems, int startingIndex)
+        {
+            OnProjectionCollectionItemsAdded(newItems, startingIndex);
+        }
+
+        /// <summary>
+        /// Invoked when items are added to the projection collection.
+        /// </summary>
+        /// <param name="newItems"></param>
+        /// <param name="startingIndex"></param>
+        protected virtual void OnProjectionCollectionItemsAdded(IEnumerable<LambdaOperation<TProjection>> newItems, int startingIndex)
+        {
+            base.OnLambdaCollectionItemsAdded(newItems, startingIndex);
+        }
+
+        protected override sealed void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TProjection>> oldItems, int startingIndex)
+        {
+            OnProjectionCollectionItemsRemoved(oldItems, startingIndex);
+        }
+
+        /// <summary>
+        /// Invoked when items are removed from the projection collection.
+        /// </summary>
+        /// <param name="oldItems"></param>
+        /// <param name="startingIndex"></param>
+        protected virtual void OnProjectionCollectionItemsRemoved(IEnumerable<LambdaOperation<TProjection>> oldItems, int startingIndex)
+        {
+            base.OnLambdaCollectionItemsRemoved(oldItems, startingIndex);
         }
 
         protected override sealed void OnLambdaValueChanged(LambdaValueChangedEventArgs<TSource, TProjection> args)
@@ -122,7 +175,7 @@ namespace OLinq
         /// <param name="args"></param>
         protected virtual void OnProjectionValueChanged(LambdaValueChangedEventArgs<TSource, TProjection> args)
         {
-            ResetValue();
+            base.OnLambdaValueChanged(args);
         }
 
     }

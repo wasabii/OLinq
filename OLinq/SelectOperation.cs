@@ -16,24 +16,19 @@ namespace OLinq
             SetValue(this);
         }
 
-        protected override void OnLambdaCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override void OnLambdaCollectionReset()
         {
-            switch (args.Action)
-            {
-                case NotifyCollectionChangedAction.Reset:
-                case NotifyCollectionChangedAction.Move:
-                case NotifyCollectionChangedAction.Replace:
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-                    break;
-                case NotifyCollectionChangedAction.Add:
-                    var newItems = args.NewItems.Cast<LambdaOperation<TResult>>().Select(i => i.Value).ToList();
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems, args.NewStartingIndex));
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    var oldItems = args.OldItems.Cast<LambdaOperation<TResult>>().Select(i => i.Value).ToList();
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems, args.OldStartingIndex));
-                    break;
-            }
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        protected override void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<TResult>> newItems, int startingIndex)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.Select(i => i.Value).ToList(), startingIndex));
+        }
+
+        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TResult>> oldItems, int startingIndex)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.Select(i => i.Value).ToList(), startingIndex));
         }
 
         protected override void OnLambdaValueChanged(LambdaValueChangedEventArgs<TSource, TResult> args)

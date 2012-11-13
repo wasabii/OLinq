@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq.Expressions;
 
@@ -60,6 +61,21 @@ namespace OLinq
         void lambdas_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             OnLambdaCollectionChanged(args);
+
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Reset:
+                case NotifyCollectionChangedAction.Move:
+                case NotifyCollectionChangedAction.Replace:
+                    OnLambdaCollectionReset();
+                    break;
+                case NotifyCollectionChangedAction.Add:
+                    OnLambdaCollectionItemsAdded(Utils.AsEnumerable<LambdaOperation<TLambdaResult>>(args.NewItems), args.NewStartingIndex);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    OnLambdaCollectionItemsRemoved(Utils.AsEnumerable<LambdaOperation<TLambdaResult>>(args.OldItems), args.OldStartingIndex);
+                    break;
+            }
         }
 
         /// <summary>
@@ -79,6 +95,34 @@ namespace OLinq
         void lambdas_ValueChanged(object sender, LambdaValueChangedEventArgs<TSource, TLambdaResult> args)
         {
             OnLambdaValueChanged(args);
+        }
+
+        /// <summary>
+        /// Invoked when the lambda collection is reset.
+        /// </summary>
+        protected virtual void OnLambdaCollectionReset()
+        {
+
+        }
+
+        /// <summary>
+        /// Invoked when items are added to the lambda collection.
+        /// </summary>
+        /// <param name="newItems"></param>
+        /// <param name="startingIndex"></param>
+        protected virtual void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<TLambdaResult>> newItems, int startingIndex)
+        {
+
+        }
+
+        /// <summary>
+        /// Invoked when items are removed from the lambda collection.
+        /// </summary>
+        /// <param name="oldItems"></param>
+        /// <param name="startingIndex"></param>
+        protected virtual void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TLambdaResult>> oldItems, int startingIndex)
+        {
+
         }
 
         /// <summary>

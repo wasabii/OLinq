@@ -16,26 +16,19 @@ namespace OLinq
             SetValue(this);
         }
 
-        protected override void OnLambdaCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override void OnLambdaCollectionReset()
         {
-            switch (args.Action)
-            {
-                case NotifyCollectionChangedAction.Move:
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move));
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                case NotifyCollectionChangedAction.Reset:
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-                    break;
-                case NotifyCollectionChangedAction.Add:
-                    var newItems = args.NewItems.Cast<LambdaOperation<IEnumerable<TResult>>>().SelectMany(i => i.Value).ToList();
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems));
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    var oldItems = args.OldItems.Cast<LambdaOperation<IEnumerable<TResult>>>().SelectMany(i => i.Value).ToList();
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems));
-                    break;
-            }
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        protected override void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<IEnumerable<TResult>>> newItems, int startingIndex)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.SelectMany(i => i.Value).ToList()));
+        }
+
+        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<IEnumerable<TResult>>> oldItems, int startingIndex)
+        {
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.SelectMany(i => i.Value).ToList()));
         }
 
         protected override void OnLambdaValueChanged(LambdaValueChangedEventArgs<TSource, IEnumerable<TResult>> args)

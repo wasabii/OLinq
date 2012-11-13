@@ -65,22 +65,14 @@ namespace OLinq
 
         }
 
-        protected override void OnProjectionCollectionChanged(NotifyCollectionChangedEventArgs args)
+        protected override void OnProjectionCollectionItemsAdded(IEnumerable<LambdaOperation<int>> newItems, int startingIndex)
         {
-            switch (args.Action)
-            {
-                case NotifyCollectionChangedAction.Move:
-                case NotifyCollectionChangedAction.Replace:
-                case NotifyCollectionChangedAction.Reset:
-                    ResetValue();
-                    break;
-                case NotifyCollectionChangedAction.Add:
-                    SetValue(sum += args.NewItems.Cast<LambdaOperation<int>>().Sum(i => i.Value));
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    SetValue(sum -= args.OldItems.Cast<LambdaOperation<int>>().Sum(i => i.Value));
-                    break;
-            }
+            SetValue(sum += newItems.Sum(i => i.Value));
+        }
+
+        protected override void OnProjectionCollectionItemsRemoved(IEnumerable<LambdaOperation<int>> oldItems, int startingIndex)
+        {
+            SetValue(sum -= oldItems.Sum(i => i.Value));
         }
 
         protected override void OnProjectionValueChanged(LambdaValueChangedEventArgs<TSource, int> args)
