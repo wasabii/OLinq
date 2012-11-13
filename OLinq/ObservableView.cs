@@ -8,22 +8,23 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    public class ObservableView<T> : IEnumerable<T>, INotifyCollectionChanged, IDisposable
+    public class ObservableView<TElement> : IEnumerable<TElement>, INotifyCollectionChanged, IDisposable
     {
 
         private Expression expression;
-        private Operation<IEnumerable<T>> operation;
+        private Operation<IEnumerable<TElement>> operation;
+        private ObservableBuffer<TElement> buffer;
 
         /// <summary>
         /// Initializes a new instance.
         /// </summary>
         /// <param name="query"></param>
-        internal ObservableView(ObservableQuery<T> query)
+        internal ObservableView(ObservableQuery<TElement> query)
         {
             expression = query.Expression;
 
             // establish root operation, hook up events, and load
-            operation = (Operation<IEnumerable<T>>)OperationFactory.FromExpression<IEnumerable<T>>(new OperationContext(), expression);
+            operation = (Operation<IEnumerable<TElement>>)OperationFactory.FromExpression<IEnumerable<TElement>>(new OperationContext(), expression);
             operation.ValueChanged += operation_ValueChanged;
             operation.Init();
         }
@@ -56,7 +57,7 @@ namespace OLinq
             OnCollectionChanged(args);
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<TElement> GetEnumerator()
         {
             return operation.Value.GetEnumerator();
         }
@@ -101,9 +102,19 @@ namespace OLinq
         /// Initiates a new query using this view as the base.
         /// </summary>
         /// <returns></returns>
-        public ObservableQuery<T> Query()
+        public ObservableQuery<TElement> Query()
         {
-            return new ObservableQuery<T>(this);
+            return new ObservableQuery<TElement>(this);
+        }
+
+        /// <summary>
+        /// Gets a buffer that is kept in sync with the view. This method might be useful if you are working with a
+        /// library that requires a populated ObservableCollection.
+        /// </summary>
+        /// <returns></returns>
+        public ObservableBuffer<TElement> ToBuffer()
+        {
+            return buffer ?? (buffer = new ObservableBuffer<TElement>(this));
         }
 
     }

@@ -49,6 +49,7 @@
     <Compile Include="ConvertOperation.cs" />
     <Compile Include="EnumerableSourceWithPredicateOperation.cs" />
     <Compile Include="Grouping.cs" />
+    <Compile Include="ObservableBuffer.cs" />
     <Compile Include="SumOperation.cs" />
     <Compile Include="EnumerableSourceWithLambdaOperation.cs" />
     <Compile Include="EnumerableSourceOperation.cs" />

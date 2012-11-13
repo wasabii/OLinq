@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
@@ -18,12 +19,34 @@ namespace OLinq
 
         protected override void OnPredicateCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Move:
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Reset:
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                    break;
+                case NotifyCollectionChangedAction.Add:
+                    var newItems = args.NewItems.Cast<LambdaOperation<bool>>().Where(i => i.Value).Select(i => Predicates[i]).ToList();
+                    if (newItems.Count > 0)
+                        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems));
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    var oldItems = args.OldItems.Cast<LambdaOperation<bool>>().Where(i => i.Value).Select(i => Predicates[i]).ToList();
+                    if (oldItems.Count > 0)
+                        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems));
+                    break;
+            }
         }
 
         protected override void OnPredicateValueChanged(LambdaValueChangedEventArgs<TElement, bool> args)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            if (!args.OldValue && args.NewValue)
+                // was false, now true: item added
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, args.Item));
+            else if (args.OldValue && !args.NewValue)
+                // was true, now false: item removed
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, args.Item));
         }
 
         public IEnumerator<TElement> GetEnumerator()
