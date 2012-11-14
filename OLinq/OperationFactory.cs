@@ -81,6 +81,8 @@ namespace OLinq
                     var inType = Fix(((UnaryExpression)expression).Operand.Type);
                     var outType = Fix(((UnaryExpression)expression).Type);
                     return (IOperation)Activator.CreateInstance(typeof(ConvertOperation<,>).MakeGenericType(inType, outType), context, expression);
+                case ExpressionType.Conditional:
+                    return (IOperation)Activator.CreateInstance(typeof(ConditionalOperation<>).MakeGenericType(type), context, (ConditionalExpression)expression);
             }
 
             throw new NotSupportedException(string.Format("{0} expression not supported.", expression.NodeType));

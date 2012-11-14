@@ -20,7 +20,7 @@ namespace OLinq
 
         TOut Coerce(dynamic arg)
         {
-            return arg;
+            return (TOut)arg;
         }
 
     }

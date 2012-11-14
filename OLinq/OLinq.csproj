@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConcatOperation.cs" />
+    <Compile Include="ConditionalOperation.cs" />
     <Compile Include="ConstantOperation.cs" />
     <Compile Include="AverageOperation.cs" />
     <Compile Include="CastOperation.cs" />
