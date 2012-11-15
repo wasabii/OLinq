@@ -16,6 +16,7 @@ namespace OLinq
             : base(context, expression, source1Expression)
         {
             source2Op = OperationFactory.FromExpression<IEnumerable<TSource2>>(Context, source2Expression);
+            SubscribeSource2Operation(source2Op);
             Source2Changed(null, source2Op.Value);
         }
 

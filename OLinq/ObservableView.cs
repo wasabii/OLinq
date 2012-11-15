@@ -25,25 +25,18 @@ namespace OLinq
 
             // establish root operation, hook up events, and load
             operation = (Operation<IEnumerable<TElement>>)OperationFactory.FromExpression<IEnumerable<TElement>>(new OperationContext(), expression);
-            operation.ValueChanged += operation_ValueChanged;
+            SubscribeOperation(operation);
+            OperationChanged(null, operation.Value);
         }
 
         /// <summary>
-        /// Invoked when the handler changes its output value.
+        /// Invoked when the operation's value changes.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
         void operation_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            var oldValue = args.OldValue as INotifyCollectionChanged;
-            if (oldValue != null)
-                oldValue.CollectionChanged -= operation_CollectionChanged;
-
-            var newValue = args.NewValue as INotifyCollectionChanged;
-            if (newValue != null)
-                newValue.CollectionChanged += operation_CollectionChanged;
-
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            OperationChanged((IEnumerable<TElement>)args.OldValue, (IEnumerable<TElement>)args.NewValue);
         }
 
         /// <summary>
@@ -56,9 +49,78 @@ namespace OLinq
             OnCollectionChanged(args);
         }
 
+        /// <summary>
+        /// Invoked when the value of the operation is changed.
+        /// </summary>
+        void OperationChanged(IEnumerable<TElement> oldValue, IEnumerable<TElement> newValue)
+        {
+            UnsubscribeOperationCollection(oldValue);
+            SubscribeOperationCollection(newValue);
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        /// <summary>
+        /// Subscribes to the specified source operation.
+        /// </summary>
+        /// <param name="operation"></param>
+        void SubscribeOperation(IOperation<IEnumerable> operation)
+        {
+            operation.ValueChanged += operation_ValueChanged;
+        }
+
+        /// <summary>
+        /// Unsubscribes from the specified source operation.
+        /// </summary>
+        /// <param name="operation"></param>
+        void UnsubscribeOperation(IOperation<IEnumerable> operation)
+        {
+            operation.ValueChanged -= operation_ValueChanged;
+        }
+
+        /// <summary>
+        /// Subscribes to the given source collection.
+        /// </summary>
+        /// <param name="sourceCollection"></param>
+        void SubscribeOperationCollection(IEnumerable value)
+        {
+            var collection = value as INotifyCollectionChanged;
+            if (collection != null)
+                collection.CollectionChanged += operation_CollectionChanged;
+        }
+
+        /// <summary>
+        /// Unsubscribes from the given source collection.
+        /// </summary>
+        /// <param name="sourceCollection"></param>
+        void UnsubscribeOperationCollection(IEnumerable value)
+        {
+            var collection = value as INotifyCollectionChanged;
+            if (collection != null)
+                collection.CollectionChanged += operation_CollectionChanged;
+        }
+
+        /// <summary>
+        /// Disposes of the view instance, unsubscribing from all listened to events.
+        /// </summary>
+        public void Dispose()
+        {
+            if (operation != null)
+            {
+                UnsubscribeOperationCollection(operation.Value);
+                UnsubscribeOperation(operation);
+                operation.Dispose();
+                operation = null;
+            }
+        }
+
         public IEnumerator<TElement> GetEnumerator()
         {
             return operation.Value.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         /// <summary>
@@ -74,27 +136,6 @@ namespace OLinq
         {
             if (CollectionChanged != null)
                 CollectionChanged(this, args);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        /// <summary>
-        /// Disposes of the view instance, unsubscribing from all listened to events.
-        /// </summary>
-        public void Dispose()
-        {
-            if (operation != null)
-            {
-                var operationValue = operation.Value as INotifyCollectionChanged;
-                operation.ValueChanged -= operation_ValueChanged;
-                operation.Dispose();
-                if (operationValue != null)
-                    operationValue.CollectionChanged -= operation_CollectionChanged;
-                operation = null;
-            }
         }
 
         /// <summary>
