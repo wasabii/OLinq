@@ -37,12 +37,12 @@ namespace OLinq
 
         }
 
-        protected override void OnSourceCollectionItemsAdded(System.Collections.Generic.IEnumerable<TSource> newItems, int startingIndex)
+        protected override void OnSourceCollectionItemsAdded(IEnumerable<TSource> newItems, int startingIndex)
         {
             SetValue(count += newItems.Count());
         }
 
-        protected override void OnSourceCollectionItemsRemoved(System.Collections.Generic.IEnumerable<TSource> oldItems, int startingIndex)
+        protected override void OnSourceCollectionItemsRemoved(IEnumerable<TSource> oldItems, int startingIndex)
         {
             SetValue(count -= oldItems.Count());
         }
