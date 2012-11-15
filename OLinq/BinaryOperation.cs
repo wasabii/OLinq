@@ -17,11 +17,9 @@ namespace OLinq
             self = expression;
 
             left = OperationFactory.FromExpression(context, expression.Left);
-            left.Init();
             left.ValueChanged += left_ValueChanged;
 
             right = OperationFactory.FromExpression(context, expression.Right);
-            right.Init();
             right.ValueChanged += right_ValueChanged;
 
             ResetValue();

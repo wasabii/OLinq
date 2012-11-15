@@ -14,15 +14,12 @@ namespace OLinq
             : base(context, expression)
         {
             testOp = OperationFactory.FromExpression<bool>(context, expression.Test);
-            testOp.Init();
             testOp.ValueChanged += testOp_ValueChanged;
 
             trueOp = OperationFactory.FromExpression<TResult>(context, expression.IfTrue);
-            trueOp.Init();
             trueOp.ValueChanged += trueOp_ValueChanged;
 
             falseOp = OperationFactory.FromExpression<TResult>(context, expression.IfFalse);
-            falseOp.Init();
             falseOp.ValueChanged += falseOp_ValueChanged;
 
             // set initial value

@@ -17,7 +17,6 @@ namespace OLinq
             if (expression.Expression != null)
             {
                 targetOp = OperationFactory.FromExpression(context, expression.Expression);
-                targetOp.Init();
                 targetOp.ValueChanged += target_ValueChanged;
                 OnTargetValueChanged(null, targetOp.Value);
             }

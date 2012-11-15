@@ -26,7 +26,6 @@ namespace OLinq
             // establish root operation, hook up events, and load
             operation = (Operation<IEnumerable<TElement>>)OperationFactory.FromExpression<IEnumerable<TElement>>(new OperationContext(), expression);
             operation.ValueChanged += operation_ValueChanged;
-            operation.Init();
         }
 
         /// <summary>

@@ -24,6 +24,9 @@ namespace OLinq
             // subscribe to notifications from both sides
             view.CollectionChanged += view_CollectionChanged;
             buffer.CollectionChanged += buffer_CollectionChanged;
+
+            // reset buffer items
+            Reset();
         }
 
         /// <summary>
@@ -38,14 +41,7 @@ namespace OLinq
                 case NotifyCollectionChangedAction.Move:
                 case NotifyCollectionChangedAction.Replace:
                 case NotifyCollectionChangedAction.Reset:
-                    // remove obsolete items
-                    var oldItems = buffer.Except(view).ToList();
-                    foreach (var item in oldItems)
-                        buffer.Remove(item);
-                    // add missing items
-                    var newItems = view.Except(buffer).ToList();
-                    foreach (var item in newItems)
-                        buffer.Add(item);
+                    Reset();
                     break;
                 case NotifyCollectionChangedAction.Add:
                     // add new items
@@ -85,6 +81,22 @@ namespace OLinq
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, args.OldItems, args.OldStartingIndex));
                     break;
             }
+        }
+
+        /// <summary>
+        /// Resets the buffered collection based on the underlying list.
+        /// </summary>
+        void Reset()
+        {
+            // remove obsolete items
+            var oldItems = buffer.Except(view).ToList();
+            foreach (var item in oldItems)
+                buffer.Remove(item);
+
+            // add missing items
+            var newItems = view.Except(buffer).ToList();
+            foreach (var item in newItems)
+                buffer.Add(item);
         }
 
         /// <summary>

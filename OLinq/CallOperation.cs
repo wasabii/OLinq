@@ -20,7 +20,6 @@ namespace OLinq
             if (expression.Object != null)
             {
                 targetOp = OperationFactory.FromExpression(context, expression.Object);
-                targetOp.Init();
                 targetOp.ValueChanged += targetOp_ValueChanged;
             }
 
@@ -28,7 +27,6 @@ namespace OLinq
             for (int i = 0; i < expression.Arguments.Count; i++)
             {
                 parameterOps[i] = OperationFactory.FromExpression(context, expression.Arguments[i]);
-                parameterOps[i].Init();
                 parameterOps[i].ValueChanged += parameterOp_ValueChanged;
             }
 

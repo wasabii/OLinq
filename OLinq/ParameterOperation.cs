@@ -15,7 +15,6 @@ namespace OLinq
             variable = Context.GetVariable<T>(expression.Name);
             if (variable != null)
             {
-                variable.Init();
                 variable.ValueChanged += variable_ValueChanged;
                 SetValue(variable.Value);
             }

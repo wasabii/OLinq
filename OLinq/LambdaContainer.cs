@@ -167,7 +167,6 @@ namespace OLinq
             // create new test and subscribe to test modifications
             var lambda = new LambdaOperation<TResult>(ctx, Expression);
             lambda.Tag = item;
-            lambda.Init(); // load before value changed to prevent double notification
             lambda.ValueChanged += lambda_ValueChanged;
             lambdas[item] = lambda;
 

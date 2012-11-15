@@ -17,7 +17,6 @@ namespace OLinq
             for (int i = 0; i < expression.Arguments.Count; i++)
             {
                 argumentOps[i] = OperationFactory.FromExpression(context, expression.Arguments[i]);
-                argumentOps[i].Init();
                 argumentOps[i].ValueChanged += argument_ValueChanged;
             }
 

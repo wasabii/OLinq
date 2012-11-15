@@ -59,19 +59,6 @@ namespace OLinq
         public Expression Expression { get; private set; }
 
         /// <summary>
-        /// Gets whether or not the operation has been initialized.
-        /// </summary>
-        public bool IsInitialized { get; private set; }
-
-        /// <summary>
-        /// Invoked to init the operation's values. Operations should override this method to init their children.
-        /// </summary>
-        public virtual void Init()
-        {
-            IsInitialized = true;
-        }
-
-        /// <summary>
         /// Holder for attached information.
         /// </summary>
         public object Tag { get; set; }
@@ -155,14 +142,6 @@ namespace OLinq
         {
             add { ValueChanged += value; }
             remove { ValueChanged -= value; }
-        }
-
-        public override sealed void Init()
-        {
-            base.Init();
-
-            // ensure callers believe the value initially changes
-            OnValueChanged(null, Value);
         }
 
     }

@@ -17,7 +17,6 @@ namespace OLinq
         {
             // source operation
             sourceOp = OperationFactory.FromExpression<IEnumerable<TSource>>(context, sourceExpression);
-            sourceOp.Init();
             SourceChanged(null, sourceOp.Value);
         }
 

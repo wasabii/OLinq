@@ -16,7 +16,6 @@ namespace OLinq
             : base(context, expression)
         {
             newOp = OperationFactory.FromExpression<T>(context, expression.NewExpression);
-            newOp.Init();
             newOp.ValueChanged += newOp_ValueChanged;
 
             foreach (var binding in expression.Bindings)
@@ -26,7 +25,6 @@ namespace OLinq
                 {
                     var op = OperationFactory.FromExpression(Context, memberAssignment.Expression);
                     op.Tag = memberAssignment;
-                    op.Init();
                     op.ValueChanged += memberAssignmentOp_ValueChanged;
                     memberAssignmentOps.Add(op);
                     SetAssignment(newOp.Value, op);

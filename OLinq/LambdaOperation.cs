@@ -18,7 +18,6 @@ namespace OLinq
             if (expression.Body != null)
             {
                 body = (IOperation<T>)OperationFactory.FromExpression(context, expression.Body);
-                body.Init();
                 body.ValueChanged += body_ValueChanged;
                 SetValue(body.Value);
             }

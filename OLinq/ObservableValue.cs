@@ -32,7 +32,6 @@ namespace OLinq
             // operation to emit value
             operation = OperationFactory.FromExpression<TResult>(ctx, resultExpr);
             operation.ValueChanged += operation_ValueChanged;
-            operation.Init();
         }
 
         void operation_ValueChanged(object sender, ValueChangedEventArgs args)

@@ -25,11 +25,6 @@ namespace OLinq
         event ValueChangedEventHandler ValueChanged;
 
         /// <summary>
-        /// Initializes the operation <see cref="Operation"/>.
-        /// </summary>
-        void Init();
-
-        /// <summary>
         /// Holder for attached information.
         /// </summary>
         object Tag { get; set; }

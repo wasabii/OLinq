@@ -15,7 +15,6 @@ namespace OLinq
             if (expression.Operand != null)
             {
                 operand = OperationFactory.FromExpression<TIn>(context, expression.Operand);
-                operand.Init();
                 operand.ValueChanged += operand_ValueChanged;
                 SetValue(CoerceValue((TIn)operand.Value));
             }

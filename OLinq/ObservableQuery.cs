@@ -38,7 +38,7 @@ namespace OLinq
 
     }
 
-    public class ObservableQuery<T> : ObservableQuery, IQueryable<T>, IQueryProvider
+    public class ObservableQuery<TElement> : ObservableQuery, IQueryable<TElement>, IQueryProvider
     {
 
         /// <summary>
@@ -69,17 +69,17 @@ namespace OLinq
 
         }
 
-        private IEnumerable<T> enumerable;
+        private IEnumerable<TElement> enumerable;
         private Expression expression;
 
         /// <summary>
         /// Initializes a new instance.
         /// </summary>
         /// <param name="enumerable"></param>
-        public ObservableQuery(IEnumerable<T> enumerable)
+        public ObservableQuery(IEnumerable<TElement> enumerable)
         {
             this.enumerable = enumerable;
-            this.expression = Expression.Constant(this, typeof(IQueryable<T>));
+            this.expression = Expression.Constant(this, typeof(IQueryable<TElement>));
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace OLinq
 
         public override Type ElementType
         {
-            get { return typeof(T); }
+            get { return typeof(TElement); }
         }
 
         public override IQueryProvider Provider
@@ -116,12 +116,12 @@ namespace OLinq
         /// transformed into a View.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<T> GetEnumerator()
+        public IEnumerator<TElement> GetEnumerator()
         {
             // transform the query into an enumerable query
             var expr = new EnumerableTransformVisitor().Visit(expression);
-            var query = new EnumerableQuery<T>(expr);
-            return ((IEnumerable<T>)query).GetEnumerator();
+            var query = new EnumerableQuery<TElement>(expr);
+            return ((IEnumerable<TElement>)query).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -157,7 +157,7 @@ namespace OLinq
         {
             // transform the query into an enumerable query
             var expr = new EnumerableTransformVisitor().Visit(expression);
-            var query = new EnumerableQuery<T>(expr);
+            var query = new EnumerableQuery<TElement>(expr);
             return ((IQueryProvider)query).Execute(expr);
         }
 
@@ -172,25 +172,27 @@ namespace OLinq
         }
 
         /// <summary>
+        /// Finalizes the <see cref="ObservableQuery`1"/> into an <see cref="ObservableView`1"/>, which raises change
+        /// notiications when objects returned by the query are altered.
+        /// </summary>
+        /// <typeparam name="TElement"></typeparam>
+        /// <param name="self"></param>
+        /// <returns></returns>
+        public ObservableView<TElement> ToObservableView()
+        {
+            return new ObservableView<TElement>(this);
+        }
+
+        /// <summary>
         /// Obtains an <see cref="ObservableValue`1"/> for a scalar query result, from which you can watch for change
         /// notifications of the scalar value.
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="scalarFunc"></param>
         /// <returns></returns>
-        public ObservableValue<IEnumerable<T>, TResult> Observe<TResult>(Expression<Func<IQueryable<T>, TResult>> scalarFunc)
+        public ObservableValue<IEnumerable<TElement>, TResult> Observe<TResult>(Expression<Func<IQueryable<TElement>, TResult>> scalarFunc)
         {
-            return new ObservableValue<IEnumerable<T>, TResult>(expression, scalarFunc);
-        }
-
-        /// <summary>
-        /// Obtains an <see cref="ObservableView`1"/> for this query, from which you can watch for change notifications
-        /// in the query results.
-        /// </summary>
-        /// <returns></returns>
-        public ObservableView<T> ToObservableView()
-        {
-            return new ObservableView<T>(this);
+            return new ObservableValue<IEnumerable<TElement>, TResult>(expression, scalarFunc);
         }
 
     }
