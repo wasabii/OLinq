@@ -137,15 +137,18 @@ namespace OLinq
             return ObservableQuery.Create(expression.Type, expression);
         }
 
-        IQueryable<S> IQueryProvider.CreateQuery<S>(Expression expression)
+        IQueryable<TElement> IQueryProvider.CreateQuery<TElement>(Expression expression)
         {
             if (expression == null)
                 throw new ArgumentNullException("expression");
 
-            if (!typeof(IQueryable<S>).IsAssignableFrom(expression.Type))
-                throw new ArgumentException("expression");
+            if (typeof(IOrderedQueryable<TElement>).IsAssignableFrom(expression.Type))
+                return new OrderedObservableQuery<TElement>(expression);
 
-            return new ObservableQuery<S>(expression);
+            if (typeof(IQueryable<TElement>).IsAssignableFrom(expression.Type))
+                return new ObservableQuery<TElement>(expression);
+
+            throw new ArgumentException("Expression does not return IQueryable.");
         }
 
         /// <summary>
@@ -193,6 +196,23 @@ namespace OLinq
         public ObservableValue<IEnumerable<TElement>, TResult> Observe<TResult>(Expression<Func<IQueryable<TElement>, TResult>> scalarFunc)
         {
             return new ObservableValue<IEnumerable<TElement>, TResult>(expression, scalarFunc);
+        }
+
+    }
+
+    public class OrderedObservableQuery<TElement> : ObservableQuery<TElement>, IOrderedQueryable<TElement>
+    {
+
+        public OrderedObservableQuery(Expression expression)
+            : base(expression)
+        {
+
+        }
+
+        public OrderedObservableQuery(IOrderedEnumerable<TElement> orderedEnumerable)
+            : base(orderedEnumerable)
+        {
+
         }
 
     }

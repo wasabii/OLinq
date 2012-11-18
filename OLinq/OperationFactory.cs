@@ -165,6 +165,8 @@ namespace OLinq
                     return MinOperation.CreateOperation(context, expression);
                 case "Max":
                     return MaxOperation.CreateOperation(context, expression);
+                case "OrderBy":
+                    return OrderByOperation.CreateOperation(context, expression);
                 default:
                     throw new NotSupportedException(expression.Method.Name);
             }

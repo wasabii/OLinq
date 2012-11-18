@@ -42,6 +42,7 @@
     <Compile Include="AverageOperation.cs" />
     <Compile Include="CastOperation.cs" />
     <Compile Include="DefaultIfEmptyOperator.cs" />
+    <Compile Include="LambdaResultComparer.cs" />
     <Compile Include="MinOperation.cs" />
     <Compile Include="MaxOperation.cs" />
     <Compile Include="EnumerableSource2Operation.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Grouping.cs" />
     <Compile Include="ObservableBuffer.cs" />
     <Compile Include="ObservableQueryable.cs" />
+    <Compile Include="OrderByOperation.cs" />
     <Compile Include="SumOperation.cs" />
     <Compile Include="EnumerableSourceWithLambdaOperation.cs" />
     <Compile Include="EnumerableSourceOperation.cs" />
