@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class BinaryOperation : Operation<bool>
+    class BinaryOperation<T> : Operation<T>
     {
 
         private BinaryExpression self;
@@ -35,10 +35,10 @@ namespace OLinq
             ResetValue();
         }
 
-        bool ResetValue()
+        T ResetValue()
         {
             return SetValue(
-                Expression.Lambda<Func<bool>>(Expression.MakeBinary(self.NodeType,
+                Expression.Lambda<Func<T>>(Expression.MakeBinary(self.NodeType,
                     Expression.Constant(left.Value, self.Left.Type),
                     Expression.Constant(right.Value, self.Right.Type)))
                         .Compile()());

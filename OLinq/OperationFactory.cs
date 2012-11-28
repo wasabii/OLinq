@@ -76,13 +76,16 @@ namespace OLinq
                 case ExpressionType.GreaterThanOrEqual:
                 case ExpressionType.LessThan:
                 case ExpressionType.LessThanOrEqual:
-                    return new BinaryOperation(context, (BinaryExpression)expression);
+                    return new BinaryOperation<bool>(context, (BinaryExpression)expression);
                 case ExpressionType.Convert:
                     var inType = Fix(((UnaryExpression)expression).Operand.Type);
                     var outType = Fix(((UnaryExpression)expression).Type);
                     return (IOperation)Activator.CreateInstance(typeof(ConvertOperation<,>).MakeGenericType(inType, outType), context, expression);
                 case ExpressionType.Conditional:
                     return (IOperation)Activator.CreateInstance(typeof(ConditionalOperation<>).MakeGenericType(type), context, (ConditionalExpression)expression);
+                case ExpressionType.Subtract:
+                case ExpressionType.Divide:
+                    return (IOperation)Activator.CreateInstance(typeof(BinaryOperation<>).MakeGenericType(type), context, (BinaryExpression)expression);
             }
 
             throw new NotSupportedException(string.Format("{0} expression not supported.", expression.NodeType));
