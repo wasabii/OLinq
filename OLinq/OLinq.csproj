@@ -42,6 +42,7 @@
     <Compile Include="AverageOperation.cs" />
     <Compile Include="CastOperation.cs" />
     <Compile Include="DefaultIfEmptyOperator.cs" />
+    <Compile Include="FirstOrDefaultOperation.cs" />
     <Compile Include="LambdaResultComparer.cs" />
     <Compile Include="MinOperation.cs" />
     <Compile Include="MaxOperation.cs" />

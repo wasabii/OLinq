@@ -170,6 +170,9 @@ namespace OLinq
                     return MaxOperation.CreateOperation(context, expression);
                 case "OrderBy":
                     return OrderByOperation.CreateOperation(context, expression);
+                case "FirstOrDefault":
+                    sourceItemType = expression.Method.GetGenericArguments()[0];
+                    return (IOperation)Activator.CreateInstance(typeof(FirstOrDefaultOperation<>).MakeGenericType(sourceItemType), context, expression);
                 default:
                     throw new NotSupportedException(expression.Method.Name);
             }
