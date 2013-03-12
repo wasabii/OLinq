@@ -82,13 +82,18 @@ namespace OLinq
         /// </summary>
         void ResetValue()
         {
-            var expression = (MemberExpression)Expression;
-            if (expression.Member is PropertyInfo)
-                SetValue((T)((PropertyInfo)expression.Member).GetValue(targetOp.Value, null));
-            else if (expression.Member is FieldInfo)
-                SetValue((T)((FieldInfo)expression.Member).GetValue(targetOp.Value));
+            if (targetOp.Value == null)
+                SetValue(default(T));
             else
-                throw new NotSupportedException(string.Format("MemberAccess does not support Member of type {0}.", expression.Member.MemberType));
+            {
+                var expression = (MemberExpression)Expression;
+                if (expression.Member is PropertyInfo)
+                    SetValue((T)((PropertyInfo)expression.Member).GetValue(targetOp.Value, null));
+                else if (expression.Member is FieldInfo)
+                    SetValue((T)((FieldInfo)expression.Member).GetValue(targetOp.Value));
+                else
+                    throw new NotSupportedException(string.Format("MemberAccess does not support Member of type {0}.", expression.Member.MemberType));
+            }
         }
 
         public override void Dispose()
