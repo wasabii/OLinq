@@ -78,6 +78,9 @@ namespace OLinq
         /// <param name="enumerable"></param>
         public ObservableQuery(IEnumerable<TElement> enumerable)
         {
+            if (enumerable == null)
+                throw new ArgumentNullException("enumerable");
+
             this.enumerable = enumerable;
             this.expression = Expression.Constant(this, typeof(IQueryable<TElement>));
         }
@@ -193,7 +196,7 @@ namespace OLinq
         /// <typeparam name="TResult"></typeparam>
         /// <param name="scalarFunc"></param>
         /// <returns></returns>
-        public ObservableValue<IEnumerable<TElement>, TResult> Observe<TResult>(Expression<Func<IQueryable<TElement>, TResult>> scalarFunc)
+        public ObservableValue<TResult> Observe<TResult>(Expression<Func<IQueryable<TElement>, TResult>> scalarFunc)
         {
             return new ObservableValue<IEnumerable<TElement>, TResult>(expression, scalarFunc);
         }

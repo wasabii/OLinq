@@ -52,7 +52,7 @@ namespace OLinq
         {
             var newValue = target as INotifyPropertyChanged;
             if (newValue != null)
-                newValue.PropertyChanged += target_PropertyChanged;
+                PropertyChangedEventManager.AddHandler(newValue, target_PropertyChanged, ((MemberExpression)Expression).Member.Name);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace OLinq
         {
             var oldValue = target as INotifyPropertyChanged;
             if (oldValue != null)
-                oldValue.PropertyChanged -= target_PropertyChanged;
+                PropertyChangedEventManager.RemoveHandler(oldValue, target_PropertyChanged, ((MemberExpression)Expression).Member.Name);
         }
 
         /// <summary>

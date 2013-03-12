@@ -5,12 +5,66 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    public sealed class ObservableValue<TSource, TResult> : INotifyPropertyChanged, IDisposable
+    /// <summary>
+    /// Represents a single output value that monitors its underlying dependencies.
+    /// </summary>
+    /// <typeparam name="TResult"></typeparam>
+    public abstract class ObservableValue<TResult> : INotifyPropertyChanged, IDisposable
     {
 
-        private Expression sourceExpr;
-        private LambdaExpression resultExpr;
-        private IOperation<TResult> operation;
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        public abstract TResult Value { get; }
+
+        /// <summary>
+        /// Raised when the value is changed.
+        /// </summary>
+        public event ValueChangedEventHandler ValueChanged;
+
+        /// <summary>
+        /// Raises the ValueChanged event.
+        /// </summary>
+        /// <param name="args"></param>
+        protected void OnValueChanged(ValueChangedEventArgs args)
+        {
+            if (ValueChanged != null)
+                ValueChanged(this, args);
+        }
+
+        /// <summary>
+        /// Raised when a property is changed.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Raises the PropertyChanged event.
+        /// </summary>
+        /// <param name="args"></param>
+        protected void OnPropertyChanged(PropertyChangedEventArgs args)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, args);
+        }
+
+        /// <summary>
+        /// Disposes of the instance.
+        /// </summary>
+        public abstract void Dispose();
+
+    }
+
+    /// <summary>
+    /// Implementation of ObservableValue{TResult}.
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    sealed class ObservableValue<TSource, TResult> : ObservableValue<TResult>
+    {
+
+        Expression sourceExpr;
+        LambdaExpression resultExpr;
+        IOperation<TResult> operation;
 
         internal ObservableValue(Expression sourceExpr, LambdaExpression resultExpr)
         {
@@ -40,28 +94,12 @@ namespace OLinq
             OnPropertyChanged(new PropertyChangedEventArgs("Value"));
         }
 
-        public TResult Value
+        public override TResult Value
         {
             get { return operation.Value; }
         }
 
-        public event ValueChangedEventHandler ValueChanged;
-
-        internal void OnValueChanged(ValueChangedEventArgs args)
-        {
-            if (ValueChanged != null)
-                ValueChanged(this, args);
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        internal void OnPropertyChanged(PropertyChangedEventArgs args)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, args);
-        }
-
-        public void Dispose()
+        public override void Dispose()
         {
             // dispose of the operation
             operation.ValueChanged -= operation_ValueChanged;
