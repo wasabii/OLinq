@@ -105,7 +105,6 @@ namespace OLinq
                 targetOp.Dispose();
             }
 
-
             base.Dispose();
         }
 
