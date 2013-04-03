@@ -23,12 +23,12 @@ namespace OLinq
 
         protected override void OnSourceCollectionItemsAdded(IEnumerable<TSource> newItems, int startingIndex)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.ToList()));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.ToList(), startingIndex));
         }
 
         protected override void OnSourceCollectionItemsRemoved(IEnumerable<TSource> oldItems, int startingIndex)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.ToList()));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.ToList(), startingIndex));
         }
 
         protected override void OnSource2CollectionReset()
@@ -38,17 +38,33 @@ namespace OLinq
 
         protected override void OnSource2CollectionItemsAdded(IEnumerable<TSource> newItems, int startingIndex)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.ToList()));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.ToList(), startingIndex + SourceCount));
         }
 
         protected override void OnSource2CollectionItemsRemoved(IEnumerable<TSource> oldItems, int startingIndex)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.ToList()));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.ToList(), startingIndex + SourceCount));
         }
 
         public IEnumerator<TSource> GetEnumerator()
         {
-            return Source.Concat(Source2).GetEnumerator();
+            return Enumerate().GetEnumerator();
+        }
+        public int SourceCount { get; set; }
+        public int Source2Count { get; set; }
+        IEnumerable<TSource> Enumerate()
+        {
+            SourceCount = 0;
+            foreach (var item in Source)
+            {
+                yield return item;
+                SourceCount++;
+            }
+            foreach (var item in Source2)
+            {
+                yield return item;
+                Source2Count++;
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()

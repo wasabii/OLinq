@@ -58,6 +58,45 @@ namespace OLinq.Tests
             Assert.AreEqual(q.Count(), 10);
         }
 
+        [TestMethod]
+        public void OrderIsPreservedWhenAddingToFirstCollection()
+        {
+            var c1 = new ObservableCollection<string>() { "b" };
+            var c2 = new ObservableCollection<string>() { "c", };
+            var combined = c1.AsObservableQuery().Concat(c2).AsObservableQuery().ToObservableView().ToBuffer();
+            c1.Insert(0, "a");
+            Assert.AreEqual("abc", string.Join("", combined));
+        }
+
+        [TestMethod]
+        public void OrderIsPreservedWhenAddingToSecondCollection()
+        {
+            var c1 = new ObservableCollection<string>() { "a", };
+            var c2 = new ObservableCollection<string>() { "c", };
+            var combined = c1.AsObservableQuery().Concat(c2).AsObservableQuery().ToObservableView().ToBuffer();
+            c2.Insert(0, "b");
+            Assert.AreEqual("abc", string.Join("", combined));
+        }
+        [TestMethod]
+        public void OrderIsPreservedWhenRemovingFromFirstCollection()
+        {
+            var c1 = new ObservableCollection<string>() { "a", "b" };
+            var c2 = new ObservableCollection<string>() { "a", "b", };
+            var combined = c1.AsObservableQuery().Concat(c2).AsObservableQuery().ToObservableView().ToBuffer();
+            c1.RemoveAt(0);
+            Assert.AreEqual("bab", string.Join("", combined));
+        }
+
+        [TestMethod]
+        public void OrderIsPreservedWhenRemovingFromSecondCollection()
+        {
+            var c1 = new ObservableCollection<string>() { "a", "b" };
+            var c2 = new ObservableCollection<string>() { "a", "b", };
+            var combined = c1.AsObservableQuery().Concat(c2).AsObservableQuery().ToObservableView().ToBuffer();
+            c2.Remove("a");
+            Assert.AreEqual("abb", string.Join("", combined));
+        }
+
     }
 
 }

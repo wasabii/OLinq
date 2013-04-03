@@ -45,13 +45,34 @@ namespace OLinq
                     break;
                 case NotifyCollectionChangedAction.Add:
                     // add new items
-                    foreach (TElement item in args.NewItems)
-                        buffer.Add(item);
+                    if (args.NewStartingIndex == -1)
+                    {
+                        foreach (TElement item in args.NewItems)
+                            buffer.Add(item);
+                    }
+                    else
+                    {
+                        for (int index = args.NewItems.Count - 1; index >= 0; index--)
+                        {
+                            var item = (TElement) args.NewItems[index];
+                            buffer.Insert(index + args.NewStartingIndex, item);
+                        }
+                    }
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     // remove old items
-                    foreach (TElement item in args.OldItems)
-                        buffer.Remove(item);
+                    if (args.OldStartingIndex == -1)
+                    {
+                        foreach (TElement item in args.OldItems)
+                            buffer.Remove(item);
+                    }
+                    else
+                    {
+                        for (int index = 0; index < args.OldItems.Count; index++)
+                        {
+                            buffer.RemoveAt(args.OldStartingIndex);
+                        }
+                    }
                     break;
             }
         }
@@ -88,15 +109,11 @@ namespace OLinq
         /// </summary>
         void Reset()
         {
-            // remove obsolete items
-            var oldItems = buffer.Except(view).ToList();
-            foreach (var item in oldItems)
-                buffer.Remove(item);
-
-            // add missing items
-            var newItems = view.Except(buffer).ToList();
-            foreach (var item in newItems)
-                buffer.Add(item);
+            buffer.Clear();
+            foreach (var element in view)
+            {
+                buffer.Add(element);
+            }
         }
 
         /// <summary>

@@ -149,6 +149,23 @@ namespace OLinq.Tests
             Assert.AreEqual(2, changed);
             Assert.AreEqual(1, q.Count());
         }
+        [TestMethod]
+        public void WhereBufferTest()
+        {
+            var c = new ObservableCollection<string>() { "b", "c", "b", };
+
+            var buffer = c.AsObservableQuery().Where(i => i == "b" || i == "c")
+                .AsObservableQuery()
+                .ToObservableView()
+                .ToBuffer();
+
+            c.Insert(0, "a");
+            Assert.AreEqual("bcb", string.Join("", buffer));
+            c.Insert(0, "c");
+            Assert.AreEqual("cbcb", string.Join("", buffer));
+            c.Insert(4, "c");
+            Assert.AreEqual("cbcbc", string.Join("", buffer));
+        }
 
     }
 
