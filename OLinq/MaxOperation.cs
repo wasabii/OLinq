@@ -55,7 +55,7 @@ namespace OLinq
 
         protected override TResult RecalculateValue()
         {
-            return max = Projections.Max(i => i.Value);
+            return max = Projections.Select(i => i.Value).DefaultIfEmpty().Max();
         }
 
     }
