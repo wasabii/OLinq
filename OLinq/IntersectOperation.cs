@@ -17,7 +17,6 @@ namespace OLinq
 
         protected override void OnSourceCollectionReset()
         {
-            cache = new HashSet<TSource>();
             sourceLookup = new HashSet<TSource>(Source);
             OnSourceCollectionItemsAdded(Source, -1);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
@@ -33,7 +32,6 @@ namespace OLinq
             var matched = newItems.Where(i => source2Lookup.Contains(i)).ToList();
             if (matched.Any())
             {
-                matched.ForEach(i => cache.Add(i));
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, matched));
             }
         }
@@ -49,14 +47,12 @@ namespace OLinq
             var matched = oldItems.Where(i => source2Lookup.Contains(i)).ToList();
             if (matched.Any())
             {
-                matched.ForEach(i => cache.Remove(i));
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, matched));
             }
         }
 
         protected override void OnSource2CollectionReset()
         {
-            cache = new HashSet<TSource>();
             source2Lookup = new HashSet<TSource>(Source2);
             OnSource2CollectionItemsAdded(Source2, -1);
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
@@ -72,7 +68,6 @@ namespace OLinq
             var matched = newItems.Where(i => sourceLookup.Contains(i)).ToList();
             if (matched.Any())
             {
-                matched.ForEach(i => cache.Add(i));
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, matched));
             }
         }
@@ -88,7 +83,6 @@ namespace OLinq
             var matched = oldItems.Where(i => sourceLookup.Contains(i)).ToList();
             if (matched.Any())
             {
-                matched.ForEach(i => cache.Remove(i));
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, matched));
             }
         }
@@ -99,16 +93,12 @@ namespace OLinq
             return Enumerate().GetEnumerator();
         }
 
-        private HashSet<TSource> cache = new HashSet<TSource>();
         HashSet<TSource> sourceLookup = new HashSet<TSource>();
         HashSet<TSource> source2Lookup = new HashSet<TSource>();
         
         IEnumerable<TSource> Enumerate()
         {
-            foreach (var item in cache)
-            {
-                yield return item;
-            }
+            return sourceLookup.Where(source2Lookup.Contains);
         }
 
         
