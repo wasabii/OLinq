@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 
 namespace OLinq
 {
-
     class ConcatOperation<TSource> : EnumerableSource2Operation<TSource, TSource, IEnumerable<TSource>>, IEnumerable<TSource>, INotifyCollectionChanged
     {
 

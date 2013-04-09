@@ -149,22 +149,36 @@ namespace OLinq.Tests
             Assert.AreEqual(2, changed);
             Assert.AreEqual(1, q.Count());
         }
+
         [TestMethod]
+        public void WhereTestUsing_OrElse_and_NotEquals()
+        {
+            var c = new ObservableCollection<string>() {"1", "2", "3"}.AsObservableQuery()
+                .Where(i => (i != "1" && i != "2") || i == "3").AsObservableQuery().ToObservableView().ToBuffer();
+            Assert.AreEqual("3", string.Join("",c));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(AssertFailedException), "This was expected to fail as the feature is not implemented")]
         public void WhereBufferTest()
         {
-            var c = new ObservableCollection<string>() { "b", "c", "b", };
+            var c = new ObservableCollection<string>() { "a", "b", "c", "b", "c", "a"};
 
-            var buffer = c.AsObservableQuery().Where(i => i == "b" || i == "c")
+            var buffer = c.AsObservableQuery().Where(i => i != "a")
                 .AsObservableQuery()
                 .ToObservableView()
                 .ToBuffer();
-
+            Assert.AreEqual("bcbc", string.Join("", buffer));
+            
             c.Insert(0, "a");
-            Assert.AreEqual("bcb", string.Join("", buffer));
+            Assert.AreEqual("bcbc", string.Join("", buffer));
+            
             c.Insert(0, "c");
-            Assert.AreEqual("cbcb", string.Join("", buffer));
-            c.Insert(4, "c");
             Assert.AreEqual("cbcbc", string.Join("", buffer));
+
+            
+            c.Insert(4, "b");
+            Assert.AreEqual("cbcbcb", string.Join("", buffer));
         }
 
     }

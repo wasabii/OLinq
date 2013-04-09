@@ -48,6 +48,7 @@
     <Compile Include="CountingEnumeratorExtension.cs" />
     <Compile Include="DefaultIfEmptyOperator.cs" />
     <Compile Include="FirstOrDefaultOperation.cs" />
+    <Compile Include="IntersectOperation.cs" />
     <Compile Include="LambdaResultComparer.cs" />
     <Compile Include="MinOperation.cs" />
     <Compile Include="MaxOperation.cs" />

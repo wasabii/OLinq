@@ -72,6 +72,9 @@ namespace OLinq
                 case ExpressionType.MemberInit:
                     return (IOperation)Activator.CreateInstance(typeof(MemberInitOperation<>).MakeGenericType(type), context, expression);
                 case ExpressionType.Equal:
+                case ExpressionType.AndAlso:
+                case ExpressionType.OrElse:
+                case ExpressionType.NotEqual:
                 case ExpressionType.GreaterThan:
                 case ExpressionType.GreaterThanOrEqual:
                 case ExpressionType.LessThan:
@@ -130,6 +133,9 @@ namespace OLinq
                 case "Concat":
                     resultItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(ConcatOperation<>).MakeGenericType(resultItemType), context, expression);
+                case "Intersect":
+                    resultItemType = expression.Method.GetGenericArguments()[0];
+                    return (IOperation)Activator.CreateInstance(typeof(IntersectOperation<>).MakeGenericType(resultItemType), context, expression);
                 case "Select":
                     sourceItemType = expression.Method.GetGenericArguments()[0];
                     resultItemType = expression.Method.GetGenericArguments()[1];
@@ -191,3 +197,4 @@ namespace OLinq
     }
 
 }
+
