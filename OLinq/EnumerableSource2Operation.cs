@@ -9,8 +9,16 @@ namespace OLinq
 
     class EnumerableSource2Operation<TSource1, TSource2, TResult> : EnumerableSourceOperation<TSource1, TResult>
     {
-        protected IOperation<IEnumerable<TSource2>> source2Op;
 
+        IOperation<IEnumerable<TSource2>> source2Op;
+
+        /// <summary>
+        /// Initializes a new instance.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="expression"></param>
+        /// <param name="source1Expression"></param>
+        /// <param name="source2Expression"></param>
         public EnumerableSource2Operation(OperationContext context, MethodCallExpression expression, Expression source1Expression, Expression source2Expression)
             : base(context, expression, source1Expression)
         {

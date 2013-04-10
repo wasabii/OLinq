@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace OLinq
@@ -12,6 +11,12 @@ namespace OLinq
 
         IOperation<IEnumerable<TSource>> sourceOp;
 
+        /// <summary>
+        /// Initializes a new instance.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="expression"></param>
+        /// <param name="sourceExpression"></param>
         public EnumerableSourceOperation(OperationContext context, MethodCallExpression expression, Expression sourceExpression)
             : base(context, expression)
         {

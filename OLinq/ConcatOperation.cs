@@ -6,9 +6,18 @@ using System.Linq.Expressions;
 
 namespace OLinq
 {
+
     class ConcatOperation<TSource> : EnumerableSource2Operation<TSource, TSource, IEnumerable<TSource>>, IEnumerable<TSource>, INotifyCollectionChanged
     {
 
+        int sourceCount;
+        int source2Count;
+
+        /// <summary>
+        /// Initializes a new instance.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="expression"></param>
         public ConcatOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression, expression.Arguments[0], expression.Arguments[1])
         {
@@ -37,32 +46,34 @@ namespace OLinq
 
         protected override void OnSource2CollectionItemsAdded(IEnumerable<TSource> newItems, int startingIndex)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.ToList(), startingIndex + SourceCount));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.ToList(), startingIndex + sourceCount));
         }
 
         protected override void OnSource2CollectionItemsRemoved(IEnumerable<TSource> oldItems, int startingIndex)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.ToList(), startingIndex + SourceCount));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.ToList(), startingIndex + sourceCount));
         }
 
         public IEnumerator<TSource> GetEnumerator()
         {
-            return Enumerate().GetEnumerator();
+            return Enumerate().ToList().GetEnumerator();
         }
-        public int SourceCount { get; set; }
-        public int Source2Count { get; set; }
+
         IEnumerable<TSource> Enumerate()
         {
-            SourceCount = 0;
+            sourceCount = 0;
+            source2Count = 0;
+
             foreach (var item in Source)
             {
                 yield return item;
-                SourceCount++;
+                sourceCount++;
             }
+
             foreach (var item in Source2)
             {
                 yield return item;
-                Source2Count++;
+                source2Count++;
             }
         }
 
