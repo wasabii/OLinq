@@ -45,7 +45,6 @@
     <Compile Include="ConstantOperation.cs" />
     <Compile Include="AverageOperation.cs" />
     <Compile Include="CastOperation.cs" />
-    <Compile Include="CountingEnumeratorExtension.cs" />
     <Compile Include="DefaultIfEmptyOperator.cs" />
     <Compile Include="FirstOrDefaultOperation.cs" />
     <Compile Include="IntersectOperation.cs" />
