@@ -57,6 +57,7 @@
     <Compile Include="ConcatTests.cs" />
     <Compile Include="AnyTests.cs" />
     <Compile Include="AverageTests.cs" />
+    <Compile Include="IntersectTests.cs" />
     <Compile Include="SelectManyTests.cs" />
     <Compile Include="GroupByTests.cs" />
     <Compile Include="MaxTests.cs" />
