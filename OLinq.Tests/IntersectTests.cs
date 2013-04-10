@@ -1,10 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Linq.Expressions;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace OLinq.Tests
 {
@@ -12,9 +9,10 @@ namespace OLinq.Tests
     [TestClass]
     public class IntersectTests
     {
-        private ObservableCollection<string> one;
-        private ObservableCollection<string> two;
-        private ObservableBuffer<string> buffer;
+
+        ObservableCollection<string> one;
+        ObservableCollection<string> two;
+        ObservableBuffer<string> buffer;
 
         [TestInitialize]
         public void SetupFilters()
@@ -44,7 +42,7 @@ namespace OLinq.Tests
             two.Add("a");
             Assert.AreEqual("bcda", string.Join("", buffer)); //order isn't perfect...
         }
- 
+
         [TestMethod]
         public void ItemRemovedFromSourceWorks()
         {
@@ -57,7 +55,16 @@ namespace OLinq.Tests
             two.Remove("b");
             Assert.AreEqual("cd", string.Join("", buffer));
         }
- 
+
+        [TestMethod]
+        public void Semantics1()
+        {
+            var q1 = one.Intersect(two);
+            var q2 = one.AsObservableQuery().Intersect(two).AsObservableQuery().ToObservableView();
+
+            Assert.IsTrue(q1.SequenceEqual(q2));
+        }
+
     }
 
 }
