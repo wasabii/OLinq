@@ -45,6 +45,7 @@
     <Compile Include="ConstantOperation.cs" />
     <Compile Include="AverageOperation.cs" />
     <Compile Include="CastOperation.cs" />
+    <Compile Include="TakeOperation.cs" />
     <Compile Include="CountingEnumeratorExtension.cs" />
     <Compile Include="DefaultIfEmptyOperator.cs" />
     <Compile Include="FirstOrDefaultOperation.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="ObservableBuffer.cs" />
     <Compile Include="ObservableQueryable.cs" />
     <Compile Include="OrderByOperation.cs" />
+    <Compile Include="SkipOperation.cs" />
     <Compile Include="SumOperation.cs" />
     <Compile Include="EnumerableSourceWithLambdaOperation.cs" />
     <Compile Include="EnumerableSourceOperation.cs" />

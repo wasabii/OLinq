@@ -147,6 +147,14 @@ namespace OLinq
                 case "Where":
                     resultItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(WhereOperation<>).MakeGenericType(resultItemType), context, expression);
+#if DEBUG
+                case "Take":
+                    sourceItemType = expression.Method.GetGenericArguments()[0];
+                    return (IOperation)Activator.CreateInstance(typeof(TakeOperation<>).MakeGenericType(sourceItemType), context, expression);
+                case "Skip":
+                    sourceItemType = expression.Method.GetGenericArguments()[0];
+                    return (IOperation)Activator.CreateInstance(typeof(SkipOperation<>).MakeGenericType(sourceItemType), context, expression);
+#endif
                 case "All":
                     return AllOperation.CreateOperation(context, expression);
                 case "Any":
