@@ -1,24 +1,21 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace OLinq.Tests
 {
-
     [TestClass]
     public class SkipTests
     {
-        private ObservableCollection<string> one;
+        private TestObservableCollection<string> one;
         private ObservableBuffer<string> buffer;
 
         [TestInitialize]
         public void SetupFilters()
         {
-            one = new ObservableCollection<string>("0123456789".Select(i => i.ToString()));
+            one = new TestObservableCollection<string>("0123456789".Select(i => i.ToString()));
             buffer = one.AsObservableQuery().Skip(5).AsObservableQuery().ToObservableView().ToBuffer();
         }
 

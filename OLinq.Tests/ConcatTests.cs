@@ -96,7 +96,18 @@ namespace OLinq.Tests
             c2.Remove("a");
             Assert.AreEqual("abb", string.Join("", combined));
         }
+        [TestMethod]
+        public void DoesNotEnumeratSourcesMoreThanOnce()
+        {
+            var c1 = new TestObservableCollection<string>() { "a", "b" };
+            var c2 = new TestObservableCollection<string>() { "a", "b", };
+            var buffer = c1.AsObservableQuery().Concat(c2).AsObservableQuery().ToObservableView().ToBuffer();
+            buffer.ToArray();
+            buffer.ToArray();
+            Assert.AreEqual(1, c1.EnumerationCount);
 
+            Assert.AreEqual(1, c2.EnumerationCount);
+            
+        }
     }
-
 }

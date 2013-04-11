@@ -8,13 +8,13 @@ namespace OLinq.Tests
     [TestClass]
     public class OrderByTests
     {
-        private ObservableCollection<string> source;
+        private TestObservableCollection<string> source;
         private ObservableBuffer<string> buffer;
 
         [TestInitialize]
         public void SetupFilters()
         {
-            source = new ObservableCollection<string>("864".Select(i => i.ToString()));
+            source = new TestObservableCollection<string>("864".Select(i => i.ToString()));
             buffer = source.AsObservableQuery().OrderBy(letter => letter).AsObservableQuery().ToObservableView().ToBuffer();
         }
 
@@ -23,6 +23,15 @@ namespace OLinq.Tests
         {
             DoAssert();
         }
+
+        [TestMethod]
+        public void NotYetImplemented_EnumeratesSourceOnlyOnce()
+        {
+            buffer.ToArray();
+            buffer.ToArray();
+            Assert.AreEqual(1, source.EnumerationCount);
+        }
+
 
         private void DoAssert()
         {
@@ -73,18 +82,11 @@ namespace OLinq.Tests
             DoAssert();
         }
         
-        [TestMethod]
-        public void NotYetImplemented_DoesntRemoveDuplicates()
-        {
-            source = new ObservableCollection<string>("44".Select(i => i.ToString()));
-            buffer = source.AsObservableQuery().OrderBy(letter => letter).AsObservableQuery().ToObservableView().ToBuffer();
-            DoAssert();
-        }
-
+        
         [TestMethod]
         public void NotYetImplemented_DoesntRemoveDuplicatesAfterRemove()
         {
-            source = new ObservableCollection<string>("44".Select(i => i.ToString()));
+            source = new TestObservableCollection<string>("44".Select(i => i.ToString()));
             buffer = source.AsObservableQuery().OrderBy(letter => letter).AsObservableQuery().ToObservableView().ToBuffer();
             source.RemoveAt(0);
             DoAssert();

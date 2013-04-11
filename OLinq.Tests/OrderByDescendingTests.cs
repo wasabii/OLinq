@@ -9,13 +9,13 @@ namespace OLinq.Tests
     [TestClass]
     public class OrderByDescendingTests
     {
-        private ObservableCollection<string> source;
+        private TestObservableCollection<string> source;
         private ObservableBuffer<string> buffer;
 
         [TestInitialize]
         public void SetupFilters()
         {
-            source = new ObservableCollection<string>("864".Select(i => i.ToString()));
+            source = new TestObservableCollection<string>("864".Select(i => i.ToString()));
             buffer =
                 source.AsObservableQuery()
                       .OrderByDescending(letter => letter)
@@ -29,6 +29,7 @@ namespace OLinq.Tests
         {
             Assert.AreEqual("864", string.Join("", buffer));
         }
+
 
         [TestMethod]
         public void NotYetImplemented_InsertAtStartWorks()
@@ -78,7 +79,7 @@ namespace OLinq.Tests
         [TestMethod]
         public void NotYetImplemented_DoesntRemoveDuplicates()
         {
-            source = new ObservableCollection<string>("44".Select(i => i.ToString()));
+            source = new TestObservableCollection<string>("44".Select(i => i.ToString()));
             buffer =
                 source.AsObservableQuery()
                       .OrderByDescending(letter => letter)
@@ -91,7 +92,7 @@ namespace OLinq.Tests
         [TestMethod]
         public void NotYetImplemented_DoesntRemoveDuplicatesAfterRemove()
         {
-            source = new ObservableCollection<string>("44".Select(i => i.ToString()));
+            source = new TestObservableCollection<string>("44".Select(i => i.ToString()));
             buffer =
                 source.AsObservableQuery()
                       .OrderByDescending(letter => letter)

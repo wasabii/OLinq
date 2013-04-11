@@ -12,18 +12,18 @@ namespace OLinq.Tests
     [TestClass]
     public class SelectManyTests
     {
-        private ObservableCollection<List<string>> source;
-        private ObservableBuffer<string> combined;
+        private TestObservableCollection<List<string>> source;
+        private ObservableBuffer<string> buffer;
         [TestInitialize]
         public void SetUp()
         {
-            source = new ObservableCollection<List<string>>()
+            source = new TestObservableCollection<List<string>>()
             {
                 new[] {"1"}.ToList(),
                 new[] {"2"}.ToList(),
                 new[] {"3"}.ToList()
             };
-            combined = source.AsObservableQuery().SelectMany(a => a).AsObservableQuery().ToObservableView().ToBuffer();
+            buffer = source.AsObservableQuery().SelectMany(a => a).AsObservableQuery().ToObservableView().ToBuffer();
         }
 
         [TestMethod]
@@ -124,7 +124,17 @@ namespace OLinq.Tests
 
         private void DoAssert()
         {
-            Assert.AreEqual(string.Join("", source.SelectMany(c => c)), string.Join("", combined));
+            Assert.AreEqual(string.Join("", source.SelectMany(c => c)), string.Join("", buffer));
         }
+
+
+        [TestMethod]
+        public void NotYetImplemented_EnumeratesSourceOnlyOnce()
+        {
+            buffer.ToArray();
+            buffer.ToArray();
+            Assert.AreEqual(1, source.EnumerationCount);
+        }
+
     }
 }

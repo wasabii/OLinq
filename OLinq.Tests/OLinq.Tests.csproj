@@ -71,6 +71,7 @@
     <Compile Include="MemberInitTests.cs" />
     <Compile Include="NotificationObject.cs" />
     <Compile Include="TakeTests.cs" />
+    <Compile Include="TestObservableCollection.cs" />
     <Compile Include="ValueTests.cs" />
     <Compile Include="SelectTests.cs" />
     <Compile Include="WhereTests.cs" />
