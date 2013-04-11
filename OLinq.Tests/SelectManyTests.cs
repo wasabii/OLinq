@@ -12,6 +12,19 @@ namespace OLinq.Tests
     [TestClass]
     public class SelectManyTests
     {
+        private TestObservableCollection<List<string>> source;
+        private ObservableBuffer<string> buffer;
+        [TestInitialize]
+        public void SetUp()
+        {
+            source = new TestObservableCollection<List<string>>()
+            {
+                new[] {"1"}.ToList(),
+                new[] {"2"}.ToList(),
+                new[] {"3"}.ToList()
+            };
+            buffer = source.AsObservableQuery().SelectMany(a => a).AsObservableQuery().ToObservableView().ToBuffer();
+        }
 
         [TestMethod]
         public void SelectManyTest()
@@ -63,6 +76,65 @@ namespace OLinq.Tests
             Assert.AreEqual(3, removed);
         }
 
-    }
+        
+        
+        [TestMethod]
+        public void NotYetImplemented_SelectManyWorks()
+        {
+            DoAssert();
+        }
 
+        [TestMethod]
+        public void NotYetImplemented_CanAddToSourceCollection()
+        {
+            source.Insert(2, new List<string> { "B" });
+            DoAssert();
+        }
+
+        [TestMethod]
+        public void NotYetImplemented_CanRemoveFromSourceCollection()
+        {
+            source.RemoveAt(1);
+            DoAssert();
+        }
+
+        [TestMethod]
+        public void NotYetImplemented_CanInsertIntoChildCollections()
+        {
+            source[1].Add("A");
+            DoAssert();
+        }
+
+        [TestMethod]
+        public void NotYetImplemented_DoesntRemoveDuplicates()
+        {
+            source[0].Add("1");
+            DoAssert();
+            source[0].RemoveAt(0);
+            DoAssert();
+        }
+
+        [TestMethod]
+        public void NotYetImplemented_DoesntRemoveDuplicatesOnRemove()
+        {
+            source[0].Add("1");
+            source[0].RemoveAt(0);
+            DoAssert();
+        }
+
+        private void DoAssert()
+        {
+            Assert.AreEqual(string.Join("", source.SelectMany(c => c)), string.Join("", buffer));
+        }
+
+
+        [TestMethod]
+        public void NotYetImplemented_EnumeratesSourceOnlyOnce()
+        {
+            buffer.ToArray();
+            buffer.ToArray();
+            Assert.AreEqual(1, source.EnumerationCount);
+        }
+
+    }
 }

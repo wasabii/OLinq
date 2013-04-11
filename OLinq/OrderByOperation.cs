@@ -52,7 +52,7 @@ namespace OLinq
             foreach (var item in oldItems)
                 sort.Remove(item);
 
-            RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, oldItems.Select(i => Lambdas[i]).ToList()));
+            RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.Select(i => Lambdas[i]).ToList()));
         }
 
         public IEnumerator<TSource> GetEnumerator()

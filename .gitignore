@@ -5,3 +5,4 @@
 /OLinq/bin
 /*.suo
 /*.user
+/OLinq/*.user
