@@ -57,6 +57,8 @@
     <Compile Include="ConcatTests.cs" />
     <Compile Include="AnyTests.cs" />
     <Compile Include="AverageTests.cs" />
+    <Compile Include="OrderByDescendingTests.cs" />
+    <Compile Include="OrderByTests.cs" />
     <Compile Include="SkipTests.cs" />
     <Compile Include="IntersectTests.cs" />
     <Compile Include="SelectManyTests.cs" />
