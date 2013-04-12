@@ -1,16 +1,16 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace OLinq.Tests
 {
+
     [TestClass]
     public class SkipTests
     {
-        private TestObservableCollection<string> one;
-        private ObservableBuffer<string> buffer;
+
+        TestObservableCollection<string> one;
+        ObservableBuffer<string> buffer;
 
         [TestInitialize]
         public void SetupFilters()
@@ -34,6 +34,7 @@ namespace OLinq.Tests
             Assert.AreEqual(string.Join("", one), string.Join("", buffer));
 
         }
+
         [TestMethod]
         public void NotYetImplemented_InsertAfterSkipped()
         {
@@ -52,6 +53,7 @@ namespace OLinq.Tests
             Assert.AreEqual(string.Join("", one), string.Join("", buffer));
 
         }
+
         [TestMethod]
         public void NotYetImplemented_RemovedAfterSkipped()
         {
@@ -60,5 +62,7 @@ namespace OLinq.Tests
             one.RemoveAt(7);
             Assert.AreEqual(string.Join("", one), string.Join("", buffer));
         }
+
     }
+
 }

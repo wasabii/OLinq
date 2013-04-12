@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace OLinq.Tests
@@ -9,8 +8,9 @@ namespace OLinq.Tests
     [TestClass]
     public class OrderByDescendingTests
     {
-        private TestObservableCollection<string> source;
-        private ObservableBuffer<string> buffer;
+
+        TestObservableCollection<string> source;
+        ObservableBuffer<string> buffer;
 
         [TestInitialize]
         public void SetupFilters()
@@ -18,10 +18,10 @@ namespace OLinq.Tests
             source = new TestObservableCollection<string>("864".Select(i => i.ToString()));
             buffer =
                 source.AsObservableQuery()
-                      .OrderByDescending(letter => letter)
-                      .AsObservableQuery()
-                      .ToObservableView()
-                      .ToBuffer();
+                    .OrderByDescending(letter => letter)
+                    .AsObservableQuery()
+                    .ToObservableView()
+                    .ToBuffer();
         }
 
         [TestMethod]
@@ -45,7 +45,6 @@ namespace OLinq.Tests
             Assert.AreEqual("8764", string.Join("", buffer));
             source.Insert(3, "9");
             Assert.AreEqual("98764", string.Join("", buffer));
-
         }
 
         [TestMethod]
@@ -82,10 +81,10 @@ namespace OLinq.Tests
             source = new TestObservableCollection<string>("44".Select(i => i.ToString()));
             buffer =
                 source.AsObservableQuery()
-                      .OrderByDescending(letter => letter)
-                      .AsObservableQuery()
-                      .ToObservableView()
-                      .ToBuffer();
+                    .OrderByDescending(letter => letter)
+                    .AsObservableQuery()
+                    .ToObservableView()
+                    .ToBuffer();
             Assert.AreEqual("44", string.Join("", buffer));
         }
 
@@ -95,10 +94,10 @@ namespace OLinq.Tests
             source = new TestObservableCollection<string>("44".Select(i => i.ToString()));
             buffer =
                 source.AsObservableQuery()
-                      .OrderByDescending(letter => letter)
-                      .AsObservableQuery()
-                      .ToObservableView()
-                      .ToBuffer();
+                    .OrderByDescending(letter => letter)
+                    .AsObservableQuery()
+                    .ToObservableView()
+                    .ToBuffer();
             source.RemoveAt(0);
             Assert.AreEqual("4", string.Join("", buffer));
         }

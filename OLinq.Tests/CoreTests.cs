@@ -1,10 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-using OLinq;
 
 namespace OLinq.Tests
 {

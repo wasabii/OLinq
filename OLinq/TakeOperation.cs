@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if DEBUG //throw exception in production as not implemented
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -7,9 +9,10 @@ using System.Linq.Expressions;
 
 namespace OLinq
 {
-#if DEBUG //throw exception in production as not implemented
+
     class TakeOperation<TElement> : EnumerableSourceOperation<TElement, IEnumerable<TElement>>, IEnumerable<TElement>, INotifyCollectionChanged
     {
+
         public TakeOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression, expression.Arguments[0])
         {
@@ -35,7 +38,6 @@ namespace OLinq
         {
             return Source.GetEnumerator();
         }
-
     
         IEnumerator IEnumerable.GetEnumerator()
         {
@@ -44,11 +46,13 @@ namespace OLinq
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
+        void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
             if (CollectionChanged != null)
                 CollectionChanged(this, args);
         }
     }
-#endif
+
 }
+
+#endif

@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace OLinq.Tests
@@ -7,8 +8,10 @@ namespace OLinq.Tests
     [TestClass]
     public class TakeTests
     {
-        private ObservableCollection<string> source;
-        private ObservableBuffer<string> buffer;
+
+        ObservableCollection<string> source;
+        ObservableBuffer<string> buffer;
+
         [TestInitialize]
         public void SetupFilters()
         {
@@ -49,6 +52,7 @@ namespace OLinq.Tests
             Assert.AreEqual(string.Join("", source.Take(5)), string.Join("", buffer));
 
         }
+
         [TestMethod]
         public void NotYetImplemented_RemovedAfterTaken()
         {
@@ -57,5 +61,7 @@ namespace OLinq.Tests
             source.RemoveAt(7);
             Assert.AreEqual(string.Join("", source.Take(5)), string.Join("", buffer));
         }
+
     }
+
 }

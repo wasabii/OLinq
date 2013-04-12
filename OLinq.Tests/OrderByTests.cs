@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace OLinq.Tests
 {
+
     [TestClass]
     public class OrderByTests
     {
-        private TestObservableCollection<string> source;
-        private ObservableBuffer<string> buffer;
+
+        TestObservableCollection<string> source;
+        ObservableBuffer<string> buffer;
 
         [TestInitialize]
         public void SetupFilters()
@@ -32,8 +33,7 @@ namespace OLinq.Tests
             Assert.AreEqual(1, source.EnumerationCount);
         }
 
-
-        private void DoAssert()
+        void DoAssert()
         {
             Assert.AreEqual(string.Join("", source.OrderBy(s => s)), string.Join("", buffer));
         }
@@ -81,8 +81,7 @@ namespace OLinq.Tests
             source.RemoveAt(2);
             DoAssert();
         }
-        
-        
+
         [TestMethod]
         public void NotYetImplemented_DoesntRemoveDuplicatesAfterRemove()
         {
@@ -93,4 +92,5 @@ namespace OLinq.Tests
         }
 
     }
+
 }

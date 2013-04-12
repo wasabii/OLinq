@@ -10,10 +10,10 @@ namespace OLinq.Tests
     class NotificationObject<T> : INotifyPropertyChanged
     {
 
-        private T value1;
-        private T value2;
-        private T value3;
-        private T value4;
+        T value1;
+        T value2;
+        T value3;
+        T value4;
 
         public T Value1
         {

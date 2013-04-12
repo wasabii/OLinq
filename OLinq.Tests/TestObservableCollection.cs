@@ -5,18 +5,20 @@ using System.Collections.Specialized;
 
 namespace OLinq.Tests
 {
-    internal class TestObservableCollection<T> : INotifyCollectionChanged, IEnumerable<T>
+
+    class TestObservableCollection<T> : INotifyCollectionChanged, IEnumerable<T>
     {
-        private readonly ObservableCollection<T> _observableCollection;
-      
+
+        readonly ObservableCollection<T> _observableCollection;
+
         public TestObservableCollection(IEnumerable<T> items = null)
         {
-            _observableCollection = new ObservableCollection<T>(items ?? new T[]{});
+            _observableCollection = new ObservableCollection<T>(items ?? new T[] { });
             _observableCollection.CollectionChanged += (o, e) => this.CollectionChanged(this, e);
         }
 
+        public event NotifyCollectionChangedEventHandler CollectionChanged = (sender, args) => { };
 
-        public event NotifyCollectionChangedEventHandler CollectionChanged = (sender, args) => {};
         public IEnumerator<T> GetEnumerator()
         {
             EnumerationCount++;
@@ -29,7 +31,6 @@ namespace OLinq.Tests
         {
             return GetEnumerator();
         }
-
 
         public void Add(T t)
         {
@@ -50,7 +51,6 @@ namespace OLinq.Tests
             ((IList)_observableCollection).Remove(value);
         }
 
-
         public bool Remove(T item)
         {
             return _observableCollection.Remove(item);
@@ -62,4 +62,5 @@ namespace OLinq.Tests
         }
 
     }
+
 }
