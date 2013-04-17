@@ -9,13 +9,55 @@ namespace OLinq
     /// Represents a single output value that monitors its underlying dependencies.
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class ObservableValue<TResult> : INotifyPropertyChanged, IDisposable
+    public class ObservableValue<TResult> : INotifyPropertyChanged, IDisposable
     {
 
+        internal LambdaExpression resultExpr;
+        internal IOperation<TResult> operation;
+
         /// <summary>
-        /// Gets the value.
+        /// Initializes a new instance.
         /// </summary>
-        public abstract TResult Value { get; }
+        protected internal ObservableValue()
+        {
+
+        }
+
+        /// <summary>
+        /// Initializes a new instance.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="func"></param>
+        public ObservableValue(Expression<Func<TResult>> func)
+        {
+            if (func == null)
+                throw new ArgumentNullException("func");
+
+            this.resultExpr = func;
+
+            // operation to emit value
+            operation = OperationFactory.FromExpression<TResult>(new OperationContext(), resultExpr);
+            operation.ValueChanged += operation_ValueChanged;
+        }
+
+        /// <summary>
+        /// Invoked when the operation's output value is changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        protected void operation_ValueChanged(object sender, ValueChangedEventArgs args)
+        {
+            OnValueChanged(new ValueChangedEventArgs(args.OldValue, args.NewValue));
+            OnPropertyChanged(new PropertyChangedEventArgs("Value"));
+        }
+
+        /// <summary>
+        /// Gets the current observed value.
+        /// </summary>
+        public TResult Value
+        {
+            get { return operation.Value; }
+        }
 
         /// <summary>
         /// Raised when the value is changed.
@@ -47,25 +89,36 @@ namespace OLinq
                 PropertyChanged(this, args);
         }
 
-        /// <summary>
-        /// Disposes of the instance.
-        /// </summary>
-        public abstract void Dispose();
+        public virtual void Dispose()
+        {
+            // dispose of the operation
+            operation.ValueChanged -= operation_ValueChanged;
+            operation.Dispose();
+
+            // dispose of variables
+            foreach (var var in operation.Context.Variables.Values)
+                var.Dispose();
+
+            operation = null;
+        }
 
     }
 
     /// <summary>
-    /// Implementation of ObservableValue{TResult}.
+    /// Represents a single output value that monitors it's underlying dependencies.
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    sealed class ObservableValue<TSource, TResult> : ObservableValue<TResult>
+    public sealed class ObservableValue<TSource, TResult> : ObservableValue<TResult>
     {
 
         Expression sourceExpr;
-        LambdaExpression resultExpr;
-        IOperation<TResult> operation;
 
+        /// <summary>
+        /// Initializes a new instance.
+        /// </summary>
+        /// <param name="sourceExpr"></param>
+        /// <param name="resultExpr"></param>
         internal ObservableValue(Expression sourceExpr, LambdaExpression resultExpr)
         {
             if (sourceExpr == null)
@@ -86,17 +139,6 @@ namespace OLinq
             // operation to emit value
             operation = OperationFactory.FromExpression<TResult>(ctx, resultExpr);
             operation.ValueChanged += operation_ValueChanged;
-        }
-
-        void operation_ValueChanged(object sender, ValueChangedEventArgs args)
-        {
-            OnValueChanged(new ValueChangedEventArgs(args.OldValue, args.NewValue));
-            OnPropertyChanged(new PropertyChangedEventArgs("Value"));
-        }
-
-        public override TResult Value
-        {
-            get { return operation.Value; }
         }
 
         public override void Dispose()

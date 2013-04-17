@@ -55,7 +55,16 @@ namespace OLinq
 
         protected virtual T Invoke(object target, params object[] parameters)
         {
-            return (T)((MethodCallExpression)Expression).Method.Invoke(target, parameters);
+            var method = ((MethodCallExpression)Expression).Method;
+            if (method.IsStatic)
+                // static method requires no target
+                return (T)method.Invoke(null, parameters);
+            else if (target == null)
+                // null target of non-static method should not fail, but simply return default value
+                return default(T);
+            else
+                // invoke instance method
+                return (T)method.Invoke(target, parameters);
         }
 
         /// <summary>
