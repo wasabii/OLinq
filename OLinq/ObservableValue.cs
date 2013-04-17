@@ -12,8 +12,7 @@ namespace OLinq
     public class ObservableValue<TResult> : INotifyPropertyChanged, IDisposable
     {
 
-        internal LambdaExpression resultExpr;
-        internal IOperation<TResult> operation;
+        IOperation<TResult> operation;
 
         /// <summary>
         /// Initializes a new instance.
@@ -26,17 +25,23 @@ namespace OLinq
         /// <summary>
         /// Initializes a new instance.
         /// </summary>
-        /// <param name="source"></param>
         /// <param name="func"></param>
         public ObservableValue(Expression<Func<TResult>> func)
         {
             if (func == null)
                 throw new ArgumentNullException("func");
 
-            this.resultExpr = func;
+            // initialize result
+            Initialize(OperationFactory.FromExpression<TResult>(new OperationContext(), func));
+        }
 
-            // operation to emit value
-            operation = OperationFactory.FromExpression<TResult>(new OperationContext(), resultExpr);
+        /// <summary>
+        /// Initializes the operation.
+        /// </summary>
+        /// <param name="op"></param>
+        internal void Initialize(IOperation<TResult> op)
+        {
+            operation = op;
             operation.ValueChanged += operation_ValueChanged;
         }
 
@@ -45,7 +50,7 @@ namespace OLinq
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        protected void operation_ValueChanged(object sender, ValueChangedEventArgs args)
+        void operation_ValueChanged(object sender, ValueChangedEventArgs args)
         {
             OnValueChanged(new ValueChangedEventArgs(args.OldValue, args.NewValue));
             OnPropertyChanged(new PropertyChangedEventArgs("Value"));
@@ -89,7 +94,10 @@ namespace OLinq
                 PropertyChanged(this, args);
         }
 
-        public virtual void Dispose()
+        /// <summary>
+        /// Disposes of the current instance.
+        /// </summary>
+        public void Dispose()
         {
             // dispose of the operation
             operation.ValueChanged -= operation_ValueChanged;
@@ -112,46 +120,29 @@ namespace OLinq
     public sealed class ObservableValue<TSource, TResult> : ObservableValue<TResult>
     {
 
-        Expression sourceExpr;
-
         /// <summary>
         /// Initializes a new instance.
         /// </summary>
-        /// <param name="sourceExpr"></param>
-        /// <param name="resultExpr"></param>
-        internal ObservableValue(Expression sourceExpr, LambdaExpression resultExpr)
+        /// <param name="source"></param>
+        /// <param name="func"></param>
+        internal ObservableValue(Expression source, LambdaExpression func)
         {
-            if (sourceExpr == null)
-                throw new ArgumentNullException("sourceExpr");
-            if (resultExpr == null)
-                throw new ArgumentNullException("resultExpr");
-            if (resultExpr.Parameters.Count != 1)
-                throw new ArgumentException("resultExpr");
-
-            this.sourceExpr = sourceExpr;
-            this.resultExpr = resultExpr;
+            if (source == null)
+                throw new ArgumentNullException("source");
+            if (func == null)
+                throw new ArgumentNullException("func");
+            if (func.Parameters.Count != 1)
+                throw new ArgumentException("func");
 
             // provide source
+            var src = OperationFactory.FromExpression<TSource>(new OperationContext(), source);
+
+            // provide source to func operation as named variable
             var ctx = new OperationContext();
-            var src = OperationFactory.FromExpression<TSource>(new OperationContext(), sourceExpr);
-            ctx.Variables[resultExpr.Parameters[0].Name] = src;
+            ctx.Variables[func.Parameters[0].Name] = src;
 
-            // operation to emit value
-            operation = OperationFactory.FromExpression<TResult>(ctx, resultExpr);
-            operation.ValueChanged += operation_ValueChanged;
-        }
-
-        public override void Dispose()
-        {
-            // dispose of the operation
-            operation.ValueChanged -= operation_ValueChanged;
-            operation.Dispose();
-
-            // dispose of variables
-            foreach (var var in operation.Context.Variables.Values)
-                var.Dispose();
-
-            operation = null;
+            // initialize result
+            Initialize(OperationFactory.FromExpression<TResult>(ctx, func));
         }
 
     }
