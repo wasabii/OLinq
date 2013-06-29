@@ -2,19 +2,21 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>OLinq</id>
-        <version>0.0.7</version>
+        <version>0.0.8</version>
         <title>OLinq</title>
         <authors>Jerome Haltom</authors>
         <owners>Jerome Haltom</owners>
         <licenseUrl>http://www.microsoft.com/en-us/openness/licenses.aspx#MRL</licenseUrl>
         <projectUrl>https://github.com/wasabii/OLinq</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>OLinq is a project to provide a Linq Queryable provider implementation for operating on ObservableCollections, or other INotifyCollectionChanged supporting lists. The output of OLinq is an ObservableView which notifies when the results of the query have changed.</description>
+        <description>OLinq is a project to provide a Linq Queryable provider implementation for operating on
+        ObservableCollections or other INotifyCollectionChanged supporting lists. The output of OLinq is an
+        ObservableView which notifies when the results of the query have changed.</description>
         <releaseNotes />
         <copyright>Copyright © 2013 Jerome Haltom</copyright>
         <tags>linq observable clinq bindable wpf rx queryable</tags>
     </metadata>
     <files>
-        <file src="OLinq\bin\Release\OLinq.dll" target="lib\net45" />
+        <file src="OLinq\bin\Release-net40\OLinq.dll" target="lib\net40" />
     </files>
 </package>

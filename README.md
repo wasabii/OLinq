@@ -1,9 +1,9 @@
-OLinq is a project to provide a Linq Queryable provider implementation for operating on ObservableCollections, or other INotifyCollectionChanged supporting lists. The output of OLinq is an ObservableView which notifies when the results of the query have changed.
+OLinq is a project to provide a Linq Queryable provider implementation for operating on ObservableCollections or other INotifyCollectionChanged supporting lists. The output of OLinq is an ObservableView which notifies when the results of the query have changed.
 
 ```csharp
     var collection = new ObservableCollection<int>(){ 1, 2, 3 }; //an object implementing INotifyCollectionChanged
-	var observableView = someQueryable.AsObservableQuery().Where(i => i > 2).ToObservableView(); //an ObservableView raises events when underlying source collections used in the linq statement are changed
-	var observableBuffer = observableView.ToBuffer(); //an ObservableBuffer caches the results of the Linq query, so it is not re-evaluated, but instead the results are updated incrementally as the view raises events      
+    var observableView = someQueryable.AsObservableQuery().Where(i => i > 2).ToObservableView(); //an ObservableView raises events when underlying source collections used in the linq statement are changed
+    var observableBuffer = observableView.ToBuffer(); //an ObservableBuffer caches the results of the Linq query, so it is not re-evaluated, but instead the results are updated incrementally as the view raises events      
 ```
 
 
