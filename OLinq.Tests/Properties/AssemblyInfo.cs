@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("OLinq.Tests")]
-[assembly: AssemblyCopyright("Copyright © Jerome Haltom 2012")]
+[assembly: AssemblyCopyright("Copyright © Jerome Haltom 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
