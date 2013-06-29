@@ -2,7 +2,6 @@
 
 namespace OLinq.Tests
 {
-
     /// <summary>
     /// Simple notification object for use with tests.
     /// </summary>
