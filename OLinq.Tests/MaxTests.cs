@@ -27,6 +27,13 @@ namespace OLinq.Tests
             Assert.AreEqual(1, b1.Value);
         }
 
+        [TestMethod]
+        [TestCategory("Bugged")]
+        public void MaxDuplicateValueTest()
+        {
+
+        }
+
     }
 
 }

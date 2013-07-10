@@ -76,6 +76,7 @@ namespace OLinq.Tests
             c2.Insert(0, "b");
             Assert.AreEqual("abc", string.Join("", combined));
         }
+
         [TestMethod]
         public void OrderIsPreservedWhenRemovingFromFirstCollection()
         {
@@ -95,6 +96,7 @@ namespace OLinq.Tests
             c2.Remove("a");
             Assert.AreEqual("abb", string.Join("", combined));
         }
+
         [TestMethod]
         public void DoesNotEnumeratSourcesMoreThanOnce()
         {

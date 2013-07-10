@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
 
@@ -9,7 +10,7 @@ namespace OLinq
     /// Represents a single output value that monitors its underlying dependencies.
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public class ObservableValue<TResult> : INotifyPropertyChanged, IDisposable
+    public class ObservableValue<TResult> : INotifyPropertyChanged, IObservable<TResult>, IDisposable
     {
 
         IOperation<TResult> operation;
@@ -52,7 +53,7 @@ namespace OLinq
         /// <param name="args"></param>
         void operation_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            OnValueChanged(new ValueChangedEventArgs(args.OldValue, args.NewValue));
+            OnValueChanged(args);
             OnPropertyChanged(new PropertyChangedEventArgs("Value"));
         }
 
@@ -108,6 +109,16 @@ namespace OLinq
                 var.Dispose();
 
             operation = null;
+        }
+
+        /// <summary>
+        /// Notifies the provider that an observer is to receive notifications.
+        /// </summary>
+        /// <param name="observer">The object that is to receive notifications.</param>
+        /// <returns>A reference to an interface that allows observers to stop receiving notifications before the provider has finished sending them.</returns>
+        public IDisposable Subscribe(IObserver<TResult> observer)
+        {
+            return new ObservableSubscription<TResult>(this, observer);
         }
 
     }

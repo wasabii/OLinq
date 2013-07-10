@@ -10,6 +10,8 @@
     <RootNamespace>OLinq</RootNamespace>
     <AssemblyName>OLinq</AssemblyName>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'net40' ">
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
@@ -46,6 +48,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\packages\Rx-Interfaces.2.1.30214.0\lib\Net40\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConcatOperation.cs" />
@@ -53,6 +58,7 @@
     <Compile Include="ConstantOperation.cs" />
     <Compile Include="AverageOperation.cs" />
     <Compile Include="CastOperation.cs" />
+    <Compile Include="ObservableValueSubscription.cs" />
     <Compile Include="TakeOperation.cs" />
     <Compile Include="DefaultIfEmptyOperator.cs" />
     <Compile Include="FirstOrDefaultOperation.cs" />
@@ -111,5 +117,9 @@
     <Compile Include="ObservableQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>
