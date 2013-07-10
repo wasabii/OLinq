@@ -44,7 +44,7 @@ namespace OLinq
                 SubscribeItem(newItem);
             }
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.SelectMany(i => i.Value).ToList()));
+            NotifyCollectionChangedUtil.RaiseAddEvent<TResult>(OnCollectionChanged, newItems.SelectMany(i => i.Value));
         }
 
         protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<IEnumerable<TResult>>> oldItems, int startingIndex)
@@ -56,7 +56,7 @@ namespace OLinq
                 items.Remove(oldItem);
             }
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.SelectMany(i => i.Value).ToList()));
+            NotifyCollectionChangedUtil.RaiseRemoveEvent<TResult>(OnCollectionChanged, oldItems.SelectMany(i => i.Value));
         }
 
         protected override void OnLambdaValueChanged(LambdaValueChangedEventArgs<TSource, IEnumerable<TResult>> args)
@@ -72,11 +72,11 @@ namespace OLinq
             var oldValues = args.OldValue.Except(args.NewValue).ToList();
             var newValues = args.NewValue.Except(args.OldValue).ToList();
             if (oldValues.Count == 0 && newValues.Count >= 1)
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newValues));
+                NotifyCollectionChangedUtil.RaiseAddEvent<TResult>(OnCollectionChanged, newValues);
             else if (oldValues.Count >= 1 && newValues.Count == 0)
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldValues));
+                NotifyCollectionChangedUtil.RaiseRemoveEvent<TResult>(OnCollectionChanged, oldValues);
             else if (oldValues.Count >= 1 && newValues.Count >= 1)
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, oldValues, newValues));
+                NotifyCollectionChangedUtil.RaiseReplaceEvent<TResult>(OnCollectionChanged, oldValues, newValues);
         }
 
         void SubscribeItem(IEnumerable item)
@@ -97,16 +97,18 @@ namespace OLinq
         {
             switch (args.Action)
             {
+#if !SILVERLIGHT
                 case NotifyCollectionChangedAction.Move:
+#endif
                 case NotifyCollectionChangedAction.Replace:
                 case NotifyCollectionChangedAction.Reset:
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, args.NewItems.Cast<TResult>().ToList()));
+                    NotifyCollectionChangedUtil.RaiseAddEvent<TResult>(OnCollectionChanged, args.NewItems.Cast<TResult>());
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, args.OldItems.Cast<TResult>().ToList()));
+                    NotifyCollectionChangedUtil.RaiseRemoveEvent<TResult>(OnCollectionChanged, args.OldItems.Cast<TResult>());
                     break;
             }
         }

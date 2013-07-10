@@ -53,13 +53,13 @@ namespace OLinq
 
             if (newTrack.Count > 0 && oldTrack.Count > 0)
                 // both new and old items exist
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newTrack, oldTrack));
+                NotifyCollectionChangedUtil.RaiseReplaceEvent<TElement>(OnCollectionChanged, oldTrack, newTrack);
             else if (newTrack.Count > 0 && oldTrack.Count == 0)
                 // only new items were added
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newTrack));
+                NotifyCollectionChangedUtil.RaiseAddEvent<TElement>(OnCollectionChanged, newTrack);
             else if (newTrack.Count == 0 && oldTrack.Count > 0)
                 // only items were removed
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldTrack));
+                NotifyCollectionChangedUtil.RaiseRemoveEvent<TElement>(OnCollectionChanged, oldTrack);
         }
 
         protected override void OnSourceCollectionItemsAdded(IEnumerable<TElement> newItems, int startingIndex)
@@ -78,7 +78,7 @@ namespace OLinq
                     counts[item]++;
 
             if (newTrack.Count > 0)
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newTrack));
+                NotifyCollectionChangedUtil.RaiseAddEvent<TElement>(OnCollectionChanged, newTrack);
         }
 
         protected override void OnSourceCollectionItemsRemoved(IEnumerable<TElement> oldItems, int startingIndex)
@@ -100,7 +100,7 @@ namespace OLinq
                     counts[item]--;
 
             if (oldTrack.Count > 0)
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldTrack));
+                NotifyCollectionChangedUtil.RaiseRemoveEvent<TElement>(OnCollectionChanged, oldTrack);
         }
 
         public IEnumerator<TElement> GetEnumerator()
@@ -115,7 +115,7 @@ namespace OLinq
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
+        void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
             if (CollectionChanged != null)
                 CollectionChanged(this, args);

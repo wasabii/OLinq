@@ -102,7 +102,7 @@ namespace OLinq
             if (group.Count == 0)
             {
                 groups.Remove(key);
-                RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, group));
+                NotifyCollectionChangedUtil.RaiseRemoveEvent<TElement>(RaiseCollectionChanged, group);
             }
         }
 
@@ -120,7 +120,7 @@ namespace OLinq
 
             // create new group
             group = groups[key] = new Grouping<TKey, TElement>(key);
-            RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, group));
+            NotifyCollectionChangedUtil.RaiseAddEvent<TElement>(RaiseCollectionChanged, group);
             return group;
         }
 
@@ -136,7 +136,7 @@ namespace OLinq
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        private void RaiseCollectionChanged(NotifyCollectionChangedEventArgs args)
+        void RaiseCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
             if (CollectionChanged != null)
                 CollectionChanged(this, args);

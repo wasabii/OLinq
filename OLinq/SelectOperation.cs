@@ -18,17 +18,17 @@ namespace OLinq
 
         protected override void OnLambdaCollectionReset()
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         protected override void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<TResult>> newItems, int startingIndex)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.Select(i => i.Value).ToList(), startingIndex));
+            RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.Select(i => i.Value).ToList(), startingIndex));
         }
 
         protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TResult>> oldItems, int startingIndex)
         {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.Select(i => i.Value).ToList(), startingIndex));
+            RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.Select(i => i.Value).ToList(), startingIndex));
         }
 
         protected override void OnLambdaValueChanged(LambdaValueChangedEventArgs<TSource, TResult> args)
@@ -38,7 +38,7 @@ namespace OLinq
 
             // single value has been replaced
             if (!object.Equals(oldValue, newValue))
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, new TResult[] { newValue }, new TResult[] { oldValue }));
+                NotifyCollectionChangedUtil.RaiseReplaceEvent<TResult>(RaiseCollectionChanged, oldValue, newValue);
         }
 
         public IEnumerator<TResult> GetEnumerator()
@@ -53,7 +53,7 @@ namespace OLinq
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-        private void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
+        private void RaiseCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
             if (CollectionChanged != null)
                 CollectionChanged(this, args);

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>OLinq</id>
-        <version>0.0.9</version>
+        <version>0.0.10.0</version>
         <title>OLinq</title>
         <authors>Jerome Haltom</authors>
         <owners>Jerome Haltom</owners>
@@ -19,5 +19,6 @@
     </metadata>
     <files>
         <file src="OLinq\bin\Release-net40\OLinq.dll" target="lib\net40\OLinq.dll" />
+        <file src="OLinq\bin\Release-sl50\OLinq.dll" target="lib\sl50\OLinq.dll" />
     </files>
 </package>

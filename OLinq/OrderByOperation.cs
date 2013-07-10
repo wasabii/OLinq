@@ -44,7 +44,7 @@ namespace OLinq
             foreach (var item in newItems)
                 sort.Add(item);
 
-            RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.Select(i => Lambdas[i]).ToList()));
+            NotifyCollectionChangedUtil.RaiseAddEvent<TSource>(RaiseCollectionChanged, newItems.Select(i => Lambdas[i]));
         }
 
         protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TKey>> oldItems, int startingIndex)
@@ -52,7 +52,7 @@ namespace OLinq
             foreach (var item in oldItems)
                 sort.Remove(item);
 
-            RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.Select(i => Lambdas[i]).ToList()));
+            NotifyCollectionChangedUtil.RaiseRemoveEvent<TSource>(RaiseCollectionChanged, oldItems.Select(i => Lambdas[i]));
         }
 
         public IEnumerator<TSource> GetEnumerator()

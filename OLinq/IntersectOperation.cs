@@ -38,7 +38,7 @@ namespace OLinq
 
             var matched = newItems.Where(i => source2Lookup.Contains(i)).ToList();
             if (matched.Any())
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, matched));
+                NotifyCollectionChangedUtil.RaiseAddEvent<TSource>(OnCollectionChanged, matched);
         }
 
         protected override void OnSourceCollectionItemsRemoved(IEnumerable<TSource> oldItems, int startingIndex)
@@ -48,7 +48,7 @@ namespace OLinq
 
             var matched = oldItems.Where(i => source2Lookup.Contains(i)).ToList();
             if (matched.Any())
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, matched));
+                NotifyCollectionChangedUtil.RaiseRemoveEvent<TSource>(OnCollectionChanged, matched);
         }
 
         protected override void OnSource2CollectionReset()
@@ -65,7 +65,7 @@ namespace OLinq
 
             var matched = newItems.Where(i => sourceLookup.Contains(i)).ToList();
             if (matched.Any())
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, matched));
+                NotifyCollectionChangedUtil.RaiseAddEvent<TSource>(OnCollectionChanged, matched);
         }
 
         protected override void OnSource2CollectionItemsRemoved(IEnumerable<TSource> oldItems, int startingIndex)
@@ -75,7 +75,7 @@ namespace OLinq
 
             var matched = oldItems.Where(i => sourceLookup.Contains(i)).ToList();
             if (matched.Any())
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, matched));
+                NotifyCollectionChangedUtil.RaiseRemoveEvent<TSource>(OnCollectionChanged, matched);
         }
 
         public IEnumerator<TSource> GetEnumerator()

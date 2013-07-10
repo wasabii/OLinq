@@ -58,6 +58,7 @@
     <Compile Include="ConstantOperation.cs" />
     <Compile Include="AverageOperation.cs" />
     <Compile Include="CastOperation.cs" />
+    <Compile Include="NotifyCollectionChangedUtil.cs" />
     <Compile Include="ObservableValueSubscription.cs" />
     <Compile Include="TakeOperation.cs" />
     <Compile Include="DefaultIfEmptyOperator.cs" />

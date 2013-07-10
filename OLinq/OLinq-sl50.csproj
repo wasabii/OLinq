@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7523C2B0-3622-43DF-A9A2-7C642C231B38}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OLinq</RootNamespace>
+    <AssemblyName>OLinq</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug-sl50\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release-sl50\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp, Version=5.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\packages\Rx-Interfaces.2.1.30214.0\lib\SL5\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core">
+      <HintPath>$(TargetFrameworkDirectory)System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AllOperation.cs" />
+    <Compile Include="AnyOperation.cs" />
+    <Compile Include="AverageOperation.cs" />
+    <Compile Include="BinaryOperation.cs" />
+    <Compile Include="CallOperation.cs" />
+    <Compile Include="CastOperation.cs" />
+    <Compile Include="ConcatOperation.cs" />
+    <Compile Include="ConditionalOperation.cs" />
+    <Compile Include="ConstantOperation.cs" />
+    <Compile Include="ConvertOperation.cs" />
+    <Compile Include="CountOperation.cs" />
+    <Compile Include="DefaultIfEmptyOperator.cs" />
+    <Compile Include="DistinctOperation.cs" />
+    <Compile Include="EnumerableSource2Operation.cs" />
+    <Compile Include="EnumerableSourceOperation.cs" />
+    <Compile Include="EnumerableSourceWithLambdaOperation.cs" />
+    <Compile Include="EnumerableSourceWithPredicateOperation.cs" />
+    <Compile Include="FirstOrDefaultOperation.cs" />
+    <Compile Include="GroupByOperation.cs" />
+    <Compile Include="Grouping.cs" />
+    <Compile Include="GroupOperation.cs" />
+    <Compile Include="INotifyPropertyChanging.cs" />
+    <Compile Include="IntersectOperation.cs" />
+    <Compile Include="IOperation.cs" />
+    <Compile Include="LambdaContainer.cs" />
+    <Compile Include="LambdaOperation.cs" />
+    <Compile Include="LambdaResultComparer.cs" />
+    <Compile Include="LambdaValueChangedEventArgs.cs" />
+    <Compile Include="LambdaValueChangedEventHandler.cs" />
+    <Compile Include="MaxOperation.cs" />
+    <Compile Include="MemberAccessOperation.cs" />
+    <Compile Include="MemberInitOperation.cs" />
+    <Compile Include="MinOperation.cs" />
+    <Compile Include="NewOperation.cs" />
+    <Compile Include="NotifyCollectionChangedUtil.cs" />
+    <Compile Include="ObservableBuffer.cs" />
+    <Compile Include="ObservableQuery.cs" />
+    <Compile Include="ObservableQueryable.cs" />
+    <Compile Include="ObservableQueryConstantOperation.cs" />
+    <Compile Include="ObservableValue.cs" />
+    <Compile Include="ObservableValueSubscription.cs" />
+    <Compile Include="ObservableView.cs" />
+    <Compile Include="Operation.cs" />
+    <Compile Include="OperationContext.cs" />
+    <Compile Include="OperationFactory.cs" />
+    <Compile Include="OrderByOperation.cs" />
+    <Compile Include="ParameterOperation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyChangingEventArgs.cs" />
+    <Compile Include="PropertyChangingEventHandler.cs" />
+    <Compile Include="QuoteOperation.cs" />
+    <Compile Include="RBTree.cs" />
+    <Compile Include="SelectManyOperation.cs" />
+    <Compile Include="SelectOperation.cs" />
+    <Compile Include="SingleOperation.cs" />
+    <Compile Include="SingleOrDefaultOperation.cs" />
+    <Compile Include="SkipOperation.cs" />
+    <Compile Include="SortedSet.cs" />
+    <Compile Include="SumOperation.cs" />
+    <Compile Include="TakeOperation.cs" />
+    <Compile Include="TypeExtensions.cs" />
+    <Compile Include="UnaryOperation.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="ValueChangedEventArgs.cs" />
+    <Compile Include="ValueChangedEventHandler.cs" />
+    <Compile Include="ValueOperation.cs" />
+    <Compile Include="WhereOperation.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
