@@ -100,15 +100,19 @@ namespace OLinq
         /// </summary>
         public void Dispose()
         {
-            // dispose of the operation
-            operation.ValueChanged -= operation_ValueChanged;
-            operation.Dispose();
+            if (operation != null)
+            {
+                // dispose of the operation
+                operation.ValueChanged -= operation_ValueChanged;
+                operation.Dispose();
 
-            // dispose of variables
-            foreach (var var in operation.Context.Variables.Values)
-                var.Dispose();
+                // dispose of variables
+                if (operation.Context != null)
+                    foreach (var var in operation.Context.Variables.Values)
+                        var.Dispose();
 
-            operation = null;
+                operation = null;
+            }
         }
 
         /// <summary>
