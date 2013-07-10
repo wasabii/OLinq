@@ -116,7 +116,7 @@ namespace OLinq
         /// </summary>
         /// <param name="observer">The object that is to receive notifications.</param>
         /// <returns>A reference to an interface that allows observers to stop receiving notifications before the provider has finished sending them.</returns>
-        public IDisposable Subscribe(IObserver<TResult> observer)
+        IDisposable IObservable<TResult>.Subscribe(IObserver<TResult> observer)
         {
             return new ObservableSubscription<TResult>(this, observer);
         }
