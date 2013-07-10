@@ -78,9 +78,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OLinq\OLinq.csproj">
+    <ProjectReference Include="..\OLinq\OLinq-net40.csproj">
       <Project>{e695fb6e-d878-4692-a453-e335021294f0}</Project>
-      <Name>OLinq</Name>
+      <Name>OLinq-net40</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

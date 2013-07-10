@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq", "OLinq\OLinq.csproj", "{E695FB6E-D878-4692-A453-E335021294F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq", "OLinq\OLinq-net40.csproj", "{E695FB6E-D878-4692-A453-E335021294F0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq.Tests", "OLinq.Tests\OLinq.Tests.csproj", "{022242E9-62F7-41CA-96F3-C033A175E6FC}"
 EndProject
