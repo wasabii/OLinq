@@ -61,7 +61,7 @@
     <Compile Include="NotifyCollectionChangedUtil.cs" />
     <Compile Include="ObservableValueSubscription.cs" />
     <Compile Include="TakeOperation.cs" />
-    <Compile Include="DefaultIfEmptyOperator.cs" />
+    <Compile Include="DefaultIfEmptyOperation.cs" />
     <Compile Include="FirstOrDefaultOperation.cs" />
     <Compile Include="IntersectOperation.cs" />
     <Compile Include="LambdaResultComparer.cs" />

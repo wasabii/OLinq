@@ -68,6 +68,11 @@ namespace OLinq
 #endif
         }
 
+        public static void RaiseResetEvent<T>(Action<NotifyCollectionChangedEventArgs> raise)
+        {
+            raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
     }
 
 }

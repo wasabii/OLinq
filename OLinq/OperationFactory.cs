@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -10,7 +9,7 @@ namespace OLinq
     public static class OperationFactory
     {
 
-        private static Type Fix(Type type)
+        static Type Fix(Type type)
         {
             var oldArgs = type.GetGenericArguments();
             var newArgs = new Type[oldArgs.Length];
@@ -94,7 +93,7 @@ namespace OLinq
             throw new NotSupportedException(string.Format("{0} expression not supported.", expression.NodeType));
         }
 
-        private static IOperation FromConstantExpression(OperationContext context, ConstantExpression expression)
+        static IOperation FromConstantExpression(OperationContext context, ConstantExpression expression)
         {
             var query = expression.Value as ObservableQuery;
             if (query != null)
@@ -109,7 +108,7 @@ namespace OLinq
         /// <param name="context"></param>
         /// <param name="expression"></param>
         /// <returns></returns>
-        private static IOperation FromCallExpression(OperationContext context, MethodCallExpression expression)
+        static IOperation FromCallExpression(OperationContext context, MethodCallExpression expression)
         {
             if (expression.Method.DeclaringType == typeof(Queryable) ||
                 expression.Method.DeclaringType == typeof(Enumerable))
@@ -124,7 +123,7 @@ namespace OLinq
         /// <param name="context"></param>
         /// <param name="expression"></param>
         /// <returns></returns>
-        private static IOperation FromQueryableExpression(OperationContext context, MethodCallExpression expression)
+        static IOperation FromQueryableExpression(OperationContext context, MethodCallExpression expression)
         {
             Type resultItemType, sourceItemType, keyItemType;
 
@@ -187,12 +186,14 @@ namespace OLinq
                 case "FirstOrDefault":
                     sourceItemType = expression.Method.GetGenericArguments()[0];
                     return (IOperation)Activator.CreateInstance(typeof(FirstOrDefaultOperation<>).MakeGenericType(sourceItemType), context, expression);
+                case "DefaultIfEmpty":
+                    return DefaultIfEmptyOperation.CreateOperation(context, expression);
                 default:
                     throw new NotSupportedException(expression.Method.Name);
             }
         }
 
-        private static IOperation FromLambdaExpression(OperationContext context, LambdaExpression expression)
+        static IOperation FromLambdaExpression(OperationContext context, LambdaExpression expression)
         {
             return (IOperation)Activator.CreateInstance(typeof(LambdaOperation<>).MakeGenericType(expression.ReturnType), context, expression);
         }

@@ -77,7 +77,7 @@
     <Compile Include="ConstantOperation.cs" />
     <Compile Include="ConvertOperation.cs" />
     <Compile Include="CountOperation.cs" />
-    <Compile Include="DefaultIfEmptyOperator.cs" />
+    <Compile Include="DefaultIfEmptyOperation.cs" />
     <Compile Include="DistinctOperation.cs" />
     <Compile Include="EnumerableSource2Operation.cs" />
     <Compile Include="EnumerableSourceOperation.cs" />
