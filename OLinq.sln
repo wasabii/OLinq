@@ -36,6 +36,7 @@ Global
 		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|Mixed Platforms.Build.0 = Debug|net40
 		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|net40.ActiveCfg = Debug|net40
 		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Any CPU.ActiveCfg = Release|net40
+		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Any CPU.Build.0 = Release|net40
 		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Mixed Platforms.ActiveCfg = Release|net40
 		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Mixed Platforms.Build.0 = Release|net40
 		{E695FB6E-D878-4692-A453-E335021294F0}.Release|net40.ActiveCfg = Release|net40
