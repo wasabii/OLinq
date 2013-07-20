@@ -1,22 +1,21 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace OLinq
 {
 
-    abstract class UnaryOperation<TIn, TOut> : Operation<TOut>
+    abstract class UnaryOperation<TOperand, TResult> : Operation<TResult>
     {
 
-        IOperation<TIn> operand;
+        IOperation<TOperand> operand;
 
         protected UnaryOperation(OperationContext context, UnaryExpression expression)
             : base(context, expression)
         {
             if (expression.Operand != null)
             {
-                operand = OperationFactory.FromExpression<TIn>(context, expression.Operand);
+                operand = OperationFactory.FromExpression<TOperand>(context, expression.Operand);
                 operand.ValueChanged += operand_ValueChanged;
-                SetValue(CoerceValue((TIn)operand.Value));
+                SetValue(CoerceValue((TOperand)operand.Value));
             }
         }
 
@@ -27,7 +26,7 @@ namespace OLinq
         /// <param name="args"></param>
         void operand_ValueChanged(object sender, ValueChangedEventArgs args)
         {
-            SetValue(CoerceValue((TIn)args.NewValue));
+            SetValue(CoerceValue((TOperand)args.NewValue));
         }
 
         /// <summary>
@@ -35,7 +34,7 @@ namespace OLinq
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        protected abstract TOut CoerceValue(TIn value);
+        protected abstract TResult CoerceValue(TOperand value);
 
         public override void Dispose()
         {
