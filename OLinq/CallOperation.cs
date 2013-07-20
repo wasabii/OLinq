@@ -53,7 +53,13 @@ namespace OLinq
             Invoke();
         }
 
-        protected virtual T Invoke(object target, params object[] parameters)
+        /// <summary>
+        /// Invokes the method against the specified target with the given parameters.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        T Invoke(object target, params object[] parameters)
         {
             var method = ((MethodCallExpression)Expression).Method;
             if (method.IsStatic)

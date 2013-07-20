@@ -62,6 +62,8 @@ namespace OLinq
                     return FromCallExpression(context, (MethodCallExpression)expression);
                 case ExpressionType.MemberAccess:
                     return (IOperation)Activator.CreateInstance(typeof(MemberAccessOperation<>).MakeGenericType(type), context, expression);
+                case ExpressionType.ArrayIndex:
+                    return (IOperation)Activator.CreateInstance(typeof(BinaryOperation<>).MakeGenericType(type), context, (BinaryExpression)expression);
                 case ExpressionType.Lambda:
                     return FromLambdaExpression(context, (LambdaExpression)expression);
                 case ExpressionType.Parameter:

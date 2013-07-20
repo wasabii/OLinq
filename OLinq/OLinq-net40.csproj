@@ -53,6 +53,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrayIndexOperation.cs" />
+    <Compile Include="IndexOperation.cs" />
     <Compile Include="ConcatOperation.cs" />
     <Compile Include="ConditionalOperation.cs" />
     <Compile Include="ConstantOperation.cs" />
