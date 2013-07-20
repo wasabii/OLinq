@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Linq;
+using System.Linq.Expressions;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -8,6 +9,9 @@ namespace OLinq.Tests
     [TestClass]
     public class MemberAccessTests
     {
+
+        static readonly object nullValue = null;
+        static readonly object nonNullValue = new object();
 
         [TestMethod]
         public void MemberAccessOperationRead()
@@ -40,6 +44,30 @@ namespace OLinq.Tests
 
             src.Value1 = "Test2";
             Assert.AreEqual("Test2", op.Value);
+        }
+
+        [TestMethod]
+        public void MemberAccessStaticNullTest()
+        {
+            var buffer = Enumerable.Range(0, 1).AsObservableQuery()
+                .Select(i => nullValue)
+                .AsObservableQuery()
+                .ToObservableView()
+                .ToBuffer();
+
+            Assert.AreEqual(1, buffer.Count());
+        }
+
+        [TestMethod]
+        public void MemberAccessStaticNonNullTest()
+        {
+            var buffer = Enumerable.Range(0, 1).AsObservableQuery()
+                .Select(i => nonNullValue)
+                .AsObservableQuery()
+                .ToObservableView()
+                .ToBuffer();
+
+            Assert.AreEqual(1, buffer.Count());
         }
 
     }

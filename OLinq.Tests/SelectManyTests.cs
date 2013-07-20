@@ -12,8 +12,9 @@ namespace OLinq.Tests
     [TestClass]
     public class SelectManyTests
     {
-        private TestObservableCollection<List<string>> source;
-        private ObservableBuffer<string> buffer;
+         TestObservableCollection<List<string>> source;
+         ObservableBuffer<string> buffer;
+
         [TestInitialize]
         public void SetUp()
         {

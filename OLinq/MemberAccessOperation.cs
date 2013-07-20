@@ -9,17 +9,22 @@ namespace OLinq
     class MemberAccessOperation<T> : Operation<T>
     {
 
+        MemberExpression self;
         IOperation targetOp;
 
         public MemberAccessOperation(OperationContext context, MemberExpression expression)
             : base(context, expression)
         {
-            if (expression.Expression != null)
+            self = expression;
+
+            if (self.Expression != null)
             {
-                targetOp = OperationFactory.FromExpression(context, expression.Expression);
+                targetOp = OperationFactory.FromExpression(context, self.Expression);
                 targetOp.ValueChanged += target_ValueChanged;
                 OnTargetValueChanged(null, targetOp.Value);
             }
+            else if (!IsStatic(self.Member))
+                throw new ArgumentException("Cannot access a non-static method without a target expression.");
         }
 
         /// <summary>
@@ -82,18 +87,42 @@ namespace OLinq
         /// </summary>
         void ResetValue()
         {
-            if (targetOp.Value == null)
-                SetValue(default(T));
+            // obtain target if possible
+            var target = targetOp != null ? targetOp.Value : null;
+
+            // if target is null, but it should be a value type, generate default instance of value type
+            if (target == null &&
+                targetOp != null &&
+                self.Expression.Type.IsValueType)
+                target = Activator.CreateInstance(self.Expression.Type);
+
+            var member = self.Member;
+            if (member is PropertyInfo)
+                SetValue(GetValue((PropertyInfo)member, target));
+            else if (self.Member is FieldInfo)
+                SetValue(GetValue((FieldInfo)member, target));
             else
-            {
-                var expression = (MemberExpression)Expression;
-                if (expression.Member is PropertyInfo)
-                    SetValue((T)((PropertyInfo)expression.Member).GetValue(targetOp.Value, null));
-                else if (expression.Member is FieldInfo)
-                    SetValue((T)((FieldInfo)expression.Member).GetValue(targetOp.Value));
-                else
-                    throw new NotSupportedException(string.Format("MemberAccess does not support Member of type {0}.", expression.Member.MemberType));
-            }
+                throw new NotSupportedException(string.Format("MemberAccess does not support Member of type {0}.", member.MemberType));
+        }
+
+        T GetValue(FieldInfo member, object target)
+        {
+            return (T)member.GetValue(target);
+        }
+
+        T GetValue(PropertyInfo member, object target)
+        {
+            return (T)member.GetValue(target, null);
+        }
+
+        bool IsStatic(MemberInfo member)
+        {
+            if (member is FieldInfo)
+                return ((FieldInfo)member).IsStatic;
+            else if (member is PropertyInfo)
+                return (((PropertyInfo)member)).GetGetMethod().IsStatic;
+            else
+                throw new ArgumentException("Member is not of a known type.");
         }
 
         public override void Dispose()

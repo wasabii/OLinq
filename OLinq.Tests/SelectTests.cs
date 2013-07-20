@@ -36,11 +36,11 @@ namespace OLinq.Tests
 
             c.Add("TestItem1");
             Assert.AreEqual(1, added);
-            Assert.AreEqual(q.Count(), 6);
+            Assert.AreEqual(6, q.Count());
 
             c.Remove("TestItem1");
             Assert.AreEqual(1, removed);
-            Assert.AreEqual(q.Count(), 5);
+            Assert.AreEqual(5, q.Count());
         }
 
         void q_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -67,13 +67,25 @@ namespace OLinq.Tests
                 .ToObservableView();
             q.CollectionChanged += q_CollectionChanged;
 
-            Assert.AreEqual(q.Count(), 6);
+            Assert.AreEqual(6, q.Count());
 
             c[0].Add("Item2.5");
-            Assert.AreEqual(q.Count(), 7);
+            Assert.AreEqual(7, q.Count());
 
             c[0].Remove("Item2.5");
-            Assert.AreEqual(q.Count(), 6);
+            Assert.AreEqual(6, q.Count());
+        }
+
+        [TestMethod]
+        public void SelectNullTest()
+        {
+            var buffer = Enumerable.Range(1, 10).AsObservableQuery()
+                .Select(i => (object)null)
+                .AsObservableQuery()
+                .ToObservableView()
+                .ToBuffer();
+
+            Assert.AreEqual(10, buffer.Count());
         }
 
     }
