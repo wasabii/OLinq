@@ -107,11 +107,17 @@ namespace OLinq
 
         T GetValue(FieldInfo member, object target)
         {
+            if (!IsStatic(member) && target == null)
+                throw new InvalidOperationException(string.Format("Non-static method requires target. ({0})", member));
+
             return (T)member.GetValue(target);
         }
 
         T GetValue(PropertyInfo member, object target)
         {
+            if (!IsStatic(member) && target == null)
+                throw new InvalidOperationException(string.Format("Non-static method requires target. ({0})", member));
+
             return (T)member.GetValue(target, null);
         }
 

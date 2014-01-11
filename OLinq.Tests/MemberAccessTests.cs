@@ -70,6 +70,12 @@ namespace OLinq.Tests
             Assert.AreEqual(1, buffer.Count());
         }
 
+        [TestMethod]
+        public void Test_member_access_non_static()
+        {
+
+        }
+
     }
 
 }
