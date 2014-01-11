@@ -88,7 +88,8 @@ namespace OLinq
     /// Value-providing operation type.
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    abstract class Operation<TResult> : Operation, IOperation<TResult>
+    abstract class Operation<TResult> :
+        Operation, IOperation<TResult>
     {
 
         /// <summary>

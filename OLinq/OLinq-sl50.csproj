@@ -89,7 +89,7 @@
     <Reference Include="Microsoft.CSharp, Version=5.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="mscorlib" />
     <Reference Include="System.Reactive.Interfaces">
-      <HintPath>..\packages\Rx-Interfaces.2.1.30214.0\lib\SL5\System.Reactive.Interfaces.dll</HintPath>
+      <HintPath>..\packages\Rx-Interfaces.2.2.2\lib\sl5\System.Reactive.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
@@ -148,6 +148,7 @@
     <Compile Include="Operation.cs" />
     <Compile Include="OperationContext.cs" />
     <Compile Include="OperationFactory.cs" />
+    <Compile Include="OptionOperation.cs" />
     <Compile Include="OrderByOperation.cs" />
     <Compile Include="ParameterOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="ValueChangedEventHandler.cs" />
     <Compile Include="ValueOperation.cs" />
     <Compile Include="WhereOperation.cs" />
+    <Compile Include="WithNullSafeOperation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

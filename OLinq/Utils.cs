@@ -10,20 +10,12 @@ namespace OLinq
     public static class Utils
     {
 
-        public static LambdaExpression CreateConstantLambdaExpression(object value, Type type)
-        {
-            return Expression.Lambda(
-                Expression.Constant(value, type),
-                Expression.Parameter(type, "p")); ;
-        }
-
-        public static LambdaExpression CreateSelfLambdaExpression(Type type)
-        {
-            return Expression.Lambda(
-                Expression.Parameter(type, "p"),
-                Expression.Parameter(type, "p"));
-        }
-
+        /// <summary>
+        /// Casts the specified object as an enumerable of the specified type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public static IEnumerable<T> AsEnumerable<T>(object o)
         {
             var e1 = o as IEnumerable<T>;
@@ -40,18 +32,45 @@ namespace OLinq
             throw new ArgumentOutOfRangeException();
         }
 
-        public static TValue ValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> self, TKey key)
+        /// <summary>
+        /// Returns the value for the specified key, or the default if not found.
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="self"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> self, TKey key)
         {
             TValue value;
             return self.TryGetValue(key, out value) ? value : default(TValue);
         }
 
+        /// <summary>
+        /// Returns the existing value for the specififed key, or creates one using the specified function.
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="self"></param>
+        /// <param name="key"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
         public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> self, TKey key, Func<TKey, TValue> func)
         {
             bool created;
             return GetOrCreate<TKey, TValue>(self, key, func, out created);
         }
 
+        /// <summary>
+        /// Returns the existing value for the specififed key, or creates one using the specified function.
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="self"></param>
+        /// <param name="key"></param>
+        /// <param name="func"></param>
+        /// <param name="created"></param>
+        /// <returns></returns>
         public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> self, TKey key, Func<TKey, TValue> func, out bool created)
         {
             TValue value;

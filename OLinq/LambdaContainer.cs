@@ -9,7 +9,17 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class LambdaContainer<TSource, TResult> : IEnumerable<LambdaOperation<TResult>>, INotifyPropertyChanging, INotifyPropertyChanged, INotifyCollectionChanged, IDisposable
+    /// <summary>
+    /// Provides a lambda container. This maps a set of objects to lambda expressions.
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    class LambdaContainer<TSource, TResult> :
+        IEnumerable<LambdaOperation<TResult>>,
+        INotifyPropertyChanging,
+        INotifyPropertyChanged,
+        INotifyCollectionChanged,
+        IDisposable
     {
 
         IEnumerable<TSource> source;
@@ -151,7 +161,7 @@ namespace OLinq
         /// <returns></returns>
         LambdaOperation<TResult> GetLambda(TSource item)
         {
-            return lambdas.ValueOrDefault(item);
+            return lambdas.GetOrDefault(item);
         }
 
         /// <summary>

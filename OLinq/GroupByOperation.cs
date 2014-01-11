@@ -114,7 +114,7 @@ namespace OLinq
         Grouping<TKey, TElement> GetOrCreateGroup(TKey key)
         {
             // does group already exist?
-            var group = groups.ValueOrDefault(key);
+            var group = groups.GetOrDefault(key);
             if (group != null)
                 return group;
 

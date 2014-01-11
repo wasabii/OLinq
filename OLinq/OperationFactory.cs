@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -9,6 +10,11 @@ namespace OLinq
     public static class OperationFactory
     {
 
+        /// <summary>
+        /// Fixes up the given <see cref="Type"/>.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         static Type Fix(Type type)
         {
             var oldArgs = type.GetGenericArguments();
@@ -95,8 +101,17 @@ namespace OLinq
             throw new NotSupportedException(string.Format("{0} expression not supported.", expression.NodeType));
         }
 
+        /// <summary>
+        /// Returns an operation from a constant expression.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         static IOperation FromConstantExpression(OperationContext context, ConstantExpression expression)
         {
+            Contract.Requires<ArgumentNullException>(context != null);
+            Contract.Requires<ArgumentNullException>(expression != null);
+
             var query = expression.Value as ObservableQuery;
             if (query != null)
                 return (IOperation)Activator.CreateInstance(typeof(ObservableQueryConstantOperation<>).MakeGenericType(query.ElementType), context, expression);
@@ -112,9 +127,14 @@ namespace OLinq
         /// <returns></returns>
         static IOperation FromCallExpression(OperationContext context, MethodCallExpression expression)
         {
+            Contract.Requires<ArgumentNullException>(context != null);
+            Contract.Requires<ArgumentNullException>(expression != null);
+
             if (expression.Method.DeclaringType == typeof(Queryable) ||
                 expression.Method.DeclaringType == typeof(Enumerable))
                 return FromQueryableExpression(context, expression);
+            else if (expression.Method.DeclaringType == typeof(ObservableQueryable))
+                return FromObservableQueryableExpression(context, expression);
             else
                 return (IOperation)Activator.CreateInstance(typeof(CallOperation<>).MakeGenericType(Fix(expression.Type)), context, expression);
         }
@@ -127,6 +147,9 @@ namespace OLinq
         /// <returns></returns>
         static IOperation FromQueryableExpression(OperationContext context, MethodCallExpression expression)
         {
+            Contract.Requires<ArgumentNullException>(context != null);
+            Contract.Requires<ArgumentNullException>(expression != null);
+
             Type resultItemType, sourceItemType, keyItemType;
 
             switch (expression.Method.Name)
@@ -195,11 +218,44 @@ namespace OLinq
             }
         }
 
+
+        /// <summary>
+        /// Returns operations available on <see cref="ObservableQueryable"/>.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        static IOperation FromObservableQueryableExpression(OperationContext context, MethodCallExpression expression)
+        {
+            Contract.Requires<ArgumentNullException>(context != null);
+            Contract.Requires<ArgumentNullException>(expression != null);
+
+            switch (expression.Method.Name)
+            {
+                case "WithNullSafe":
+                    return (IOperation)Activator.CreateInstance(typeof(WithNullSafeOperation<>)
+                        .MakeGenericType(expression.Method.GetGenericArguments()[0]), context, expression);
+                default:
+                    throw new NotSupportedException(expression.Method.Name);
+            }
+        }
+
+        /// <summary>
+        /// Returns an operation from a lambda expression.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         static IOperation FromLambdaExpression(OperationContext context, LambdaExpression expression)
         {
             return (IOperation)Activator.CreateInstance(typeof(LambdaOperation<>).MakeGenericType(expression.ReturnType), context, expression);
         }
 
+        /// <summary>
+        /// Returns an operation from a value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         internal static IOperation FromValue(object value)
         {
             return (IOperation)Activator.CreateInstance(typeof(ValueOperation<>).MakeGenericType(value.GetType()), value);

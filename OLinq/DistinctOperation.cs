@@ -27,7 +27,7 @@ namespace OLinq
             var oldTrack = new List<TElement>();
 
             foreach (var item in newItems)
-                if (counts.ValueOrDefault(item) == 0)
+                if (counts.GetOrDefault(item) == 0)
                 {
                     // item did not exist before, we've just added it
                     counts[item] = 1;
@@ -38,10 +38,10 @@ namespace OLinq
                     counts[item]++;
 
             foreach (var item in oldItems)
-                if (counts.ValueOrDefault(item) == 0)
+                if (counts.GetOrDefault(item) == 0)
                     // value never existed in the first place
                     continue;
-                else if (counts.ValueOrDefault(item) == 1)
+                else if (counts.GetOrDefault(item) == 1)
                 {
                     // item had one count, removed for good
                     counts.Remove(item);
@@ -67,7 +67,7 @@ namespace OLinq
             var newTrack = new List<TElement>();
 
             foreach (var item in newItems)
-                if (counts.ValueOrDefault(item) == 0)
+                if (counts.GetOrDefault(item) == 0)
                 {
                     // item did not exist, added
                     counts.GetOrCreate(item, i => 1);
@@ -86,10 +86,10 @@ namespace OLinq
             var oldTrack = new List<TElement>();
 
             foreach (var item in oldItems)
-                if (counts.ValueOrDefault(item) == 0)
+                if (counts.GetOrDefault(item) == 0)
                     // item did not exist, ignore
                     continue;
-                else if (counts.ValueOrDefault(item) == 1)
+                else if (counts.GetOrDefault(item) == 1)
                 {
                     // item has been removed
                     counts.Remove(item);

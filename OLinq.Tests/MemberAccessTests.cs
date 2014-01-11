@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace OLinq.Tests
@@ -14,7 +14,7 @@ namespace OLinq.Tests
         static readonly object nonNullValue = new object();
 
         [TestMethod]
-        public void MemberAccessOperationRead()
+        public void Test_read()
         {
             var src = new NotificationObject<string>()
             {
@@ -29,7 +29,7 @@ namespace OLinq.Tests
         }
 
         [TestMethod]
-        public void MemberAccessOperationWrite()
+        public void Test_write()
         {
             var src = new NotificationObject<string>()
             {
@@ -47,7 +47,7 @@ namespace OLinq.Tests
         }
 
         [TestMethod]
-        public void MemberAccessStaticNullTest()
+        public void Test_static_null()
         {
             var buffer = Enumerable.Range(0, 1).AsObservableQuery()
                 .Select(i => nullValue)
@@ -59,7 +59,7 @@ namespace OLinq.Tests
         }
 
         [TestMethod]
-        public void MemberAccessStaticNonNullTest()
+        public void Test_static_not_null()
         {
             var buffer = Enumerable.Range(0, 1).AsObservableQuery()
                 .Select(i => nonNullValue)
@@ -71,9 +71,16 @@ namespace OLinq.Tests
         }
 
         [TestMethod]
-        public void Test_member_access_non_static()
+        public void Test_null_instance()
         {
+            var buffer = Enumerable.Repeat((string)null, 1).AsObservableQuery()
+                .Select(i => i.EndsWith("1"))
+                .AsObservableQuery()
+                .WithNullSafe(true)
+                .ToObservableView()
+                .ToBuffer();
 
+            Assert.AreEqual(0, buffer.Count());
         }
 
     }
