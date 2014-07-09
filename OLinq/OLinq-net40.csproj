@@ -99,78 +99,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArrayIndexOperation.cs" />
-    <Compile Include="IndexOperation.cs" />
-    <Compile Include="ConcatOperation.cs" />
-    <Compile Include="ConditionalOperation.cs" />
-    <Compile Include="ConstantOperation.cs" />
-    <Compile Include="AverageOperation.cs" />
-    <Compile Include="CastOperation.cs" />
-    <Compile Include="NotifyCollectionChangedUtil.cs" />
-    <Compile Include="ObservableValueSubscription.cs" />
-    <Compile Include="OptionOperation.cs" />
-    <Compile Include="TakeOperation.cs" />
-    <Compile Include="DefaultIfEmptyOperation.cs" />
-    <Compile Include="FirstOrDefaultOperation.cs" />
-    <Compile Include="IntersectOperation.cs" />
-    <Compile Include="LambdaResultComparer.cs" />
-    <Compile Include="MinOperation.cs" />
-    <Compile Include="MaxOperation.cs" />
-    <Compile Include="EnumerableSource2Operation.cs" />
-    <Compile Include="AnyOperation.cs" />
-    <Compile Include="BinaryOperation.cs" />
-    <Compile Include="AllOperation.cs" />
-    <Compile Include="ConvertOperation.cs" />
-    <Compile Include="EnumerableSourceWithPredicateOperation.cs" />
-    <Compile Include="Grouping.cs" />
-    <Compile Include="ObservableBuffer.cs" />
-    <Compile Include="ObservableQueryable.cs" />
-    <Compile Include="OrderByOperation.cs" />
-    <Compile Include="SkipOperation.cs" />
-    <Compile Include="SumOperation.cs" />
-    <Compile Include="EnumerableSourceWithLambdaOperation.cs" />
-    <Compile Include="EnumerableSourceOperation.cs" />
-    <Compile Include="LambdaValueChangedEventArgs.cs" />
-    <Compile Include="LambdaValueChangedEventHandler.cs" />
-    <Compile Include="DistinctOperation.cs" />
-    <Compile Include="LambdaContainer.cs" />
-    <Compile Include="MemberInitOperation.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SelectManyOperation.cs" />
-    <Compile Include="GroupByOperation.cs" />
-    <Compile Include="ObservableQueryConstantOperation.cs" />
-    <Compile Include="ObservableView.cs" />
-    <Compile Include="SingleOrDefaultOperation.cs" />
-    <Compile Include="SingleOperation.cs" />
-    <Compile Include="TypeExtensions.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="ValueChangedEventHandler.cs" />
-    <Compile Include="CountOperation.cs" />
-    <Compile Include="GroupOperation.cs" />
-    <Compile Include="NewOperation.cs" />
-    <Compile Include="ObservableValue.cs" />
-    <Compile Include="OperationFactory.cs" />
-    <Compile Include="SelectOperation.cs" />
-    <Compile Include="MemberAccessOperation.cs" />
-    <Compile Include="IOperation.cs" />
-    <Compile Include="ParameterOperation.cs" />
-    <Compile Include="ValueChangedEventArgs.cs" />
-    <Compile Include="ValueOperation.cs" />
-    <Compile Include="OperationContext.cs" />
-    <Compile Include="LambdaOperation.cs" />
-    <Compile Include="QuoteOperation.cs" />
-    <Compile Include="UnaryOperation.cs" />
-    <Compile Include="WhereOperation.cs" />
-    <Compile Include="CallOperation.cs" />
-    <Compile Include="Operation.cs" />
-    <Compile Include="ObservableQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WithNullSafeOperation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <Import Project="OLinq.projitems" Label="Shared" Condition="Exists('OLinq.projitems')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
 </Project>

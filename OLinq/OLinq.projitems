@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>2e07278c-d001-4ba7-a9fb-782415210f91</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Rnet.Util</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AllOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AnyOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ArrayIndexOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AverageOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BinaryOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CallOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CastOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConcatOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConditionalOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConstantOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConvertOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CountOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DefaultIfEmptyOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DistinctOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnumerableSource2Operation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnumerableSourceOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnumerableSourceWithLambdaOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnumerableSourceWithPredicateOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FirstOrDefaultOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GroupByOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Grouping.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GroupOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IndexOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)INotifyPropertyChanging.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IntersectOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LambdaContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LambdaOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LambdaResultComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LambdaValueChangedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LambdaValueChangedEventHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MaxOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MemberAccessOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MemberInitOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MinOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NewOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NotifyCollectionChangedUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObservableBuffer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObservableQuery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObservableQueryable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObservableQueryConstantOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObservableValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObservableValueSubscription.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObservableView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Operation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OperationContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OperationFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OptionOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OrderByOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ParameterOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PropertyChangingEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PropertyChangingEventHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QuoteOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RBTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SelectManyOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SelectOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SingleOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SingleOrDefaultOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SkipOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SortedSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SumOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TakeOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TypeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UnaryOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ValueChangedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ValueChangedEventHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ValueOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WhereOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WithNullSafeOperation.cs" />
+  </ItemGroup>
+</Project>

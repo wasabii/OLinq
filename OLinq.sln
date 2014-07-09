@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-net40", "OLinq\OLinq-net40.csproj", "{E695FB6E-D878-4692-A453-E335021294F0}"
 EndProject
@@ -22,7 +22,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-sl50", "OLinq\OLinq-sl50.csproj", "{7523C2B0-3622-43DF-A9A2-7C642C231B38}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "OLinq", "OLinq\OLinq.shproj", "{2E07278C-D001-4BA7-A9FB-782415210F91}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		OLinq\OLinq.projitems*{2e07278c-d001-4ba7-a9fb-782415210f91}*SharedItemsImports = 13
+		OLinq\OLinq.projitems*{e695fb6e-d878-4692-a453-e335021294f0}*SharedItemsImports = 4
+		OLinq\OLinq.projitems*{7523c2b0-3622-43df-a9a2-7c642c231b38}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms

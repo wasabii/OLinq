@@ -101,81 +101,16 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AllOperation.cs" />
-    <Compile Include="AnyOperation.cs" />
-    <Compile Include="ArrayIndexOperation.cs" />
-    <Compile Include="AverageOperation.cs" />
-    <Compile Include="BinaryOperation.cs" />
-    <Compile Include="CallOperation.cs" />
-    <Compile Include="CastOperation.cs" />
-    <Compile Include="ConcatOperation.cs" />
-    <Compile Include="ConditionalOperation.cs" />
-    <Compile Include="ConstantOperation.cs" />
-    <Compile Include="ConvertOperation.cs" />
-    <Compile Include="CountOperation.cs" />
-    <Compile Include="DefaultIfEmptyOperation.cs" />
-    <Compile Include="DistinctOperation.cs" />
-    <Compile Include="EnumerableSource2Operation.cs" />
-    <Compile Include="EnumerableSourceOperation.cs" />
-    <Compile Include="EnumerableSourceWithLambdaOperation.cs" />
-    <Compile Include="EnumerableSourceWithPredicateOperation.cs" />
-    <Compile Include="FirstOrDefaultOperation.cs" />
-    <Compile Include="GroupByOperation.cs" />
-    <Compile Include="Grouping.cs" />
-    <Compile Include="GroupOperation.cs" />
-    <Compile Include="IndexOperation.cs" />
-    <Compile Include="INotifyPropertyChanging.cs" />
-    <Compile Include="IntersectOperation.cs" />
-    <Compile Include="IOperation.cs" />
-    <Compile Include="LambdaContainer.cs" />
-    <Compile Include="LambdaOperation.cs" />
-    <Compile Include="LambdaResultComparer.cs" />
-    <Compile Include="LambdaValueChangedEventArgs.cs" />
-    <Compile Include="LambdaValueChangedEventHandler.cs" />
-    <Compile Include="MaxOperation.cs" />
-    <Compile Include="MemberAccessOperation.cs" />
-    <Compile Include="MemberInitOperation.cs" />
-    <Compile Include="MinOperation.cs" />
-    <Compile Include="NewOperation.cs" />
-    <Compile Include="NotifyCollectionChangedUtil.cs" />
-    <Compile Include="ObservableBuffer.cs" />
-    <Compile Include="ObservableQuery.cs" />
-    <Compile Include="ObservableQueryable.cs" />
-    <Compile Include="ObservableQueryConstantOperation.cs" />
-    <Compile Include="ObservableValue.cs" />
-    <Compile Include="ObservableValueSubscription.cs" />
-    <Compile Include="ObservableView.cs" />
-    <Compile Include="Operation.cs" />
-    <Compile Include="OperationContext.cs" />
-    <Compile Include="OperationFactory.cs" />
-    <Compile Include="OptionOperation.cs" />
-    <Compile Include="OrderByOperation.cs" />
-    <Compile Include="ParameterOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyChangingEventArgs.cs" />
-    <Compile Include="PropertyChangingEventHandler.cs" />
-    <Compile Include="QuoteOperation.cs" />
-    <Compile Include="RBTree.cs" />
-    <Compile Include="SelectManyOperation.cs" />
-    <Compile Include="SelectOperation.cs" />
-    <Compile Include="SingleOperation.cs" />
-    <Compile Include="SingleOrDefaultOperation.cs" />
-    <Compile Include="SkipOperation.cs" />
-    <Compile Include="SortedSet.cs" />
-    <Compile Include="SumOperation.cs" />
-    <Compile Include="TakeOperation.cs" />
-    <Compile Include="TypeExtensions.cs" />
-    <Compile Include="UnaryOperation.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="ValueChangedEventArgs.cs" />
-    <Compile Include="ValueChangedEventHandler.cs" />
-    <Compile Include="ValueOperation.cs" />
-    <Compile Include="WhereOperation.cs" />
-    <Compile Include="WithNullSafeOperation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <Import Project="OLinq.projitems" Label="Shared" Condition="Exists('OLinq.projitems')" />
+  <Import Project="OLinq.projitems" Label="Shared" Condition="Exists('OLinq.projitems')" />
+  <Import Project="OLinq.projitems" Label="Shared" Condition="Exists('OLinq.projitems')" />
+  <Import Project="OLinq.projitems" Label="Shared" Condition="Exists('OLinq.projitems')" />
+  <Import Project="OLinq.projitems" Label="Shared" Condition="Exists('OLinq.projitems')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
