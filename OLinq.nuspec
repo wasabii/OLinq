@@ -18,8 +18,8 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="OLinq-net40\bin\Release\OLinq.dll" target="lib\net40\OLinq.dll" />
         <file src="OLinq-net45\bin\Release\OLinq.dll" target="lib\net45\OLinq.dll" />
+        <file src="OLinq-net40\bin\Release\OLinq.dll" target="lib\net40\OLinq.dll" />
         <file src="OLinq-sl50\bin\Release\OLinq.dll" target="lib\sl50\OLinq.dll" />
     </files>
 </package>
