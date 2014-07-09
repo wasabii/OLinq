@@ -1,10 +1,6 @@
-/OLinq.Tests/obj
-/OLinq.Tests/bin
 /TestResults
-/OLinq/obj
-/OLinq/bin
-/*.suo
-/*.user
-/OLinq/*.user
 /packages
+*.suo
 *.user
+bin
+obj
