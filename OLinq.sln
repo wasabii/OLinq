@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-net40", "OLinq\OLinq-net40.csproj", "{E695FB6E-D878-4692-A453-E335021294F0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq.Tests", "OLinq.Tests\OLinq.Tests.csproj", "{022242E9-62F7-41CA-96F3-C033A175E6FC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{9179D280-42B4-4C4C-A6F8-FB72A2BD4397}"
 	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.config = .nuget\NuGet.config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
@@ -20,13 +18,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-sl50", "OLinq\OLinq-sl50.csproj", "{7523C2B0-3622-43DF-A9A2-7C642C231B38}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "OLinq", "OLinq\OLinq.shproj", "{2E07278C-D001-4BA7-A9FB-782415210F91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-net40", "OLinq-net40\OLinq-net40.csproj", "{E695FB6E-D878-4692-A453-E335021294F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-net45", "OLinq-net45\OLinq-net45.csproj", "{B3BE7333-BFAA-4651-A401-BD73C9B89619}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-sl50", "OLinq-sl50\OLinq-sl50.csproj", "{7523C2B0-3622-43DF-A9A2-7C642C231B38}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		OLinq\OLinq.projitems*{2e07278c-d001-4ba7-a9fb-782415210f91}*SharedItemsImports = 13
+		OLinq\OLinq.projitems*{b3be7333-bfaa-4651-a401-bd73c9b89619}*SharedItemsImports = 4
 		OLinq\OLinq.projitems*{e695fb6e-d878-4692-a453-e335021294f0}*SharedItemsImports = 4
 		OLinq\OLinq.projitems*{7523c2b0-3622-43df-a9a2-7c642c231b38}*SharedItemsImports = 4
 	EndGlobalSection
@@ -39,16 +42,6 @@ Global
 		Release|net40 = Release|net40
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|net40.ActiveCfg = Debug|Any CPU
-		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{E695FB6E-D878-4692-A453-E335021294F0}.Release|net40.ActiveCfg = Release|Any CPU
 		{022242E9-62F7-41CA-96F3-C033A175E6FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{022242E9-62F7-41CA-96F3-C033A175E6FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{022242E9-62F7-41CA-96F3-C033A175E6FC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -61,6 +54,26 @@ Global
 		{022242E9-62F7-41CA-96F3-C033A175E6FC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{022242E9-62F7-41CA-96F3-C033A175E6FC}.Release|net40.ActiveCfg = Release|Any CPU
 		{022242E9-62F7-41CA-96F3-C033A175E6FC}.Release|net40.Build.0 = Release|Any CPU
+		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E695FB6E-D878-4692-A453-E335021294F0}.Debug|net40.ActiveCfg = Debug|Any CPU
+		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E695FB6E-D878-4692-A453-E335021294F0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E695FB6E-D878-4692-A453-E335021294F0}.Release|net40.ActiveCfg = Release|Any CPU
+		{B3BE7333-BFAA-4651-A401-BD73C9B89619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3BE7333-BFAA-4651-A401-BD73C9B89619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3BE7333-BFAA-4651-A401-BD73C9B89619}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B3BE7333-BFAA-4651-A401-BD73C9B89619}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B3BE7333-BFAA-4651-A401-BD73C9B89619}.Debug|net40.ActiveCfg = Debug|Any CPU
+		{B3BE7333-BFAA-4651-A401-BD73C9B89619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3BE7333-BFAA-4651-A401-BD73C9B89619}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3BE7333-BFAA-4651-A401-BD73C9B89619}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B3BE7333-BFAA-4651-A401-BD73C9B89619}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B3BE7333-BFAA-4651-A401-BD73C9B89619}.Release|net40.ActiveCfg = Release|Any CPU
 		{7523C2B0-3622-43DF-A9A2-7C642C231B38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7523C2B0-3622-43DF-A9A2-7C642C231B38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7523C2B0-3622-43DF-A9A2-7C642C231B38}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
