@@ -21,7 +21,7 @@
     <RestorePackages>true</RestorePackages>
     <TargetFrameworkProfile />
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
-    <NuGetPackageImportStamp>f89d9d96</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>9dd483a5</NuGetPackageImportStamp>
   </PropertyGroup>
   <!-- This property group is only here to support building this project using the 
        MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
@@ -118,12 +118,12 @@
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Import Project="..\packages\GitVersionTask.1.0.0.0\Build\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.1.0.0.0\Build\GitVersionTask.targets')" />
+  <Import Project="..\packages\GitVersionTask.1.1.0-beta0001\Build\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.1.1.0-beta0001\Build\GitVersionTask.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\GitVersionTask.1.0.0.0\Build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.1.0.0.0\Build\GitVersionTask.targets'))" />
+    <Error Condition="!Exists('..\packages\GitVersionTask.1.1.0-beta0001\Build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.1.1.0-beta0001\Build\GitVersionTask.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
