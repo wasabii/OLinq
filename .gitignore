@@ -4,3 +4,4 @@
 *.user
 bin
 obj
+*.nupkg
