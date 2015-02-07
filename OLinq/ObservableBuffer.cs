@@ -1,17 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 
 namespace OLinq
 {
 
-    public sealed class ObservableBuffer<TElement> : IEnumerable<TElement>, INotifyCollectionChanged
+    public sealed class ObservableBuffer<TElement> : IEnumerable<TElement>, INotifyCollectionChanged, IDisposable
     {
 
-        ObservableView<TElement> view;
-        ObservableCollection<TElement> buffer = new ObservableCollection<TElement>();
+        readonly ObservableView<TElement> view;
+        readonly ObservableCollection<TElement> buffer = new ObservableCollection<TElement>();
 
         /// <summary>
         /// Initializes a new instance.
@@ -144,6 +144,11 @@ namespace OLinq
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public void Dispose()
+        {
+            view.Dispose();
         }
 
     }
