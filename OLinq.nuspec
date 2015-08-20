@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>OLinq</id>
-        <version>0.0.15</version>
+        <version>0.1.4-pre3</version>
         <title>OLinq</title>
         <authors>Jerome Haltom</authors>
         <owners>Jerome Haltom</owners>
@@ -17,9 +17,10 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="OLinq-net45\bin\Release\OLinq.dll" target="lib\net45\OLinq.dll" />
         <file src="OLinq-net40\bin\Release\OLinq.dll" target="lib\net40\OLinq.dll" />
+        <file src="OLinq-net45\bin\Release\OLinq.dll" target="lib\net45\OLinq.dll" />
+        <file src="OLinq-pcl\bin\Release\OLinq.dll" target="lib\portable-net45+win+wp80+MonoAndroid10+MonoTouch10\OLinq.dll" />
+        <file src="OLinq-pcl\bin\Release\OLinq.dll" target="lib\MonoAndroid\OLinq.dll" />
         <file src="OLinq-sl50\bin\Release\OLinq.dll" target="lib\sl50\OLinq.dll" />
-        <file src="OLinq-pcl\bin\Release\OLinq.dll" target="lib\portable-MonoAndroid10+MonoTouch10\OLinq.dll" />
     </files>
 </package>
