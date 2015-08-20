@@ -36,8 +36,11 @@ using System.Collections;
 namespace System.Collections.Generic
 {
 
-    internal class RBTree : IEnumerable, IEnumerable<RBTree.Node>
+    internal class RBTree : 
+        IEnumerable, 
+        IEnumerable<RBTree.Node>
     {
+
         public interface INodeHelper<T>
         {
             int Compare(T key, Node node);
@@ -259,7 +262,7 @@ namespace System.Collections.Generic
                 if (index < 0 || index >= Count)
                     throw new IndexOutOfRangeException("index");
 
-                Node current = root;
+                var current = root;
                 while (current != null)
                 {
                     int left_size = current.left == null ? 0 : (int)current.left.Size;
@@ -275,7 +278,8 @@ namespace System.Collections.Generic
                         current = current.right;
                     }
                 }
-                throw new SystemException("Internal Error: index calculation");
+
+                throw new Exception("Internal Error: index calculation");
             }
         }
 
@@ -288,8 +292,8 @@ namespace System.Collections.Generic
         public NodeEnumerator GetSuffixEnumerator<T>(T key)
         {
             var pennants = new Stack<Node>();
-            INodeHelper<T> hlp = (INodeHelper<T>)this.hlp;
-            Node current = root;
+            var hlp = (INodeHelper<T>)this.hlp;
+            var current = root;
             while (current != null)
             {
                 int c = hlp.Compare(key, current);
@@ -299,6 +303,7 @@ namespace System.Collections.Generic
                     break;
                 current = c < 0 ? current.left : current.right;
             }
+
             return new NodeEnumerator(this, pennants);
         }
 
@@ -383,7 +388,7 @@ namespace System.Collections.Generic
                 rebalance_insert(path);
 
             if (!root.IsBlack)
-                throw new SystemException("Internal error: root is not black");
+                throw new Exception("Internal error: root is not black");
 
             ++version;
             return current;
@@ -416,7 +421,7 @@ namespace System.Collections.Generic
             current = path[curpos];
 
             if (current.Size != 1)
-                throw new SystemException("Internal Error: red-black violation somewhere");
+                throw new Exception("Internal Error: red-black violation somewhere");
 
             // remove it from our data structures
             path[curpos] = null;
@@ -433,7 +438,7 @@ namespace System.Collections.Generic
             }
 
             if (root != null && !root.IsBlack)
-                throw new SystemException("Internal Error: root is not black");
+                throw new Exception("Internal Error: root is not black");
 
             ++version;
             return current;
@@ -640,7 +645,7 @@ namespace System.Collections.Generic
         void node_reparent(Node orig_parent, Node orig, uint orig_size, Node updated)
         {
             if (updated != null && updated.FixSize() != orig_size)
-                throw new SystemException("Internal error: rotation");
+                throw new Exception("Internal error: rotation");
 
             if (orig == root)
                 root = updated;
@@ -649,7 +654,7 @@ namespace System.Collections.Generic
             else if (orig == orig_parent.right)
                 orig_parent.right = updated;
             else
-                throw new SystemException("Internal error: path error");
+                throw new Exception("Internal error: path error");
         }
 
         // Pre-condition: current != null

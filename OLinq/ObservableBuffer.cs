@@ -1,17 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 
 namespace OLinq
 {
 
-    public sealed class ObservableBuffer<TElement> : IEnumerable<TElement>, INotifyCollectionChanged
+    public sealed class ObservableBuffer<TElement> : IEnumerable<TElement>, INotifyCollectionChanged, IDisposable
     {
 
-        ObservableView<TElement> view;
-        ObservableCollection<TElement> buffer = new ObservableCollection<TElement>();
+        readonly ObservableView<TElement> view;
+        readonly ObservableCollection<TElement> buffer = new ObservableCollection<TElement>();
 
         /// <summary>
         /// Initializes a new instance.
@@ -38,7 +38,7 @@ namespace OLinq
         {
             switch (args.Action)
             {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
                 case NotifyCollectionChangedAction.Move:
 #endif
                 case NotifyCollectionChangedAction.Replace:
@@ -88,7 +88,7 @@ namespace OLinq
         {
             switch (args.Action)
             {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
                 case NotifyCollectionChangedAction.Move:
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, args.NewItems, args.NewStartingIndex, args.OldStartingIndex));
                     break;
@@ -144,6 +144,11 @@ namespace OLinq
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public void Dispose()
+        {
+            view.Dispose();
         }
 
     }

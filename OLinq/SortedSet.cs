@@ -1,4 +1,6 @@
-﻿//
+﻿#if SILVERLIGHT || PCL
+
+//
 // SortedSet.cs
 //
 // Authors:
@@ -32,19 +34,17 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Security.Permissions;
 using System.Diagnostics;
 
 // SortedSet is basically implemented as a reduction of SortedDictionary<K, V>
 
-#if SILVERLIGHT
-
-namespace System.Collections.Generic {
-
+namespace System.Collections.Generic 
+{
 
 	[DebuggerDisplay ("Count={Count}")]
 	public class SortedSet<T> : ISet<T>, ICollection
 	{
+
 		class Node : RBTree.Node {
 
 			public T item;
@@ -413,12 +413,12 @@ namespace System.Collections.Generic {
 			using (var t = that.GetEnumerator ()) {
 				foreach (T item in this) {
 					if (!t.MoveNext ())
-						throw new SystemException ("count wrong somewhere: this longer than that");
+						throw new Exception("count wrong somewhere: this longer than that");
 					if (Comparer.Compare (item, t.Current) != 0)
 						return false;
 				}
 				if (t.MoveNext ())
-					throw new SystemException ("count wrong somewhere: this shorter than that");
+					throw new Exception("count wrong somewhere: this shorter than that");
 				return true;
 			}
 		}

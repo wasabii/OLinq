@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>OLinq</id>
-        <version>0.1.3</version>
+        <version>0.0.15</version>
         <title>OLinq</title>
         <authors>Jerome Haltom</authors>
         <owners>Jerome Haltom</owners>
@@ -11,15 +11,15 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>OLinq is a project to provide a Linq Queryable provider implementation for operating on ObservableCollections or other INotifyCollectionChanged supporting lists. The output of OLinq is an ObservableView which notifies when the results of the query have changed.</description>
         <releaseNotes />
-        <copyright>Copyright © 2014 Jerome Haltom</copyright>
+        <copyright>Copyright © 2015 Jerome Haltom</copyright>
         <tags>linq observable clinq bindable wpf rx queryable</tags>
         <dependencies>
-            <dependency id="Rx-Interfaces" version="2.2.4" />
         </dependencies>
     </metadata>
     <files>
-        <file src="OLinq-net40\bin\Release\OLinq.dll" target="lib\net40\OLinq.dll" />
         <file src="OLinq-net45\bin\Release\OLinq.dll" target="lib\net45\OLinq.dll" />
+        <file src="OLinq-net40\bin\Release\OLinq.dll" target="lib\net40\OLinq.dll" />
         <file src="OLinq-sl50\bin\Release\OLinq.dll" target="lib\sl50\OLinq.dll" />
+        <file src="OLinq-pcl\bin\Release\OLinq.dll" target="lib\portable-MonoAndroid10+MonoTouch10\OLinq.dll" />
     </files>
 </package>

@@ -8,7 +8,8 @@ namespace OLinq
 
     static class SingleOrDefaultOperation
     {
-public static IOperation CreateOperation(OperationContext context, MethodCallExpression expression)
+
+        public static IOperation CreateOperation(OperationContext context, MethodCallExpression expression)
         {
             var method = expression.Method.GetGenericMethodDefinition();
             if (method.GetGenericArguments().Length == 1 &&

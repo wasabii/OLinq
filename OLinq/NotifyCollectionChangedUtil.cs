@@ -11,7 +11,7 @@ namespace OLinq
 
         public static void RaiseAddEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, IEnumerable<T> newItems)
         {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
             raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.ToList()));
 #else
             foreach (var item in newItems)
@@ -21,7 +21,7 @@ namespace OLinq
 
         public static void RaiseAddEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, T newItem)
         {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
             raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItem, -1));
 #else
             raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItem, -1));
@@ -30,7 +30,7 @@ namespace OLinq
 
         public static void RaiseRemoveEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, IEnumerable<T> oldItems)
         {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
             raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.ToList()));
 #else
             foreach (var item in oldItems)
@@ -40,7 +40,7 @@ namespace OLinq
 
         public static void RaiseRemoveEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, T oldItem)
         {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
             raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, -1));
 #else
             raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, -1));
@@ -49,7 +49,7 @@ namespace OLinq
 
         public static void RaiseReplaceEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, IEnumerable<T> oldItems, IEnumerable<T> newItems)
         {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
             raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newItems.ToList(), oldItems.ToList()));
 #else
             var items = newItems
@@ -61,7 +61,7 @@ namespace OLinq
 
         public static void RaiseReplaceEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, T oldItem, T newItem)
         {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
             raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, new [] { newItem }, new [] { oldItem }));
 #else
             raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newItem, oldItem, -1));

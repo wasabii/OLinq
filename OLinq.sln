@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq.Tests", "OLinq.Tests\OLinq.Tests.csproj", "{022242E9-62F7-41CA-96F3-C033A175E6FC}"
 EndProject
@@ -26,12 +26,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-net45", "OLinq-net45\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-sl50", "OLinq-sl50\OLinq-sl50.csproj", "{7523C2B0-3622-43DF-A9A2-7C642C231B38}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-pcl", "OLinq-pcl\OLinq-pcl.csproj", "{67F9D3A8-F71E-4428-913F-C37AE82CDB24}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		OLinq\OLinq.projitems*{2e07278c-d001-4ba7-a9fb-782415210f91}*SharedItemsImports = 13
 		OLinq\OLinq.projitems*{b3be7333-bfaa-4651-a401-bd73c9b89619}*SharedItemsImports = 4
 		OLinq\OLinq.projitems*{e695fb6e-d878-4692-a453-e335021294f0}*SharedItemsImports = 4
 		OLinq\OLinq.projitems*{7523c2b0-3622-43df-a9a2-7c642c231b38}*SharedItemsImports = 4
+		OLinq\OLinq.projitems*{67f9d3a8-f71e-4428-913f-c37ae82cdb24}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,6 +87,18 @@ Global
 		{7523C2B0-3622-43DF-A9A2-7C642C231B38}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{7523C2B0-3622-43DF-A9A2-7C642C231B38}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7523C2B0-3622-43DF-A9A2-7C642C231B38}.Release|net40.ActiveCfg = Release|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Debug|net40.ActiveCfg = Debug|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Debug|net40.Build.0 = Debug|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Release|net40.ActiveCfg = Release|Any CPU
+		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Release|net40.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
