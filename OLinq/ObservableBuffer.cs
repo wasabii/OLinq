@@ -38,7 +38,7 @@ namespace OLinq
         {
             switch (args.Action)
             {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
                 case NotifyCollectionChangedAction.Move:
 #endif
                 case NotifyCollectionChangedAction.Replace:
@@ -88,7 +88,7 @@ namespace OLinq
         {
             switch (args.Action)
             {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
                 case NotifyCollectionChangedAction.Move:
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, args.NewItems, args.NewStartingIndex, args.OldStartingIndex));
                     break;

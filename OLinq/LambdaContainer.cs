@@ -110,7 +110,7 @@ namespace OLinq
         {
             switch (args.Action)
             {
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !PCL
                 case NotifyCollectionChangedAction.Move:
 #endif
                 case NotifyCollectionChangedAction.Replace:

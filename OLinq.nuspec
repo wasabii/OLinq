@@ -11,7 +11,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>OLinq is a project to provide a Linq Queryable provider implementation for operating on ObservableCollections or other INotifyCollectionChanged supporting lists. The output of OLinq is an ObservableView which notifies when the results of the query have changed.</description>
         <releaseNotes />
-        <copyright>Copyright © 2014 Jerome Haltom</copyright>
+        <copyright>Copyright © 2015 Jerome Haltom</copyright>
         <tags>linq observable clinq bindable wpf rx queryable</tags>
         <dependencies>
         </dependencies>
@@ -20,5 +20,6 @@
         <file src="OLinq-net45\bin\Release\OLinq.dll" target="lib\net45\OLinq.dll" />
         <file src="OLinq-net40\bin\Release\OLinq.dll" target="lib\net40\OLinq.dll" />
         <file src="OLinq-sl50\bin\Release\OLinq.dll" target="lib\sl50\OLinq.dll" />
+        <file src="OLinq-pcl\bin\Release\OLinq.dll" target="lib\portable-MonoAndroid10+MonoTouch10\OLinq.dll" />
     </files>
 </package>

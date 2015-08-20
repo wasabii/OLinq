@@ -102,7 +102,11 @@ namespace OLinq
             else if (self.Member is FieldInfo)
                 SetValue(GetValue((FieldInfo)member, target));
             else
+#if !PCL
                 throw new NotSupportedException(string.Format("MemberAccess does not support Member of type {0}.", member.MemberType));
+#else
+                throw new NotSupportedException(string.Format("MemberAccess does not support Member of type {0}.", member.GetType().Name));
+#endif
         }
 
         T GetValue(FieldInfo member, object target)
