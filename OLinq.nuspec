@@ -19,7 +19,7 @@
     <files>
         <file src="OLinq-net40\bin\Release\OLinq.dll" target="lib\net40\OLinq.dll" />
         <file src="OLinq-net45\bin\Release\OLinq.dll" target="lib\net45\OLinq.dll" />
-        <file src="OLinq-pcl\bin\Release\OLinq.dll" target="lib\portable-net45+win+wp80+MonoAndroid10+MonoTouch10\OLinq.dll" />
+        <file src="OLinq-pcl\bin\Release\OLinq.dll" target="lib\portable-net45+win8+wp8+MonoAndroid10+MonoTouch10\OLinq.dll" />
         <file src="OLinq-sl50\bin\Release\OLinq.dll" target="lib\sl50\OLinq.dll" />
     </files>
 </package>
