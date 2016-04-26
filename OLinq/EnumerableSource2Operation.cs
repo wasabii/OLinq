@@ -7,10 +7,11 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class EnumerableSource2Operation<TSource1, TSource2, TResult> : EnumerableSourceOperation<TSource1, TResult>
+    abstract class EnumerableSource2Operation<TSource1, TSource2, TResult> :
+        EnumerableSourceOperation<TSource1, TResult>
     {
 
-        IOperation<IEnumerable<TSource2>> source2Op;
+        readonly IOperation<IEnumerable<TSource2>> source2Op;
 
         /// <summary>
         /// Initializes a new instance.
@@ -177,7 +178,6 @@ namespace OLinq
                 UnsubscribeSource2Collection(source2Op.Value);
                 UnsubscribeSource2Operation(source2Op);
                 source2Op.Dispose();
-                source2Op = null;
             }
 
             base.Dispose();

@@ -2,18 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace OLinq
 {
 
+    /// <summary>
+    /// Final product of an <see cref="ObservableQuery{TElement}"/>. Allows iteration and raises events when the
+    /// underlying collections change.
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
     public class ObservableView<TElement> : IEnumerable<TElement>, INotifyCollectionChanged, IDisposable
     {
 
-        private Expression expression;
-        private Operation<IEnumerable<TElement>> operation;
-        private ObservableBuffer<TElement> buffer;
+        Expression expression;
+        Operation<IEnumerable<TElement>> operation;
+        ObservableBuffer<TElement> buffer;
 
         /// <summary>
         /// Initializes a new instance.
@@ -134,8 +138,7 @@ namespace OLinq
         /// <param name="args"></param>
         private void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
-            if (CollectionChanged != null)
-                CollectionChanged(this, args);
+            CollectionChanged?.Invoke(this, args);
         }
 
         /// <summary>
@@ -149,7 +152,7 @@ namespace OLinq
 
         /// <summary>
         /// Gets a buffer that is kept in sync with the view. This method might be useful if you are working with a
-        /// library that requires a populated ObservableCollection.
+        /// library that requires a populated <see cref="ObservableCollection{TElement}"/>.
         /// </summary>
         /// <returns></returns>
         public ObservableBuffer<TElement> ToBuffer()

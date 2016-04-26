@@ -86,14 +86,14 @@ namespace OLinq
 
         }
 
-        protected override void OnPredicateCollectionItemsAdded(IEnumerable<LambdaOperation<bool>> newItems, int startingIndex)
+        protected override void OnPredicateCollectionItemsAdded(IEnumerable<FuncOperation<bool>> newItems, int startingIndex)
         {
             // we are currently false, any new true items make us true
             if (!Value)
                 SetValue(newItems.Any(i => i.Value));
         }
 
-        protected override void OnPredicateValueChanged(LambdaValueChangedEventArgs<TSource, bool> args)
+        protected override void OnPredicateValueChanged(FuncValueChangedEventArgs<TSource, bool> args)
         {
             // any value being set to true means we're true
             if (args.NewValue)

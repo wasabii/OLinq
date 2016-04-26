@@ -18,10 +18,10 @@ namespace OLinq
 
     }
 
-    class OrderByOperation<TSource, TKey> : EnumerableSourceWithLambdaOperation<TSource, TKey, IEnumerable<TSource>>, IOrderedEnumerable<TSource>, INotifyCollectionChanged, IEnumerable<TSource>
+    class OrderByOperation<TSource, TKey> : EnumerableSourceWithFuncOperation<TSource, TKey, IEnumerable<TSource>>, IOrderedEnumerable<TSource>, INotifyCollectionChanged, IEnumerable<TSource>
     {
 
-        SortedSet<LambdaOperation<TKey>> sort = new SortedSet<LambdaOperation<TKey>>(new LambdaResultComparer<TKey>());
+        SortedSet<FuncOperation<TKey>> sort = new SortedSet<FuncOperation<TKey>>(new FuncResultComparer<TKey>());
 
         /// <summary>
         /// Initializes a new instance.
@@ -39,25 +39,25 @@ namespace OLinq
             Reset();
         }
 
-        protected override void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<TKey>> newItems, int startingIndex)
+        protected override void OnLambdaCollectionItemsAdded(IEnumerable<FuncOperation<TKey>> newItems, int startingIndex)
         {
             foreach (var item in newItems)
                 sort.Add(item);
 
-            NotifyCollectionChangedUtil.RaiseAddEvent<TSource>(RaiseCollectionChanged, newItems.Select(i => Lambdas[i]));
+            NotifyCollectionChangedUtil.RaiseAddEvent<TSource>(RaiseCollectionChanged, newItems.Select(i => Funcs[i]));
         }
 
-        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TKey>> oldItems, int startingIndex)
+        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<FuncOperation<TKey>> oldItems, int startingIndex)
         {
             foreach (var item in oldItems)
                 sort.Remove(item);
 
-            NotifyCollectionChangedUtil.RaiseRemoveEvent<TSource>(RaiseCollectionChanged, oldItems.Select(i => Lambdas[i]));
+            NotifyCollectionChangedUtil.RaiseRemoveEvent<TSource>(RaiseCollectionChanged, oldItems.Select(i => Funcs[i]));
         }
 
         public IEnumerator<TSource> GetEnumerator()
         {
-            return sort.Select(i => Lambdas[i]).GetEnumerator();
+            return sort.Select(i => Funcs[i]).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -76,12 +76,12 @@ namespace OLinq
         void Reset()
         {
             // remove obsolete items
-            var oldItems = sort.Except(Lambdas).ToList();
+            var oldItems = sort.Except(Funcs).ToList();
             foreach (var item in oldItems)
                 sort.Remove(item);
 
             // add missing items
-            var newItems = Lambdas.Except(sort).ToList();
+            var newItems = Funcs.Except(sort).ToList();
             foreach (var item in newItems)
                 sort.Add(item);
 

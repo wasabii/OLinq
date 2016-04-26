@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq.Tests", "OLinq.Tests\OLinq.Tests.csproj", "{022242E9-62F7-41CA-96F3-C033A175E6FC}"
 EndProject
@@ -27,6 +27,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-sl50", "OLinq-sl50\OLinq-sl50.csproj", "{7523C2B0-3622-43DF-A9A2-7C642C231B38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq-pcl", "OLinq-pcl\OLinq-pcl.csproj", "{67F9D3A8-F71E-4428-913F-C37AE82CDB24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OLinq.Wpf.Tests", "OLinq.Wpf.Tests\OLinq.Wpf.Tests.csproj", "{BD6F49CA-3000-46AE-964F-510384214F64}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -99,6 +101,18 @@ Global
 		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Release|net40.ActiveCfg = Release|Any CPU
 		{67F9D3A8-F71E-4428-913F-C37AE82CDB24}.Release|net40.Build.0 = Release|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Debug|net40.ActiveCfg = Debug|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Debug|net40.Build.0 = Debug|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Release|net40.ActiveCfg = Release|Any CPU
+		{BD6F49CA-3000-46AE-964F-510384214F64}.Release|net40.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

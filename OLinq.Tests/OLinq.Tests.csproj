@@ -150,6 +150,7 @@
     <Compile Include="AverageTests.cs" />
     <Compile Include="DefaultIfEmptyTests.cs" />
     <Compile Include="IndexTests.cs" />
+    <Compile Include="Issues.cs" />
     <Compile Include="ObservableTests.cs" />
     <Compile Include="OrderByDescendingTests.cs" />
     <Compile Include="OrderByTests.cs" />

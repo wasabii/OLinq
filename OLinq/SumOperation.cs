@@ -65,17 +65,17 @@ namespace OLinq
 
         }
 
-        protected override void OnProjectionCollectionItemsAdded(IEnumerable<LambdaOperation<int>> newItems, int startingIndex)
+        protected override void OnProjectionCollectionItemsAdded(IEnumerable<FuncOperation<int>> newItems, int startingIndex)
         {
             SetValue(sum += newItems.Sum(i => i.Value));
         }
 
-        protected override void OnProjectionCollectionItemsRemoved(IEnumerable<LambdaOperation<int>> oldItems, int startingIndex)
+        protected override void OnProjectionCollectionItemsRemoved(IEnumerable<FuncOperation<int>> oldItems, int startingIndex)
         {
             SetValue(sum -= oldItems.Sum(i => i.Value));
         }
 
-        protected override void OnProjectionValueChanged(LambdaValueChangedEventArgs<TSource, int> args)
+        protected override void OnProjectionValueChanged(FuncValueChangedEventArgs<TSource, int> args)
         {
             SetValue(sum = sum - args.OldValue + args.NewValue);
         }

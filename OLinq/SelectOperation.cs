@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class SelectOperation<TSource, TResult> : EnumerableSourceWithLambdaOperation<TSource, TResult, IEnumerable<TResult>>, IEnumerable<TResult>, INotifyCollectionChanged
+    class SelectOperation<TSource, TResult> : EnumerableSourceWithFuncOperation<TSource, TResult, IEnumerable<TResult>>, IEnumerable<TResult>, INotifyCollectionChanged
     {
 
         public SelectOperation(OperationContext context, MethodCallExpression expression)
@@ -21,17 +21,17 @@ namespace OLinq
             RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
-        protected override void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<TResult>> newItems, int startingIndex)
+        protected override void OnLambdaCollectionItemsAdded(IEnumerable<FuncOperation<TResult>> newItems, int startingIndex)
         {
             RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.Select(i => i.Value).ToList(), startingIndex));
         }
 
-        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TResult>> oldItems, int startingIndex)
+        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<FuncOperation<TResult>> oldItems, int startingIndex)
         {
             RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.Select(i => i.Value).ToList(), startingIndex));
         }
 
-        protected override void OnLambdaValueChanged(LambdaValueChangedEventArgs<TSource, TResult> args)
+        protected override void OnLambdaValueChanged(FuncValueChangedEventArgs<TSource, TResult> args)
         {
             var oldValue = (TResult)args.OldValue;
             var newValue = (TResult)args.NewValue;
@@ -43,7 +43,7 @@ namespace OLinq
 
         public IEnumerator<TResult> GetEnumerator()
         {
-            return Lambdas.Select(i => i.Value).GetEnumerator();
+            return Funcs.Select(i => i.Value).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

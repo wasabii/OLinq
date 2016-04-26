@@ -63,17 +63,17 @@ namespace OLinq
 
         }
 
-        protected override void OnPredicateCollectionItemsAdded(IEnumerable<LambdaOperation<bool>> newItems, int startingIndex)
+        protected override void OnPredicateCollectionItemsAdded(IEnumerable<FuncOperation<bool>> newItems, int startingIndex)
         {
             SetValue(count += newItems.Count(i => i.Value));
         }
 
-        protected override void OnPredicateCollectionItemsRemoved(IEnumerable<LambdaOperation<bool>> oldItems, int startingIndex)
+        protected override void OnPredicateCollectionItemsRemoved(IEnumerable<FuncOperation<bool>> oldItems, int startingIndex)
         {
             SetValue(count -= oldItems.Count(i => i.Value));
         }
 
-        protected override void OnPredicateValueChanged(LambdaValueChangedEventArgs<TSource, bool> args)
+        protected override void OnPredicateValueChanged(FuncValueChangedEventArgs<TSource, bool> args)
         {
             if (!args.OldValue && args.NewValue)
                 SetValue(++count);

@@ -48,7 +48,7 @@ namespace OLinq
 
     }
 
-    abstract class GroupOperationWithLambda<TSource, TLambdaResult, TResult> : EnumerableSourceWithLambdaOperation<TSource, TLambdaResult, TResult>
+    abstract class GroupOperationWithLambda<TSource, TLambdaResult, TResult> : EnumerableSourceWithFuncOperation<TSource, TLambdaResult, TResult>
     {
 
         public GroupOperationWithLambda(OperationContext context, MethodCallExpression expression, Expression sourceExpression, Expression<Func<TSource, TLambdaResult>> lambdaExpression)
@@ -62,17 +62,17 @@ namespace OLinq
             ResetValue();
         }
 
-        protected override void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<TLambdaResult>> newItems, int startingIndex)
+        protected override void OnLambdaCollectionItemsAdded(IEnumerable<FuncOperation<TLambdaResult>> newItems, int startingIndex)
         {
             ResetValue();
         }
 
-        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TLambdaResult>> oldItems, int startingIndex)
+        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<FuncOperation<TLambdaResult>> oldItems, int startingIndex)
         {
             ResetValue();
         }
 
-        protected override void OnLambdaValueChanged(LambdaValueChangedEventArgs<TSource, TLambdaResult> args)
+        protected override void OnLambdaValueChanged(FuncValueChangedEventArgs<TSource, TLambdaResult> args)
         {
             ResetValue();
         }
@@ -102,9 +102,9 @@ namespace OLinq
 
         }
 
-        public LambdaContainer<TSource, TProjection> Projections
+        public FuncContainer<TSource, TProjection> Projections
         {
-            get { return Lambdas; }
+            get { return Funcs; }
         }
 
         protected override sealed void OnLambdaCollectionReset()
@@ -120,7 +120,7 @@ namespace OLinq
             base.OnLambdaCollectionReset();
         }
 
-        protected override sealed void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<TProjection>> newItems, int startingIndex)
+        protected override sealed void OnLambdaCollectionItemsAdded(IEnumerable<FuncOperation<TProjection>> newItems, int startingIndex)
         {
             OnProjectionCollectionItemsAdded(newItems, startingIndex);
         }
@@ -130,12 +130,12 @@ namespace OLinq
         /// </summary>
         /// <param name="newItems"></param>
         /// <param name="startingIndex"></param>
-        protected virtual void OnProjectionCollectionItemsAdded(IEnumerable<LambdaOperation<TProjection>> newItems, int startingIndex)
+        protected virtual void OnProjectionCollectionItemsAdded(IEnumerable<FuncOperation<TProjection>> newItems, int startingIndex)
         {
             base.OnLambdaCollectionItemsAdded(newItems, startingIndex);
         }
 
-        protected override sealed void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TProjection>> oldItems, int startingIndex)
+        protected override sealed void OnLambdaCollectionItemsRemoved(IEnumerable<FuncOperation<TProjection>> oldItems, int startingIndex)
         {
             OnProjectionCollectionItemsRemoved(oldItems, startingIndex);
         }
@@ -145,12 +145,12 @@ namespace OLinq
         /// </summary>
         /// <param name="oldItems"></param>
         /// <param name="startingIndex"></param>
-        protected virtual void OnProjectionCollectionItemsRemoved(IEnumerable<LambdaOperation<TProjection>> oldItems, int startingIndex)
+        protected virtual void OnProjectionCollectionItemsRemoved(IEnumerable<FuncOperation<TProjection>> oldItems, int startingIndex)
         {
             base.OnLambdaCollectionItemsRemoved(oldItems, startingIndex);
         }
 
-        protected override sealed void OnLambdaValueChanged(LambdaValueChangedEventArgs<TSource, TProjection> args)
+        protected override sealed void OnLambdaValueChanged(FuncValueChangedEventArgs<TSource, TProjection> args)
         {
             OnProjectionValueChanged(args);
         }
@@ -159,7 +159,7 @@ namespace OLinq
         /// Invoked when the value of a projection is changed.
         /// </summary>
         /// <param name="args"></param>
-        protected virtual void OnProjectionValueChanged(LambdaValueChangedEventArgs<TSource, TProjection> args)
+        protected virtual void OnProjectionValueChanged(FuncValueChangedEventArgs<TSource, TProjection> args)
         {
             base.OnLambdaValueChanged(args);
         }
@@ -175,7 +175,7 @@ namespace OLinq
 
         }
 
-        public LambdaContainer<TSource, bool> Predicates
+        public FuncContainer<TSource, bool> Predicates
         {
             get { return Projections; }
         }
@@ -193,7 +193,7 @@ namespace OLinq
             base.OnProjectionCollectionReset();
         }
 
-        protected override sealed void OnProjectionCollectionItemsAdded(IEnumerable<LambdaOperation<bool>> newItems, int startingIndex)
+        protected override sealed void OnProjectionCollectionItemsAdded(IEnumerable<FuncOperation<bool>> newItems, int startingIndex)
         {
             OnPredicateCollectionItemsAdded(newItems, startingIndex);
         }
@@ -203,12 +203,12 @@ namespace OLinq
         /// </summary>
         /// <param name="newItems"></param>
         /// <param name="startingIndex"></param>
-        protected virtual void OnPredicateCollectionItemsAdded(IEnumerable<LambdaOperation<bool>> newItems, int startingIndex)
+        protected virtual void OnPredicateCollectionItemsAdded(IEnumerable<FuncOperation<bool>> newItems, int startingIndex)
         {
             base.OnProjectionCollectionItemsAdded(newItems, startingIndex);
         }
 
-        protected override sealed void OnProjectionCollectionItemsRemoved(IEnumerable<LambdaOperation<bool>> oldItems, int startingIndex)
+        protected override sealed void OnProjectionCollectionItemsRemoved(IEnumerable<FuncOperation<bool>> oldItems, int startingIndex)
         {
             OnPredicateCollectionItemsRemoved(oldItems, startingIndex);
         }
@@ -218,12 +218,12 @@ namespace OLinq
         /// </summary>
         /// <param name="oldItems"></param>
         /// <param name="startingIndex"></param>
-        protected virtual void OnPredicateCollectionItemsRemoved(IEnumerable<LambdaOperation<bool>> oldItems, int startingIndex)
+        protected virtual void OnPredicateCollectionItemsRemoved(IEnumerable<FuncOperation<bool>> oldItems, int startingIndex)
         {
             base.OnProjectionCollectionItemsRemoved(oldItems, startingIndex);
         }
 
-        protected override sealed void OnProjectionValueChanged(LambdaValueChangedEventArgs<TSource, bool> args)
+        protected override sealed void OnProjectionValueChanged(FuncValueChangedEventArgs<TSource, bool> args)
         {
             OnPredicateValueChanged(args);
         }
@@ -232,7 +232,7 @@ namespace OLinq
         /// Invoked when a predicate value is changed.
         /// </summary>
         /// <param name="args"></param>
-        protected virtual void OnPredicateValueChanged(LambdaValueChangedEventArgs<TSource, bool> args)
+        protected virtual void OnPredicateValueChanged(FuncValueChangedEventArgs<TSource, bool> args)
         {
             base.OnProjectionValueChanged(args);
         }

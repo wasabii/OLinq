@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class GroupByOperation<TElement, TKey> : EnumerableSourceWithLambdaOperation<TElement, TKey, IEnumerable<IGrouping<TKey, TElement>>>, IEnumerable<IGrouping<TKey, TElement>>, INotifyCollectionChanged
+    class GroupByOperation<TElement, TKey> : EnumerableSourceWithFuncOperation<TElement, TKey, IEnumerable<IGrouping<TKey, TElement>>>, IEnumerable<IGrouping<TKey, TElement>>, INotifyCollectionChanged
     {
 
         Dictionary<TKey, Grouping<TKey, TElement>> groups = new Dictionary<TKey, Grouping<TKey, TElement>>();
@@ -23,19 +23,19 @@ namespace OLinq
             Reset();
         }
 
-        protected override void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<TKey>> newItems, int startingIndex)
+        protected override void OnLambdaCollectionItemsAdded(IEnumerable<FuncOperation<TKey>> newItems, int startingIndex)
         {
-            foreach (var item in newItems.Select(i => Lambdas[i]))
+            foreach (var item in newItems.Select(i => Funcs[i]))
                 AddItem(item);
         }
 
-        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<TKey>> oldItems, int startingIndex)
+        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<FuncOperation<TKey>> oldItems, int startingIndex)
         {
-            foreach (var item in oldItems.Select(i => Lambdas[i]))
+            foreach (var item in oldItems.Select(i => Funcs[i]))
                 RemoveItem(item);
         }
 
-        protected override void OnLambdaValueChanged(LambdaValueChangedEventArgs<TElement, TKey> args)
+        protected override void OnLambdaValueChanged(FuncValueChangedEventArgs<TElement, TKey> args)
         {
             RemoveItemWithKey(args.Item, args.OldValue);
             AddItem(args.Item);
@@ -48,7 +48,7 @@ namespace OLinq
         {
             // find new and old items
             var nowItems = groups.Values.SelectMany(i => i);
-            var newItems = Lambdas.Select(i => Lambdas[i]).Except(nowItems).ToList();
+            var newItems = Funcs.Select(i => Funcs[i]).Except(nowItems).ToList();
             var oldItems = nowItems.Except(newItems).ToList();
 
             // remove old items
@@ -67,7 +67,7 @@ namespace OLinq
         void AddItem(TElement item)
         {
             // lambda associated with item
-            var lambda = Lambdas[item];
+            var lambda = Funcs[item];
 
             // group associated with key
             var group = GetOrCreateGroup(lambda.Value);
@@ -82,7 +82,7 @@ namespace OLinq
         /// <param name="item"></param>
         void RemoveItem(TElement item)
         {
-            RemoveItemWithKey(item, Lambdas[item].Value);
+            RemoveItemWithKey(item, Funcs[item].Value);
         }
 
         /// <summary>

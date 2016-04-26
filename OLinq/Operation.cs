@@ -10,7 +10,8 @@ namespace OLinq
     /// <summary>
     /// Base operation type. An operation is associated with an <see cref="Expression"/> and implements its functionality.
     /// </summary>
-    abstract class Operation : IDisposable
+    abstract class Operation : 
+        IDisposable
     {
 
         public static bool IsMethod(MethodInfo method, string name, int typeArgs, int parameters)
@@ -89,7 +90,8 @@ namespace OLinq
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
     abstract class Operation<TResult> :
-        Operation, IOperation<TResult>
+        Operation,
+        IOperation<TResult>
     {
 
         /// <summary>

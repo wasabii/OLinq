@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class SelectManyOperation<TSource, TResult> : EnumerableSourceWithLambdaOperation<TSource, IEnumerable<TResult>, IEnumerable<TResult>>, IEnumerable<TResult>, INotifyCollectionChanged
+    class SelectManyOperation<TSource, TResult> : EnumerableSourceWithFuncOperation<TSource, IEnumerable<TResult>, IEnumerable<TResult>>, IEnumerable<TResult>, INotifyCollectionChanged
     {
 
         List<IEnumerable> items = new List<IEnumerable>();
@@ -26,7 +26,7 @@ namespace OLinq
 
             // reset all items
             items.Clear();
-            items.AddRange(Lambdas.Select(i => i.Value));
+            items.AddRange(Funcs.Select(i => i.Value));
 
             // subscribe to all items
             foreach (var item in items)
@@ -35,7 +35,7 @@ namespace OLinq
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
-        protected override void OnLambdaCollectionItemsAdded(IEnumerable<LambdaOperation<IEnumerable<TResult>>> newItems, int startingIndex)
+        protected override void OnLambdaCollectionItemsAdded(IEnumerable<FuncOperation<IEnumerable<TResult>>> newItems, int startingIndex)
         {
             // subscribe to new items
             foreach (var newItem in newItems.Select(i => i.Value))
@@ -47,7 +47,7 @@ namespace OLinq
             NotifyCollectionChangedUtil.RaiseAddEvent<TResult>(OnCollectionChanged, newItems.SelectMany(i => i.Value));
         }
 
-        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<LambdaOperation<IEnumerable<TResult>>> oldItems, int startingIndex)
+        protected override void OnLambdaCollectionItemsRemoved(IEnumerable<FuncOperation<IEnumerable<TResult>>> oldItems, int startingIndex)
         {
             // unsubscribe from oldl items
             foreach (var oldItem in oldItems.Select(i => i.Value))
@@ -59,7 +59,7 @@ namespace OLinq
             NotifyCollectionChangedUtil.RaiseRemoveEvent<TResult>(OnCollectionChanged, oldItems.SelectMany(i => i.Value));
         }
 
-        protected override void OnLambdaValueChanged(LambdaValueChangedEventArgs<TSource, IEnumerable<TResult>> args)
+        protected override void OnLambdaValueChanged(FuncValueChangedEventArgs<TSource, IEnumerable<TResult>> args)
         {
             // unsubscribe from old value
             UnsubscribeItem(args.OldValue);
@@ -115,7 +115,7 @@ namespace OLinq
 
         public IEnumerator<TResult> GetEnumerator()
         {
-            return Lambdas.SelectMany(i => i.Value).GetEnumerator();
+            return Funcs.SelectMany(i => i.Value).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

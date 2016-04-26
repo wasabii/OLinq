@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
@@ -8,9 +7,21 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    class WhereOperation<TElement> : EnumerableSourceWithPredicateOperation<TElement, IEnumerable<TElement>>, IEnumerable<TElement>, INotifyCollectionChanged
+    /// <summary>
+    /// Implements <see cref="IQueryable{T}"/>.Where.
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
+    class WhereOperation<TElement> :
+        EnumerableSourceWithPredicateOperation<TElement, IEnumerable<TElement>>, 
+        IEnumerable<TElement>, 
+        INotifyCollectionChanged
     {
 
+        /// <summary>
+        /// Initializes a new instance.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="expression"></param>
         public WhereOperation(OperationContext context, MethodCallExpression expression)
             : base(context, expression, expression.Arguments[0], expression.GetLambdaArgument<TElement, bool>(1))
         {
@@ -29,26 +40,37 @@ namespace OLinq
                     OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    var newItems = args.NewItems.Cast<LambdaOperation<bool>>().Where(i => i.Value).Select(i => Predicates[i]).ToList();
+                    // items added to the underlying collection that currently have a true value
+                    var newItems = args.NewItems.Cast<FuncOperation<bool>>().Where(i => i.Value).Select(i => Predicates[i]).ToList();
                     if (newItems.Count > 0)
                         NotifyCollectionChangedUtil.RaiseAddEvent<TElement>(OnCollectionChanged, newItems);
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    var oldItems = args.OldItems.Cast<LambdaOperation<bool>>().Where(i => i.Value).Select(i => Predicates[i]).ToList();
+                    // items removed from the underlying collection that currently have a true value
+                    var oldItems = args.OldItems.Cast<FuncOperation<bool>>().Where(i => i.Value).Select(i => Predicates[i]).ToList();
                     if (oldItems.Count > 0)
                         NotifyCollectionChangedUtil.RaiseRemoveEvent<TElement>(OnCollectionChanged, oldItems);
                     break;
             }
         }
 
-        protected override void OnPredicateValueChanged(LambdaValueChangedEventArgs<TElement, bool> args)
+        protected override void OnPredicateValueChanged(FuncValueChangedEventArgs<TElement, bool> args)
         {
-            if (!args.OldValue && args.NewValue)
-                // was false, now true: item added
+            // value is now true, was false
+            if (args.NewValue && !args.OldValue)
+            {
+                // TODO resolve indexes
                 NotifyCollectionChangedUtil.RaiseAddEvent<TElement>(OnCollectionChanged, args.Item);
-            else if (args.OldValue && !args.NewValue)
-                // was true, now false: item removed
-                NotifyCollectionChangedUtil.RaiseRemoveEvent<TElement>(OnCollectionChanged, args.Item);;
+                return;
+            }
+
+            // values was true, now false
+            if (args.OldValue && !args.NewValue)
+            {
+                // TODO resolve indexes
+                NotifyCollectionChangedUtil.RaiseRemoveEvent<TElement>(OnCollectionChanged, args.Item);
+                return;
+            }
         }
 
         public IEnumerator<TElement> GetEnumerator()

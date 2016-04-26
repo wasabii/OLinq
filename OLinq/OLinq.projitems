@@ -25,7 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DistinctOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EnumerableSource2Operation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EnumerableSourceOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)EnumerableSourceWithLambdaOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EnumerableSourceWithFuncOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EnumerableSourceWithPredicateOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FirstOrDefaultOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GroupByOperation.cs" />
@@ -35,11 +35,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)INotifyPropertyChanging.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IntersectOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)LambdaContainer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)LambdaOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)LambdaResultComparer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)LambdaValueChangedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)LambdaValueChangedEventHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FuncContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FuncOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FuncResultComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FuncValueChangedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FuncValueChangedEventHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MaxOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MemberAccessOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MemberInitOperation.cs" />

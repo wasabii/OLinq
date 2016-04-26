@@ -11,9 +11,9 @@ namespace OLinq
     class OperationContext
     {
 
-        OperationContext parent;
-        Dictionary<string, IOperation> variables;
-        bool? nullSafe;
+        readonly OperationContext parent;
+        readonly Dictionary<string, IOperation> variables;
+        readonly bool? nullSafe;
 
         /// <summary>
         /// Initializes a new instance.

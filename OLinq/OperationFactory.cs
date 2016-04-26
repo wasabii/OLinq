@@ -248,7 +248,7 @@ namespace OLinq
         /// <returns></returns>
         static IOperation FromLambdaExpression(OperationContext context, LambdaExpression expression)
         {
-            return (IOperation)Activator.CreateInstance(typeof(LambdaOperation<>).MakeGenericType(expression.ReturnType), context, expression);
+            return (IOperation)Activator.CreateInstance(typeof(FuncOperation<>).MakeGenericType(expression.ReturnType), context, expression);
         }
 
         /// <summary>

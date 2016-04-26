@@ -7,6 +7,10 @@ using System.Collections.Specialized;
 namespace OLinq
 {
 
+    /// <summary>
+    /// Keeps a local copy of the final results of an <see cref="ObservableView{TElement}"/>.
+    /// </summary>
+    /// <typeparam name="TElement"></typeparam>
     public sealed class ObservableBuffer<TElement> : IEnumerable<TElement>, INotifyCollectionChanged, IDisposable
     {
 

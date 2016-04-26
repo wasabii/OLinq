@@ -9,39 +9,39 @@ namespace OLinq
     static class NotifyCollectionChangedUtil
     {
 
-        public static void RaiseAddEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, IEnumerable<T> newItems)
+        public static void RaiseAddEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, IEnumerable<T> newItems, int newStartingIndex = -1)
         {
 #if !SILVERLIGHT && !PCL
-            raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.ToList()));
+            raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems.ToList(), newStartingIndex));
 #else
             foreach (var item in newItems)
                 raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, -1));
 #endif
         }
 
-        public static void RaiseAddEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, T newItem)
+        public static void RaiseAddEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, T newItem, int newStartingIndex = -1)
         {
 #if !SILVERLIGHT && !PCL
-            raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItem, -1));
+            raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItem, newStartingIndex));
 #else
             raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItem, -1));
 #endif
         }
 
-        public static void RaiseRemoveEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, IEnumerable<T> oldItems)
+        public static void RaiseRemoveEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, IEnumerable<T> oldItems, int oldStartingIndex = -1)
         {
 #if !SILVERLIGHT && !PCL
-            raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.ToList()));
+            raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems.ToList(), oldStartingIndex));
 #else
             foreach (var item in oldItems)
                 raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, -1));
 #endif
         }
 
-        public static void RaiseRemoveEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, T oldItem)
+        public static void RaiseRemoveEvent<T>(Action<NotifyCollectionChangedEventArgs> raise, T oldItem, int oldStartingIndex = -1)
         {
 #if !SILVERLIGHT && !PCL
-            raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, -1));
+            raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, oldStartingIndex));
 #else
             raise(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, -1));
 #endif

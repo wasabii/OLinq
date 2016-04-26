@@ -126,19 +126,19 @@ namespace OLinq
             return l / r;
         }
 
-        protected override void OnProjectionCollectionItemsAdded(IEnumerable<LambdaOperation<TResult>> newItems, int startingIndex)
+        protected override void OnProjectionCollectionItemsAdded(IEnumerable<FuncOperation<TResult>> newItems, int startingIndex)
         {
             var newValues = newItems.Select(i => i.Value);
             SetValue(average = Divide(sum = Add(sum, Sum(newValues)), count += newValues.Count()));
         }
 
-        protected override void OnProjectionCollectionItemsRemoved(IEnumerable<LambdaOperation<TResult>> oldItems, int startingIndex)
+        protected override void OnProjectionCollectionItemsRemoved(IEnumerable<FuncOperation<TResult>> oldItems, int startingIndex)
         {
             var oldValues = oldItems.Select(i => i.Value);
             SetValue(average = Divide(sum = Subtract(sum, Sum(oldValues)), count -= oldValues.Count()));
         }
 
-        protected override void OnProjectionValueChanged(LambdaValueChangedEventArgs<TSource, TResult> args)
+        protected override void OnProjectionValueChanged(FuncValueChangedEventArgs<TSource, TResult> args)
         {
             SetValue(average = Divide(sum = Add(Subtract(sum, args.OldValue), args.NewValue), count));
         }

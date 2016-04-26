@@ -3,7 +3,8 @@
 namespace OLinq
 {
 
-    class ConstantOperation<T> : Operation<T>
+    class ConstantOperation<T> : 
+        Operation<T>
     {
 
         public ConstantOperation(OperationContext context, ConstantExpression expression)

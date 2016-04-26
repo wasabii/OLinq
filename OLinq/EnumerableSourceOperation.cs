@@ -6,10 +6,11 @@ using System.Linq.Expressions;
 namespace OLinq
 {
 
-    abstract class EnumerableSourceOperation<TSource, TResult> : Operation<TResult>
+    abstract class EnumerableSourceOperation<TSource, TResult> :
+        Operation<TResult>
     {
 
-        IOperation<IEnumerable<TSource>> sourceOp;
+        readonly IOperation<IEnumerable<TSource>> sourceOp;
 
         /// <summary>
         /// Initializes a new instance.
@@ -156,7 +157,6 @@ namespace OLinq
                 UnsubscribeSourceCollection(sourceOp.Value);
                 UnsubscribeSourceOperation(sourceOp);
                 sourceOp.Dispose();
-                sourceOp = null;
             }
 
             base.Dispose();
